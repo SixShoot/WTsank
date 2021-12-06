@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{84FD8EA3-14DD-44DD-8C36-03D91674A0E0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>WorldOfTanks</RootNamespace>
+    <AssemblyName>World Of Tanks</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Eruru.Html, Version=1.0.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Eruru.Html.1.0.0.14\lib\net40\Eruru.Html.dll</HintPath>
+    </Reference>
+    <Reference Include="Eruru.Http, Version=1.0.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Eruru.Http.1.0.0.9\lib\net40\Eruru.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Eruru.Json, Version=1.0.0.18, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Eruru.Json.1.0.0.18\lib\net40\Eruru.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Eruru.LexicalAnalyzer, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Eruru.LexicalAnalyzer.1.0.0.1\lib\net40\Eruru.LexicalAnalyzer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="API.cs" />
+    <Compile Include="Forms\ClanQueryResultForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ClanQueryResultForm.Designer.cs">
+      <DependentUpon>ClanQueryResultForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CombatRecordQueryResultForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CombatRecordQueryResultForm.Designer.cs">
+      <DependentUpon>CombatRecordQueryResultForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AimTimeCalculatorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AimTimeCalculatorForm.Designer.cs">
+      <DependentUpon>AimTimeCalculatorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AimTimeCalculatorTank.cs" />
+    <Compile Include="Models\CombatRecord.cs" />
+    <Compile Include="CombatRecordSummary.cs" />
+    <Compile Include="Enums\CombatResult.cs" />
+    <Compile Include="Enums\CommanderVisionSystemType.cs" />
+    <Compile Include="Enums\FilterResult.cs" />
+    <Compile Include="Forms\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\OujBoxCombatRecordQueryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OujBoxCombatRecordQueryForm.Designer.cs">
+      <DependentUpon>OujBoxCombatRecordQueryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PageChanger.cs" />
+    <Compile Include="Services\OujBoxService.cs" />
+    <Compile Include="Enums\Page.cs" />
+    <Compile Include="Models\SpottingPlayer.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Forms\SpottingDistanceCalculatorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SpottingDistanceCalculatorForm.Designer.cs">
+      <DependentUpon>SpottingDistanceCalculatorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\WarGamingNetService.cs" />
+    <Compile Include="Models\Tank.cs" />
+    <Compile Include="Enums\TerrainType.cs" />
+    <EmbeddedResource Include="Forms\CombatRecordQueryResultForm.resx">
+      <DependentUpon>CombatRecordQueryResultForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AimTimeCalculatorForm.resx">
+      <DependentUpon>AimTimeCalculatorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ClanQueryResultForm.resx">
+      <DependentUpon>ClanQueryResultForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OujBoxCombatRecordQueryForm.resx">
+      <DependentUpon>OujBoxCombatRecordQueryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Forms\SpottingDistanceCalculatorForm.resx">
+      <DependentUpon>SpottingDistanceCalculatorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
