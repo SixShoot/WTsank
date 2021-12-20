@@ -566,7 +566,7 @@ namespace WorldOfTanks {
 		string GetTanksGGValue (string html, string label) {
 			Group group = Regex.Match (html, $@"{label}.*?([0-9\.]*?)</span>").Groups[1];
 			if (!group.Success) {
-				throw new Exception ($"未能接析出相应数据{Environment.NewLine}" +
+				throw new Exception ($"未能解析出相应数据{Environment.NewLine}" +
 					$"请使用浏览器访问tanks.gg，例如：https://tanks.gg/tank/obj-277 {Environment.NewLine}" +
 					$"然后打开浏览器的开发者工具复制整个页面的html代码");
 			}

@@ -63,9 +63,9 @@ namespace WorldOfTanks {
 			this.TankResultListView.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TankResultListView.FullRowSelect = true;
 			this.TankResultListView.HideSelection = false;
-			this.TankResultListView.Location = new System.Drawing.Point(210, 5);
+			this.TankResultListView.Location = new System.Drawing.Point(250, 5);
 			this.TankResultListView.Name = "TankResultListView";
-			this.TankResultListView.Size = new System.Drawing.Size(1014, 565);
+			this.TankResultListView.Size = new System.Drawing.Size(974, 565);
 			this.TankResultListView.TabIndex = 23;
 			this.TankResultListView.UseCompatibleStateImageBehavior = false;
 			this.TankResultListView.View = System.Windows.Forms.View.Details;
@@ -143,7 +143,7 @@ namespace WorldOfTanks {
 			this.ResultListView.HideSelection = false;
 			this.ResultListView.Location = new System.Drawing.Point(5, 5);
 			this.ResultListView.Name = "ResultListView";
-			this.ResultListView.Size = new System.Drawing.Size(200, 565);
+			this.ResultListView.Size = new System.Drawing.Size(240, 565);
 			this.ResultListView.TabIndex = 24;
 			this.ResultListView.UseCompatibleStateImageBehavior = false;
 			this.ResultListView.View = System.Windows.Forms.View.Details;

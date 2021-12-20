@@ -94,7 +94,7 @@ namespace WorldOfTanks {
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(150, 40);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "作者：Eruru\r\nQQ：1633756198";
+			this.label1.Text = "作者：Eruru\r\nQQ群：628613664";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// Panel

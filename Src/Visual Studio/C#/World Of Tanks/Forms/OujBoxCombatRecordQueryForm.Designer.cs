@@ -31,6 +31,7 @@ namespace WorldOfTanks {
 			this.ClanButton = new System.Windows.Forms.Button();
 			this.SummaryLabel = new System.Windows.Forms.Label();
 			this.Panel = new System.Windows.Forms.Panel();
+			this.ToTodayButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -51,7 +52,7 @@ namespace WorldOfTanks {
 			this.NameTextBox.Location = new System.Drawing.Point(45, 5);
 			this.NameTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.NameTextBox.Name = "NameTextBox";
-			this.NameTextBox.Size = new System.Drawing.Size(385, 23);
+			this.NameTextBox.Size = new System.Drawing.Size(305, 23);
 			this.NameTextBox.TabIndex = 1;
 			this.NameTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -59,11 +60,11 @@ namespace WorldOfTanks {
 			// 
 			this.QueryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.QueryButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.QueryButton.Location = new System.Drawing.Point(640, 5);
+			this.QueryButton.Location = new System.Drawing.Point(560, 5);
 			this.QueryButton.Name = "QueryButton";
 			this.QueryButton.Size = new System.Drawing.Size(75, 25);
 			this.QueryButton.TabIndex = 2;
-			this.QueryButton.Text = "查询";
+			this.QueryButton.Text = "当天";
 			this.QueryButton.UseVisualStyleBackColor = true;
 			this.QueryButton.Click += new System.EventHandler(this.QueryButton_Click);
 			// 
@@ -72,7 +73,7 @@ namespace WorldOfTanks {
 			this.DateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DateTimePicker.CalendarFont = new System.Drawing.Font("宋体", 9F);
 			this.DateTimePicker.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.DateTimePicker.Location = new System.Drawing.Point(435, 5);
+			this.DateTimePicker.Location = new System.Drawing.Point(355, 5);
 			this.DateTimePicker.Name = "DateTimePicker";
 			this.DateTimePicker.Size = new System.Drawing.Size(200, 23);
 			this.DateTimePicker.TabIndex = 3;
@@ -112,10 +113,23 @@ namespace WorldOfTanks {
 			this.Panel.Size = new System.Drawing.Size(800, 390);
 			this.Panel.TabIndex = 8;
 			// 
+			// ToTodayButton
+			// 
+			this.ToTodayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ToTodayButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.ToTodayButton.Location = new System.Drawing.Point(640, 5);
+			this.ToTodayButton.Name = "ToTodayButton";
+			this.ToTodayButton.Size = new System.Drawing.Size(75, 25);
+			this.ToTodayButton.TabIndex = 9;
+			this.ToTodayButton.Text = "至今";
+			this.ToTodayButton.UseVisualStyleBackColor = true;
+			this.ToTodayButton.Click += new System.EventHandler(this.ToTodayButton_Click);
+			// 
 			// OujBoxCombatRecordQueryForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.ToTodayButton);
 			this.Controls.Add(this.Panel);
 			this.Controls.Add(this.SummaryLabel);
 			this.Controls.Add(this.ClanButton);
@@ -141,5 +155,6 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.Button ClanButton;
 		private System.Windows.Forms.Label SummaryLabel;
 		private System.Windows.Forms.Panel Panel;
+		private System.Windows.Forms.Button ToTodayButton;
 	}
 }

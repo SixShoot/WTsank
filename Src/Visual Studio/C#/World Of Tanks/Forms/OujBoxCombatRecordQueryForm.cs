@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -29,13 +28,13 @@ namespace WorldOfTanks {
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
-			if (DateTimePicker.Value.Month > DateTime.Now.Month ||
-				(DateTimePicker.Value.Month == DateTime.Now.Month && DateTimePicker.Value.Day > DateTime.Now.Day)
-			) {
-				MessageBox.Show ("不能查询未来的战绩");
-				return;
-			}
+			CheckDateTime ();
 			Query (NameTextBox.Text);
+		}
+
+		private void ToTodayButton_Click (object sender, EventArgs e) {
+			CheckDateTime ();
+			Query (NameTextBox.Text, false);
 		}
 
 		private void ClanButton_Click (object sender, EventArgs e) {
@@ -46,8 +45,20 @@ namespace WorldOfTanks {
 			PageChanger.ResizeCurrentPage ();
 		}
 
+		void CheckDateTime () {
+			if (DateTimePicker.Value.Month > DateTime.Now.Month ||
+				(DateTimePicker.Value.Month == DateTime.Now.Month && DateTimePicker.Value.Day > DateTime.Now.Day)
+			) {
+				MessageBox.Show ("不能查询未来的战绩");
+				return;
+			}
+		}
+
 		void BeginQuery () {
+			NameTextBox.Enabled = false;
+			DateTimePicker.Enabled = false;
 			QueryButton.Enabled = false;
+			ToTodayButton.Enabled = false;
 			ClanButton.Enabled = false;
 			PageChanger.Change (Page.None);
 			SetSummaryLabel ("查询中");
@@ -58,7 +69,10 @@ namespace WorldOfTanks {
 				Invoke (new Action (EndQuery));
 				return;
 			}
+			NameTextBox.Enabled = true;
+			DateTimePicker.Enabled = true;
 			QueryButton.Enabled = true;
+			ToTodayButton.Enabled = true;
 			ClanButton.Enabled = true;
 		}
 
@@ -70,13 +84,13 @@ namespace WorldOfTanks {
 			SummaryLabel.Text = text;
 		}
 
-		void Query (string name) {
+		void Query (string name, bool isSameDay = true) {
 			BeginQuery ();
 			PageChanger.Change (Page.CombatRecordQueryResult);
 			CombatRecordQueryResultForm.ClearAllListViewItems ();
 			new Thread (() => {
 				try {
-					List<CombatRecord> combatRecords = OujBoxService.GetCombatRecords (name, DateTimePicker.Value.Month, DateTimePicker.Value.Day);
+					List<CombatRecord> combatRecords = OujBoxService.GetCombatRecords (name, DateTimePicker.Value.Month, DateTimePicker.Value.Day, isSameDay);
 					CombatRecordSummary combatRecordSummary = OujBoxService.Summary (combatRecords, combatRecord => {
 						return Modes.Contains (combatRecord.Mode) ? FilterResult.Execute : FilterResult.Continue;
 					});
@@ -84,7 +98,14 @@ namespace WorldOfTanks {
 						throw new Exception ("没有战斗数据");
 					}
 					CombatRecordQueryResultForm.AddResultListViewItem (listView => {
+						listView.Items.Add ("玩家").SubItems.Add ($"{name}");
 						listView.Items.Add ("千场效率").SubItems.Add ($"{OujBoxService.GetCombat (name)}");
+						if (isSameDay) {
+							listView.Items.Add ($"查询日期").SubItems.Add ($"{DateTimePicker.Value:yyyy年MM月dd日}");
+						} else {
+							listView.Items.Add ($"查询范围：从").SubItems.Add ($"{DateTimePicker.Value:yyyy年MM月dd日}");
+							listView.Items.Add ($"至").SubItems.Add ($"{DateTime.Now:yyyy年MM月dd日}");
+						}
 						listView.Items.Add ("战斗次数").SubItems.Add ($"{combatRecordSummary.CombatNumber}");
 						listView.Items.Add ("胜率").SubItems.Add ($"{combatRecordSummary.VictoryRate:P2}");
 						listView.Items.Add ("胜利次数").SubItems.Add ($"{combatRecordSummary.VictoryNumber}");

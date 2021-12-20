@@ -63,6 +63,9 @@ namespace WorldOfTanks {
 				string arenaID = htmlElement.GetAttribute ("arena-id");
 				CombatResult combatResult = ParseCombatResult (htmlElement.GetElementByClassName ("state").TextContent);
 				string[] datas = htmlElement.GetElementByClassName ("game").TextContent.Split (' ');
+				if (datas.Length < 2) {
+					continue;
+				}
 				string[] dates = datas[1].Split ('-');
 				int month = int.Parse (dates[0]);
 				int day = int.Parse (dates[1]);
@@ -117,12 +120,12 @@ namespace WorldOfTanks {
 			return combatRecords;
 		}
 
-		public List<CombatRecord> GetCombatRecords (string name, int month, int day) {
+		public List<CombatRecord> GetCombatRecords (string name, int month, int day, bool isSameDay = true) {
 			return GetCombatRecords (name, null, battleRecord => {
 				if (battleRecord.DateTime.Month < month || (battleRecord.DateTime.Month == month && battleRecord.DateTime.Day < day)) {
 					return FilterResult.Break;
 				}
-				if (battleRecord.DateTime.Month > month || (battleRecord.DateTime.Month == month && battleRecord.DateTime.Day > day)) {
+				if (isSameDay && (battleRecord.DateTime.Month > month || (battleRecord.DateTime.Month == month && battleRecord.DateTime.Day > day))) {
 					return FilterResult.Continue;
 				}
 				return FilterResult.Execute;
@@ -159,7 +162,6 @@ namespace WorldOfTanks {
 					duration = lifeTime;
 				}
 			}
-			Console.WriteLine (response);
 			JsonObject vehicleJsonObject = playerJsonObject["vehicle"];
 			DateTime dateTime = resultJsonObject["end_time"];
 			combatRecord.DateTime.AddHours (dateTime.Hour);
