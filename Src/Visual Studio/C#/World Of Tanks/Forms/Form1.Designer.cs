@@ -30,6 +30,7 @@ namespace WorldOfTanks {
 			this.AimTimeCalculatorRadioButton = new System.Windows.Forms.RadioButton();
 			this.label1 = new System.Windows.Forms.Label();
 			this.Panel = new System.Windows.Forms.Panel();
+			this.OujBoxClanQueryRadioButton = new System.Windows.Forms.RadioButton();
 			this.FlowLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -38,6 +39,7 @@ namespace WorldOfTanks {
 			this.FlowLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.FlowLayoutPanel.Controls.Add(this.OujBoxCombatRecordQueryRadioButton);
+			this.FlowLayoutPanel.Controls.Add(this.OujBoxClanQueryRadioButton);
 			this.FlowLayoutPanel.Controls.Add(this.SpottingDistanceCalculatorRadioButton);
 			this.FlowLayoutPanel.Controls.Add(this.AimTimeCalculatorRadioButton);
 			this.FlowLayoutPanel.Controls.Add(this.label1);
@@ -64,7 +66,7 @@ namespace WorldOfTanks {
 			// SpottingDistanceCalculatorRadioButton
 			// 
 			this.SpottingDistanceCalculatorRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
-			this.SpottingDistanceCalculatorRadioButton.Location = new System.Drawing.Point(3, 49);
+			this.SpottingDistanceCalculatorRadioButton.Location = new System.Drawing.Point(3, 95);
 			this.SpottingDistanceCalculatorRadioButton.Name = "SpottingDistanceCalculatorRadioButton";
 			this.SpottingDistanceCalculatorRadioButton.Size = new System.Drawing.Size(147, 40);
 			this.SpottingDistanceCalculatorRadioButton.TabIndex = 5;
@@ -77,7 +79,7 @@ namespace WorldOfTanks {
 			// AimTimeCalculatorRadioButton
 			// 
 			this.AimTimeCalculatorRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
-			this.AimTimeCalculatorRadioButton.Location = new System.Drawing.Point(3, 95);
+			this.AimTimeCalculatorRadioButton.Location = new System.Drawing.Point(3, 141);
 			this.AimTimeCalculatorRadioButton.Name = "AimTimeCalculatorRadioButton";
 			this.AimTimeCalculatorRadioButton.Size = new System.Drawing.Size(147, 40);
 			this.AimTimeCalculatorRadioButton.TabIndex = 6;
@@ -90,7 +92,7 @@ namespace WorldOfTanks {
 			// label1
 			// 
 			this.label1.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label1.Location = new System.Drawing.Point(3, 138);
+			this.label1.Location = new System.Drawing.Point(3, 184);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(150, 40);
 			this.label1.TabIndex = 2;
@@ -109,6 +111,19 @@ namespace WorldOfTanks {
 			this.Panel.Size = new System.Drawing.Size(899, 605);
 			this.Panel.TabIndex = 2;
 			this.Panel.Resize += new System.EventHandler(this.Panel_Resize);
+			// 
+			// OujBoxClanQueryRadioButton
+			// 
+			this.OujBoxClanQueryRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
+			this.OujBoxClanQueryRadioButton.Location = new System.Drawing.Point(3, 49);
+			this.OujBoxClanQueryRadioButton.Name = "OujBoxClanQueryRadioButton";
+			this.OujBoxClanQueryRadioButton.Size = new System.Drawing.Size(147, 40);
+			this.OujBoxClanQueryRadioButton.TabIndex = 7;
+			this.OujBoxClanQueryRadioButton.TabStop = true;
+			this.OujBoxClanQueryRadioButton.Text = "偶游盒子军团查询";
+			this.OujBoxClanQueryRadioButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.OujBoxClanQueryRadioButton.UseVisualStyleBackColor = true;
+			this.OujBoxClanQueryRadioButton.CheckedChanged += new System.EventHandler(this.OujBoxClanQueryRadioButton_CheckedChanged);
 			// 
 			// Form1
 			// 
@@ -133,6 +148,7 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.RadioButton OujBoxCombatRecordQueryRadioButton;
 		private System.Windows.Forms.RadioButton SpottingDistanceCalculatorRadioButton;
 		private System.Windows.Forms.RadioButton AimTimeCalculatorRadioButton;
+		private System.Windows.Forms.RadioButton OujBoxClanQueryRadioButton;
 	}
 }
 

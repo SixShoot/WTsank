@@ -15,10 +15,11 @@ namespace WorldOfTanks {
 			PageChanger.MDIForm = this;
 			PageChanger.Parent = Panel;
 			PageChanger.Add (Page.OujBoxCombatRecordQuery, new OujBoxCombatRecordQueryForm ());
+			PageChanger.Add (Page.OujBoxClandQuery, new OujBoxClanQueryForm ());
 			PageChanger.Add (Page.SpottingDistanceCalculator, new SpottingDistanceCalculatorForm ());
 			PageChanger.Add (Page.AimTimeCalculator, new AimTimeCalculatorForm ());
 #if DEBUG
-			AimTimeCalculatorRadioButton.Checked = true;
+			OujBoxCombatRecordQueryRadioButton.Checked = true;
 #else
 			OujBoxCombatRecordQueryRadioButton.Checked = true;
 #endif
@@ -28,6 +29,12 @@ namespace WorldOfTanks {
 		private void OujBoxCombatRecordQueryRadioButton_CheckedChanged (object sender, EventArgs e) {
 			if (OujBoxCombatRecordQueryRadioButton.Checked) {
 				PageChanger.Change (Page.OujBoxCombatRecordQuery);
+			}
+		}
+
+		private void OujBoxClanQueryRadioButton_CheckedChanged (object sender, EventArgs e) {
+			if (OujBoxClanQueryRadioButton.Checked) {
+				PageChanger.Change (Page.OujBoxClandQuery);
 			}
 		}
 

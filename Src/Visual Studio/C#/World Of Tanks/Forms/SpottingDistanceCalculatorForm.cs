@@ -223,10 +223,10 @@ namespace WorldOfTanks {
 					commanderVisionSystemValueByFoliageTextBox.Enabled = false;
 					commanderVisionSystemValueByMoveTextBox.Enabled = false;
 				}
-				Calculate ();
 			} finally {
 				BlockCalculate = false;
 			}
+			Calculate ();
 		}
 
 		void Calculate () {

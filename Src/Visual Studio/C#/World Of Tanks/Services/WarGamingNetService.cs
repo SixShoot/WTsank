@@ -2,6 +2,7 @@
 using Eruru.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace WorldOfTanks {
 
@@ -17,9 +18,17 @@ namespace WorldOfTanks {
 					{ "search", name },
 					{ "type", "clans" }
 				},
-				OnResponseError = (httpWebResponse, webException) => throw webException
+				OnResponseError = (httpWebResponse, webException) => {
+					if (httpWebResponse.StatusCode == HttpStatusCode.Conflict) {
+						return true;
+					}
+					throw webException;
+				}
 			});
 			JsonObject jsonObject = JsonObject.Parse (response);
+			if (jsonObject.ContainsKey ("error")) {
+				throw new Exception (jsonObject["error"]);
+			}
 			JsonArray resultsJsonArray = jsonObject["search_autocomplete_result"];
 			if (resultsJsonArray.Count == 0) {
 				throw new Exception ("没有找到与名称或标签相匹配的军团");

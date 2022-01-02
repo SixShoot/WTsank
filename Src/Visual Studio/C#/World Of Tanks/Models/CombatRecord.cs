@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Eruru.Json;
+using System;
 
 namespace WorldOfTanks {
 
@@ -16,6 +17,7 @@ namespace WorldOfTanks {
 		public float SurvivalTime { get; set; }
 		public float XP { get; set; }
 		public string TankName { get; set; }
+		public JsonArray TeamA { get; set; }
 
 	}
 

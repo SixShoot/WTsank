@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace WorldOfTanks {
@@ -9,9 +10,20 @@ namespace WorldOfTanks {
 		/// </summary>
 		[STAThread]
 		static void Main () {
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			Application.ThreadException += Application_ThreadException;
+			Application.SetUnhandledExceptionMode (UnhandledExceptionMode.CatchException);
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
 			Application.Run (new Form1 ());
+		}
+
+		private static void Application_ThreadException (object sender, ThreadExceptionEventArgs e) {
+			MessageBox.Show (e.Exception.ToString ());
+		}
+
+		private static void CurrentDomain_UnhandledException (object sender, UnhandledExceptionEventArgs e) {
+			MessageBox.Show (e.ExceptionObject.ToString ());
 		}
 
 	}

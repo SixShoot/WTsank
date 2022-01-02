@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,116 +10,76 @@ namespace WorldOfTanks {
 
 	public partial class OujBoxCombatRecordQueryForm : Form {
 
-		readonly PageChanger<Page> PageChanger = new PageChanger<Page> ();
-		readonly CombatRecordQueryResultForm CombatRecordQueryResultForm = new CombatRecordQueryResultForm ();
-		readonly ClanQueryResultForm ClanQueryResultForm = new ClanQueryResultForm ();
 		readonly OujBoxService OujBoxService = new OujBoxService ();
-		readonly WarGamingNetService WarGamingNetService = new WarGamingNetService ();
 		readonly string[] Modes = { "标准赛" };
 
 		public OujBoxCombatRecordQueryForm () {
 			InitializeComponent ();
-		}
-
-		private void OujBoxCombatRecordQueryForm_Load (object sender, EventArgs e) {
-			PageChanger.Parent = Panel;
-			PageChanger.Add (Page.CombatRecordQueryResult, CombatRecordQueryResultForm);
-			PageChanger.Add (Page.ClanQueryResult, ClanQueryResultForm);
-			PageChanger.Change (Page.None);
+			TankResultListView.ListViewItemSorter = new TankResultListViewComparer ();
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
-			CheckDateTime ();
-			Query (NameTextBox.Text);
-		}
-
-		private void ToTodayButton_Click (object sender, EventArgs e) {
-			CheckDateTime ();
-			Query (NameTextBox.Text, false);
-		}
-
-		private void ClanButton_Click (object sender, EventArgs e) {
-			QueryClan (NameTextBox.Text);
-		}
-
-		private void OujBoxCombatRecordQueryForm_Resize (object sender, EventArgs e) {
-			PageChanger.ResizeCurrentPage ();
-		}
-
-		void CheckDateTime () {
-			if (DateTimePicker.Value.Month > DateTime.Now.Month ||
-				(DateTimePicker.Value.Month == DateTime.Now.Month && DateTimePicker.Value.Day > DateTime.Now.Day)
-			) {
-				MessageBox.Show ("不能查询未来的战绩");
-				return;
+			if (CheckDateTime ()) {
+				Query (NameTextBox.Text);
 			}
 		}
 
-		void BeginQuery () {
+		private void ToTodayButton_Click (object sender, EventArgs e) {
+			if (CheckDateTime ()) {
+				Query (NameTextBox.Text, false);
+			}
+		}
+
+		bool CheckDateTime () {
+			if (DateTimePicker.Value > DateTime.Now) {
+				MessageBox.Show ("不能查询未来的战绩");
+				return false;
+			}
+			return true;
+		}
+
+		void Query (string name, bool isSameDay = true) {
 			NameTextBox.Enabled = false;
 			DateTimePicker.Enabled = false;
 			QueryButton.Enabled = false;
 			ToTodayButton.Enabled = false;
-			ClanButton.Enabled = false;
-			PageChanger.Change (Page.None);
-			SetSummaryLabel ("查询中");
-		}
-
-		void EndQuery () {
-			if (InvokeRequired) {
-				Invoke (new Action (EndQuery));
-				return;
-			}
-			NameTextBox.Enabled = true;
-			DateTimePicker.Enabled = true;
-			QueryButton.Enabled = true;
-			ToTodayButton.Enabled = true;
-			ClanButton.Enabled = true;
-		}
-
-		void SetSummaryLabel (string text) {
-			if (InvokeRequired) {
-				Invoke (new Action<string> (SetSummaryLabel), text);
-				return;
-			}
-			SummaryLabel.Text = text;
-		}
-
-		void Query (string name, bool isSameDay = true) {
-			BeginQuery ();
-			PageChanger.Change (Page.CombatRecordQueryResult);
-			CombatRecordQueryResultForm.ClearAllListViewItems ();
+			ExportButton.Enabled = false;
+			ResultListView.Items.Clear ();
+			TankResultListView.Items.Clear ();
 			new Thread (() => {
 				try {
-					List<CombatRecord> combatRecords = OujBoxService.GetCombatRecords (name, DateTimePicker.Value.Month, DateTimePicker.Value.Day, isSameDay);
+					List<CombatRecord> combatRecords = OujBoxService.GetCombatRecords (name, DateTimePicker.Value, isSameDay);
 					CombatRecordSummary combatRecordSummary = OujBoxService.Summary (combatRecords, combatRecord => {
 						return Modes.Contains (combatRecord.Mode) ? FilterResult.Execute : FilterResult.Continue;
 					});
 					if (combatRecordSummary.CombatNumber == 0) {
-						throw new Exception ("没有战斗数据");
+						MessageBox.Show (this, "没有战斗数据");
+						return;
 					}
-					CombatRecordQueryResultForm.AddResultListViewItem (listView => {
-						listView.Items.Add ("玩家").SubItems.Add ($"{name}");
-						listView.Items.Add ("千场效率").SubItems.Add ($"{OujBoxService.GetCombat (name)}");
+					Invoke (new Action (() => {
+						ResultListView.BeginUpdate ();
+						ResultListView.Items.Add ("玩家").SubItems.Add ($"{name}");
+						ResultListView.Items.Add ("千场效率").SubItems.Add ($"{OujBoxService.GetCombat (name)}");
 						if (isSameDay) {
-							listView.Items.Add ($"查询日期").SubItems.Add ($"{DateTimePicker.Value:yyyy年MM月dd日}");
+							ResultListView.Items.Add ($"查询日期").SubItems.Add ($"{DateTimePicker.Value:yyyy年MM月dd日}");
 						} else {
-							listView.Items.Add ($"查询范围：从").SubItems.Add ($"{DateTimePicker.Value:yyyy年MM月dd日}");
-							listView.Items.Add ($"至").SubItems.Add ($"{DateTime.Now:yyyy年MM月dd日}");
+							ResultListView.Items.Add ($"查询范围：从").SubItems.Add ($"{DateTimePicker.Value:yyyy年MM月dd日}");
+							ResultListView.Items.Add ($"至").SubItems.Add ($"{DateTime.Now:yyyy年MM月dd日}");
 						}
-						listView.Items.Add ("战斗次数").SubItems.Add ($"{combatRecordSummary.CombatNumber}");
-						listView.Items.Add ("胜率").SubItems.Add ($"{combatRecordSummary.VictoryRate:P2}");
-						listView.Items.Add ("胜利次数").SubItems.Add ($"{combatRecordSummary.VictoryNumber}");
-						listView.Items.Add ("平局次数").SubItems.Add ($"{combatRecordSummary.EvenNumber}");
-						listView.Items.Add ("失败次数").SubItems.Add ($"{combatRecordSummary.FailNumber}");
-						listView.Items.Add ("平均对局持续时间").SubItems.Add ($"{combatRecordSummary.AverageDuration / 60:F2} 分钟");
-						listView.Items.Add ("平均存活时间").SubItems.Add ($"{combatRecordSummary.AverageSurvivalTime / 60:F2} 分钟");
-						listView.Items.Add ("平均效率").SubItems.Add ($"{combatRecordSummary.AverageCombat:F2}");
-						listView.Items.Add ("平均经验").SubItems.Add ($"{combatRecordSummary.AverageXP:F2}");
-						listView.Items.Add ("平均伤害").SubItems.Add ($"{combatRecordSummary.AverageDamage:F2}");
-						listView.Items.Add ("平均协助").SubItems.Add ($"{combatRecordSummary.AverageAssist:F2}");
-					});
-					CombatRecordQueryResultForm.AddTankResultListViewItem (listView => {
+						ResultListView.Items.Add ("战斗次数").SubItems.Add ($"{combatRecordSummary.CombatNumber}");
+						ResultListView.Items.Add ("胜率").SubItems.Add ($"{combatRecordSummary.VictoryRate:P2}");
+						ResultListView.Items.Add ("胜利次数").SubItems.Add ($"{combatRecordSummary.VictoryNumber}");
+						ResultListView.Items.Add ("平局次数").SubItems.Add ($"{combatRecordSummary.EvenNumber}");
+						ResultListView.Items.Add ("失败次数").SubItems.Add ($"{combatRecordSummary.FailNumber}");
+						ResultListView.Items.Add ("平均对局时间").SubItems.Add ($"{combatRecordSummary.AverageDuration / 60:F2} 分钟");
+						ResultListView.Items.Add ("平均存活时间").SubItems.Add ($"{combatRecordSummary.AverageSurvivalTime / 60:F2} 分钟");
+						ResultListView.Items.Add ("平均效率").SubItems.Add ($"{combatRecordSummary.AverageCombat:F2}");
+						ResultListView.Items.Add ("平均经验").SubItems.Add ($"{combatRecordSummary.AverageXP:F2}");
+						ResultListView.Items.Add ("平均伤害").SubItems.Add ($"{combatRecordSummary.AverageDamage:F2}");
+						ResultListView.Items.Add ("平均协助").SubItems.Add ($"{combatRecordSummary.AverageAssist:F2}");
+						API.AutoResizeListViewColumns (ResultListView);
+						ResultListView.EndUpdate ();
+						TankResultListView.BeginUpdate ();
 						foreach (KeyValuePair<string, CombatRecordSummary> tank in combatRecordSummary.Tanks) {
 							ListViewItem listViewItem = new ListViewItem (tank.Key);
 							listViewItem.SubItems.Add ($"{tank.Value.CombatNumber}");
@@ -132,67 +93,57 @@ namespace WorldOfTanks {
 							listViewItem.SubItems.Add ($"{tank.Value.AverageXP:F2}");
 							listViewItem.SubItems.Add ($"{tank.Value.AverageDamage:F2}");
 							listViewItem.SubItems.Add ($"{tank.Value.AverageAssist:F2}");
-							listView.Items.Add (listViewItem);
+							TankResultListView.Items.Add (listViewItem);
 						}
-					});
-					SetSummaryLabel ("查询完毕");
+						API.AutoResizeListViewColumns (TankResultListView);
+						TankResultListView.EndUpdate ();
+					}));
 				} catch (Exception exception) {
-					SetSummaryLabel (exception.Message);
 					Invoke (new Action (() => {
 						MessageBox.Show (this, exception.ToString ());
 					}));
 				} finally {
-					EndQuery ();
+					Invoke (new Action (() => {
+						NameTextBox.Enabled = true;
+						DateTimePicker.Enabled = true;
+						QueryButton.Enabled = true;
+						ToTodayButton.Enabled = true;
+						ExportButton.Enabled = true;
+						MessageBox.Show (this, "查询完毕");
+					}));
 				}
 			}) {
 				IsBackground = true
 			}.Start ();
 		}
 
-		void QueryClan (string name) {
-			BeginQuery ();
-			PageChanger.Change (Page.ClanQueryResult);
-			ClanQueryResultForm.ClearResultListViewItems ();
-			new Thread (() => {
-				try {
-					int id = WarGamingNetService.QueryClanID (name);
-					List<string> names = WarGamingNetService.GetClanMembers (id);
-					float totalCombat = 0;
-					List<float> combats = new List<float> ();
-					foreach (string memberName in names) {
-						float memberCombat = 0;
-						string combatText;
-						try {
-							memberCombat = OujBoxService.GetCombat (memberName);
-							combatText = $"{memberCombat:F2}";
-							totalCombat += memberCombat;
-							combats.Add (memberCombat);
-						} catch (Exception exception) {
-							combatText = exception.Message;
-						}
-						ClanQueryResultForm.AddResultListViewItem (listView => {
-							ListViewItem listViewItem = new ListViewItem (memberName);
-							listViewItem.SubItems.Add (combatText);
-							listView.Items.Add (listViewItem);
-						});
-					}
-					float averageCombat = totalCombat / combats.Count;
-					combats.Sort ();
-					float medianCombat = API.GetMedian (combats);
-					SetSummaryLabel ($"成员数：{names.Count} 平均效率：{averageCombat:F2} 效率中位数：{medianCombat}");
-				} catch (Exception exception) {
-					SetSummaryLabel (exception.Message);
-					Invoke (new Action (() => {
-						MessageBox.Show (this, exception.ToString ());
-					}));
-				} finally {
-					EndQuery ();
+		class TankResultListViewComparer : IComparer {
+
+			public int Compare (object x, object y) {
+				ListViewItem a = (ListViewItem)x;
+				ListViewItem b = (ListViewItem)y;
+				if (!float.TryParse (a.SubItems[8].Text, out float combatA)) {
+					combatA = -1;
 				}
-			}) {
-				IsBackground = true
-			}.Start ();
+				if (!float.TryParse (b.SubItems[8].Text, out float combatB)) {
+					combatB = -1;
+				}
+				return combatA.CompareTo (combatB) * -1;
+			}
+
 		}
 
+		private void ExportButton_Click (object sender, EventArgs e) {
+			if (saveFileDialog1.ShowDialog () == DialogResult.OK) {
+				API.ExportCSV (ResultListView, TankResultListView, saveFileDialog1.FileName);
+			}
+		}
+
+		private void NameTextBox_KeyUp (object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Enter) {
+				QueryButton.PerformClick ();
+			}
+		}
 	}
 
 }

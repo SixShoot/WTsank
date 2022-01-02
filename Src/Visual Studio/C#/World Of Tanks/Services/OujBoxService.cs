@@ -3,7 +3,9 @@ using Eruru.Http;
 using Eruru.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 namespace WorldOfTanks {
 
@@ -11,9 +13,20 @@ namespace WorldOfTanks {
 
 		readonly Http Http = new Http ();
 		readonly Encoding Big5 = Encoding.GetEncoding ("Big5");
+		readonly Encoding ShiftJis = Encoding.GetEncoding ("Shift_Jis");
 		readonly Encoding GBK = Encoding.GetEncoding ("GBK");
+		readonly object RequestLock = new object ();
+		readonly int RequestInterval = 100;
+		readonly Stopwatch Stopwatch = new Stopwatch ();
+
+		long RequestTime = 0;
+
+		public OujBoxService () {
+			Stopwatch.Start ();
+		}
 
 		public float GetCombat (string name) {
+			Request ();
 			string response = Http.Request (new HttpRequestInformation () {
 				Url = "https://wotbox.ouj.com/wotbox/index.php?r=default%2Findex&pn=E+ru+ru",
 				QueryStringParameters = {
@@ -32,7 +45,8 @@ namespace WorldOfTanks {
 			return combat;
 		}
 
-		public List<CombatRecord> GetCombatRecords (string name, int page, out bool hasPreviousPage, out bool hasNextPage) {
+		public List<CombatRecord> GetCombatRecords (string name, int page, ref DateTime dateTime, out bool hasPreviousPage, out bool hasNextPage) {
+			Request ();
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = "http://wotbox.ouj.com/wotbox/index.php",
@@ -75,8 +89,12 @@ namespace WorldOfTanks {
 					ArenaID = arenaID,
 					Result = combatResult,
 					Mode = mode,
-					DateTime = new DateTime (DateTime.Now.Year, month, day)
+					DateTime = new DateTime (dateTime.Year, month, day)
 				};
+				if (combatRecord.DateTime.Month > dateTime.Month || (combatRecord.DateTime.Month == dateTime.Month && combatRecord.DateTime.Day > dateTime.Day)) {
+					combatRecord.DateTime = combatRecord.DateTime.AddYears (-1);
+				}
+				dateTime = combatRecord.DateTime;
 				combatRecords.Add (combatRecord);
 			}
 			return combatRecords;
@@ -84,12 +102,13 @@ namespace WorldOfTanks {
 
 		public List<CombatRecord> GetCombatRecords (string name, Func<int, bool> pageFilter, Func<CombatRecord, FilterResult> combatRecordFilter) {
 			int page = 1;
+			DateTime dateTime = DateTime.Now.Date;
 			List<CombatRecord> combatRecords = new List<CombatRecord> ();
 			while (true) {
 				if (!pageFilter?.Invoke (page) ?? false) {
 					break;
 				}
-				List<CombatRecord> pageCombatRecords = GetCombatRecords (name, page, out bool _, out bool hasNextPage);
+				List<CombatRecord> pageCombatRecords = GetCombatRecords (name, page, ref dateTime, out bool _, out bool hasNextPage);
 				bool needBreak = false;
 				foreach (CombatRecord combatRecord in pageCombatRecords) {
 					FilterResult filterResult = combatRecordFilter?.Invoke (combatRecord) ?? FilterResult.Execute;
@@ -120,12 +139,13 @@ namespace WorldOfTanks {
 			return combatRecords;
 		}
 
-		public List<CombatRecord> GetCombatRecords (string name, int month, int day, bool isSameDay = true) {
+		public List<CombatRecord> GetCombatRecords (string name, DateTime dateTime, bool isSameDay = true) {
+			dateTime = dateTime.Date;
 			return GetCombatRecords (name, null, battleRecord => {
-				if (battleRecord.DateTime.Month < month || (battleRecord.DateTime.Month == month && battleRecord.DateTime.Day < day)) {
+				if (battleRecord.DateTime < dateTime) {
 					return FilterResult.Break;
 				}
-				if (isSameDay && (battleRecord.DateTime.Month > month || (battleRecord.DateTime.Month == month && battleRecord.DateTime.Day > day))) {
+				if (isSameDay && battleRecord.DateTime > dateTime) {
 					return FilterResult.Continue;
 				}
 				return FilterResult.Execute;
@@ -133,6 +153,7 @@ namespace WorldOfTanks {
 		}
 
 		public void FillCombatRecord (CombatRecord combatRecord) {
+			Request ();
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = "http://wotapp.ouj.com/",
@@ -150,10 +171,6 @@ namespace WorldOfTanks {
 				throw new Exception ("获取战斗记录失败");
 			}
 			JsonObject resultJsonObject = jsonObject["result"];
-			JsonObject playerJsonObject = resultJsonObject["team_a"].Array.Find (item => item["name"] == combatRecord.Name);
-			if (playerJsonObject == null) {
-				playerJsonObject = resultJsonObject["team_a"].Array.Find (item => Big5.GetString (GBK.GetBytes (item["name"])) == combatRecord.Name);
-			}
 			JsonArray winTeamPlayers = resultJsonObject[resultJsonObject["win_team"]];
 			float duration = 0;
 			foreach (JsonObject player in winTeamPlayers) {
@@ -162,11 +179,26 @@ namespace WorldOfTanks {
 					duration = lifeTime;
 				}
 			}
-			JsonObject vehicleJsonObject = playerJsonObject["vehicle"];
 			DateTime dateTime = resultJsonObject["end_time"];
 			combatRecord.DateTime.AddHours (dateTime.Hour);
 			combatRecord.DateTime.AddMinutes (dateTime.Minute);
 			combatRecord.Duration = duration;
+			combatRecord.TeamA = resultJsonObject["team_a"];
+			JsonObject playerJsonObject = combatRecord.TeamA.Find (item => item["name"] == combatRecord.Name);
+			if (playerJsonObject == null) {
+				playerJsonObject = combatRecord.TeamA.Find (item => Big5.GetString (GBK.GetBytes (item["name"])) == combatRecord.Name);
+			}
+			if (playerJsonObject == null) {
+				playerJsonObject = combatRecord.TeamA.Find (item => ShiftJis.GetString (GBK.GetBytes (item["name"])) == combatRecord.Name);
+			}
+			if (playerJsonObject == null) {
+				throw new Exception ($"战斗日志出现乱码{Environment.NewLine}" +
+					$"玩家：{combatRecord.Name}{Environment.NewLine}" +
+					$"战斗结果：{combatRecord.Result}{Environment.NewLine}" +
+					$"战斗日期：{combatRecord.DateTime:MM月dd日}{dateTime:HH时mm分}"
+				);
+			}
+			JsonObject vehicleJsonObject = playerJsonObject["vehicle"];
 			combatRecord.Combat = playerJsonObject["combat"];
 			combatRecord.Damage = vehicleJsonObject["damageDealt"];
 			combatRecord.Assist += vehicleJsonObject["damageAssistedInspire"];
@@ -181,32 +213,53 @@ namespace WorldOfTanks {
 
 		public CombatRecordSummary Summary (List<CombatRecord> combatRecords, Func<CombatRecord, FilterResult> filter) {
 			CombatRecordSummary combatRecordSummary = new CombatRecordSummary ();
+			int count = 0;
+			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
+			Exception exception = null;
+			object summaryLock = new object ();
 			foreach (CombatRecord combatRecord in combatRecords) {
 				bool needBreak = false;
 				FilterResult filterResult = filter?.Invoke (combatRecord) ?? FilterResult.Execute;
 				switch (filterResult) {
 					case FilterResult.Execute:
-						FillCombatRecord (combatRecord);
-						combatRecordSummary.CombatNumber++;
-						combatRecordSummary.AddCombatResult (combatRecord.Result);
-						combatRecordSummary.TotalDuration += combatRecord.Duration;
-						combatRecordSummary.TotalCombat += combatRecord.Combat;
-						combatRecordSummary.TotalDamage += combatRecord.Damage;
-						combatRecordSummary.TotalAssist += combatRecord.Assist;
-						combatRecordSummary.TotalSurvivalTime += combatRecord.SurvivalTime;
-						combatRecordSummary.TotalXP += combatRecord.XP;
-						if (!combatRecordSummary.Tanks.TryGetValue (combatRecord.TankName, out CombatRecordSummary tank)) {
-							tank = new CombatRecordSummary ();
-							combatRecordSummary.Tanks[combatRecord.TankName] = tank;
-						}
-						tank.CombatNumber++;
-						tank.AddCombatResult (combatRecord.Result);
-						tank.TotalDuration += combatRecord.Duration;
-						tank.TotalCombat += combatRecord.Combat;
-						tank.TotalDamage += combatRecord.Damage;
-						tank.TotalAssist += combatRecord.Assist;
-						tank.TotalSurvivalTime += combatRecord.SurvivalTime;
-						tank.TotalXP += combatRecord.XP;
+						count++;
+						ThreadPool.QueueUserWorkItem (state => {
+							try {
+								CombatRecord innerCombatRecord = (CombatRecord)state;
+								FillCombatRecord (innerCombatRecord);
+								lock (summaryLock) {
+									combatRecordSummary.CombatNumber++;
+									combatRecordSummary.AddCombatResult (innerCombatRecord.Result);
+									combatRecordSummary.TotalDuration += innerCombatRecord.Duration;
+									combatRecordSummary.TotalCombat += innerCombatRecord.Combat;
+									combatRecordSummary.TotalDamage += innerCombatRecord.Damage;
+									combatRecordSummary.TotalAssist += innerCombatRecord.Assist;
+									combatRecordSummary.TotalSurvivalTime += innerCombatRecord.SurvivalTime;
+									combatRecordSummary.TotalXP += innerCombatRecord.XP;
+									if (!combatRecordSummary.Tanks.TryGetValue (innerCombatRecord.TankName, out CombatRecordSummary tank)) {
+										tank = new CombatRecordSummary ();
+										combatRecordSummary.Tanks[innerCombatRecord.TankName] = tank;
+									}
+									tank.CombatNumber++;
+									tank.AddCombatResult (innerCombatRecord.Result);
+									tank.TotalDuration += innerCombatRecord.Duration;
+									tank.TotalCombat += innerCombatRecord.Combat;
+									tank.TotalDamage += innerCombatRecord.Damage;
+									tank.TotalAssist += innerCombatRecord.Assist;
+									tank.TotalSurvivalTime += innerCombatRecord.SurvivalTime;
+									tank.TotalXP += innerCombatRecord.XP;
+								}
+							} catch (Exception e) {
+								exception = e;
+							} finally {
+								lock (summaryLock) {
+									count--;
+									if (count <= 0) {
+										autoResetEvent.Set ();
+									}
+								}
+							}
+						}, combatRecord);
 						break;
 					case FilterResult.Continue:
 						break;
@@ -219,6 +272,13 @@ namespace WorldOfTanks {
 				if (needBreak) {
 					break;
 				}
+			}
+			if (count <= 0) {
+				autoResetEvent.Set ();
+			}
+			autoResetEvent.WaitOne ();
+			if (exception != null) {
+				throw exception;
 			}
 			combatRecordSummary.Summary ();
 			foreach (CombatRecordSummary tank in combatRecordSummary.Tanks.Values) {
@@ -246,6 +306,19 @@ namespace WorldOfTanks {
 					return CombatResult.Even;
 				default:
 					throw new NotImplementedException (text);
+			}
+		}
+
+		void Request () {
+			if (RequestInterval <= 0) {
+				return;
+			}
+			lock (RequestLock) {
+				int elapsed = (int)(Stopwatch.ElapsedMilliseconds - RequestTime);
+				if (elapsed < RequestInterval) {
+					Thread.Sleep (RequestInterval - elapsed);
+				}
+				RequestTime = Stopwatch.ElapsedMilliseconds;
 			}
 		}
 

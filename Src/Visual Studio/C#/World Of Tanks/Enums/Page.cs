@@ -3,11 +3,11 @@
 	enum Page {
 
 		OujBoxCombatRecordQuery,
+		OujBoxClandQuery,
 		SpottingDistanceCalculator,
 		AimTimeCalculator,
-		CombatRecordQueryResult,
-		ClanQueryResult,
 		None
+
 	}
 
 }

@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,13 +32,14 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Eruru.Html, Version=1.0.0.14, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eruru.Html.1.0.0.14\lib\net40\Eruru.Html.dll</HintPath>
     </Reference>
-    <Reference Include="Eruru.Http, Version=1.0.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Eruru.Http.1.0.0.9\lib\net40\Eruru.Http.dll</HintPath>
+    <Reference Include="Eruru.Http, Version=1.0.0.12, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Eruru.Http.1.0.0.12\lib\net40\Eruru.Http.dll</HintPath>
     </Reference>
     <Reference Include="Eruru.Json, Version=1.0.0.18, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eruru.Json.1.0.0.18\lib\net40\Eruru.Json.dll</HintPath>
@@ -58,18 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
-    <Compile Include="Forms\ClanQueryResultForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ClanQueryResultForm.Designer.cs">
-      <DependentUpon>ClanQueryResultForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\CombatRecordQueryResultForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\CombatRecordQueryResultForm.Designer.cs">
-      <DependentUpon>CombatRecordQueryResultForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\AimTimeCalculatorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,6 +84,13 @@
     <Compile Include="Forms\OujBoxCombatRecordQueryForm.Designer.cs">
       <DependentUpon>OujBoxCombatRecordQueryForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\OujBoxClanQueryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OujBoxClanQueryForm.Designer.cs">
+      <DependentUpon>OujBoxClanQueryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Player.cs" />
     <Compile Include="PageChanger.cs" />
     <Compile Include="Services\OujBoxService.cs" />
     <Compile Include="Enums\Page.cs" />
@@ -109,17 +106,14 @@
     <Compile Include="Services\WarGamingNetService.cs" />
     <Compile Include="Models\Tank.cs" />
     <Compile Include="Enums\TerrainType.cs" />
-    <EmbeddedResource Include="Forms\CombatRecordQueryResultForm.resx">
-      <DependentUpon>CombatRecordQueryResultForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\AimTimeCalculatorForm.resx">
       <DependentUpon>AimTimeCalculatorForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ClanQueryResultForm.resx">
-      <DependentUpon>ClanQueryResultForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OujBoxClanQueryForm.resx">
+      <DependentUpon>OujBoxClanQueryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\OujBoxCombatRecordQueryForm.resx">
       <DependentUpon>OujBoxCombatRecordQueryForm.cs</DependentUpon>

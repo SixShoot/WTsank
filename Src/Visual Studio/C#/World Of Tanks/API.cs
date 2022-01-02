@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace WorldOfTanks {
@@ -50,6 +53,50 @@ namespace WorldOfTanks {
 				}
 			}
 			listView.EndUpdate ();
+		}
+
+		public static void ExportCSV (ListView leftListView, ListView listView, string filePath) {
+			FileInfo fileInfo = new FileInfo (filePath);
+			Directory.CreateDirectory (fileInfo.DirectoryName);
+			var encoding = new UTF8Encoding (true);
+			using (StreamWriter streamWriter = new StreamWriter (File.Create (fileInfo.FullName), encoding)) {
+				int columnNumber = leftListView.Columns.Count + listView.Columns.Count + 1;
+				int rowNumber = Math.Max (leftListView.Items.Count, listView.Items.Count);
+				for (int row = -1; row < rowNumber; row++) {
+					if (row > -1) {
+						streamWriter.WriteLine ();
+					}
+					for (int column = 0; column < columnNumber; column++) {
+						if (column > 0) {
+							streamWriter.Write (',');
+						}
+						if (row == -1) {
+							if (column < leftListView.Columns.Count) {
+								streamWriter.Write (leftListView.Columns[column].Text);
+								continue;
+							}
+							if (column == leftListView.Columns.Count) {
+								continue;
+							}
+							streamWriter.Write (listView.Columns[column - leftListView.Columns.Count - 1].Text);
+							continue;
+						}
+						if (column < leftListView.Columns.Count) {
+							if (row < leftListView.Items.Count) {
+								streamWriter.Write (leftListView.Items[row].SubItems[column].Text);
+							}
+							continue;
+						}
+						if (column == leftListView.Columns.Count) {
+							continue;
+						}
+						if (row < listView.Items.Count) {
+							streamWriter.Write (listView.Items[row].SubItems[column - leftListView.Columns.Count - 1].Text);
+						}
+					}
+				}
+			}
+			MessageBox.Show ("完成");
 		}
 
 	}
