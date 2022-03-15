@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Eruru.Http;
+using System;
+using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace WorldOfTanks {
 
 	static class Program {
+
 		/// <summary>
 		/// 应用程序的主入口点。
 		/// </summary>
@@ -13,6 +16,8 @@ namespace WorldOfTanks {
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			Application.ThreadException += Application_ThreadException;
 			Application.SetUnhandledExceptionMode (UnhandledExceptionMode.CatchException);
+			HttpAPI.SetSecurityProtocol ();
+			ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
 			Application.Run (new Form1 ());

@@ -1,6 +1,6 @@
 ﻿namespace WorldOfTanks {
 
-	class Player {
+	class ClanMember {
 
 		public string Name;
 		public float Combat;
@@ -9,7 +9,7 @@
 		public int Attendance;
 		public string AttendanceText;
 
-		public Player (string name, int clanID) {
+		public ClanMember (string name, int clanID) {
 			Name = name;
 			ClanID = clanID;
 		}

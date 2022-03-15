@@ -8,7 +8,12 @@ namespace WorldOfTanks {
 
 	class WarGamingNetService {
 
-		readonly Http Http = new Http ();
+		readonly Http Http = new Http () {
+			OnRequest = httpWebRequest => {
+				httpWebRequest.Proxy = null;
+				return true;
+			}
+		};
 
 		public int QueryClanID (string name) {
 			string response = Http.Request (new HttpRequestInformation () {
@@ -37,7 +42,7 @@ namespace WorldOfTanks {
 			return id;
 		}
 
-		public List<string> GetClanMembers (int id) {
+		public List<string> GetClanMemberNames (int id) {
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = $"https://wgn.wggames.cn/clans/wot/{id}/api/players/",

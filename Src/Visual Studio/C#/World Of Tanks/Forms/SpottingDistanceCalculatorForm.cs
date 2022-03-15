@@ -36,7 +36,10 @@ namespace WorldOfTanks {
 
 		private void PlayerAViewRangeTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerA.ViewRange = float.Parse (PlayerAViewRangeTextBox.Text);
+				if (string.IsNullOrWhiteSpace (PlayerAViewRangeTextBox.Text)) {
+					return;
+				}
+				PlayerA.ViewRange = double.Parse (PlayerAViewRangeTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -45,7 +48,10 @@ namespace WorldOfTanks {
 
 		private void PlayerAStaticConcealmentTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerA.StaticConcealment = float.Parse (PlayerAStaticConcealmentTextBox.Text) / 100;
+				if (string.IsNullOrWhiteSpace (PlayerAStaticConcealmentTextBox.Text)) {
+					return;
+				}
+				PlayerA.StaticConcealment = double.Parse (PlayerAStaticConcealmentTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -54,7 +60,10 @@ namespace WorldOfTanks {
 
 		private void PlayerAMoveConcealmentTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerA.MoveConcealment = float.Parse (PlayerAMoveConcealmentTextBox.Text) / 100;
+				if (string.IsNullOrWhiteSpace (PlayerAMoveConcealmentTextBox.Text)) {
+					return;
+				}
+				PlayerA.MoveConcealment = double.Parse (PlayerAMoveConcealmentTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -77,7 +86,10 @@ namespace WorldOfTanks {
 
 		private void PlayerACommanderVisionSystemValueByFoliageTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerA.CommanderVisionSystemValueByFoliage = float.Parse (PlayerACommanderVisionSystemValueByFoliageTextBox.Text) / 100;
+				if (string.IsNullOrWhiteSpace (PlayerACommanderVisionSystemValueByFoliageTextBox.Text)) {
+					return;
+				}
+				PlayerA.CommanderVisionSystemValueByFoliage = double.Parse (PlayerACommanderVisionSystemValueByFoliageTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -86,7 +98,10 @@ namespace WorldOfTanks {
 
 		private void PlayerACommanderVisionSystemValueByMoveTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerA.CommanderVisionSystemValueByMove = float.Parse (PlayerACommanderVisionSystemValueByMoveTextBox.Text) / 100;
+				if (string.IsNullOrWhiteSpace (PlayerACommanderVisionSystemValueByMoveTextBox.Text)) {
+					return;
+				}
+				PlayerA.CommanderVisionSystemValueByMove = double.Parse (PlayerACommanderVisionSystemValueByMoveTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -113,7 +128,10 @@ namespace WorldOfTanks {
 
 		private void PlayerBViewRangeTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerB.ViewRange = float.Parse (PlayerBViewRangeTextBox.Text);
+				if (string.IsNullOrWhiteSpace (PlayerBViewRangeTextBox.Text)) {
+					return;
+				}
+				PlayerB.ViewRange = double.Parse (PlayerBViewRangeTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -122,7 +140,10 @@ namespace WorldOfTanks {
 
 		private void PlayerBStaticConcealmentTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerB.StaticConcealment = float.Parse (PlayerBStaticConcealmentTextBox.Text) / 100;
+				if (string.IsNullOrWhiteSpace (PlayerBStaticConcealmentTextBox.Text)) {
+					return;
+				}
+				PlayerB.StaticConcealment = double.Parse (PlayerBStaticConcealmentTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -131,7 +152,10 @@ namespace WorldOfTanks {
 
 		private void PlayerBMoveConcealmentTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerB.MoveConcealment = float.Parse (PlayerBMoveConcealmentTextBox.Text) / 100;
+				if (string.IsNullOrWhiteSpace (PlayerBMoveConcealmentTextBox.Text)) {
+					return;
+				}
+				PlayerB.MoveConcealment = double.Parse (PlayerBMoveConcealmentTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -150,7 +174,10 @@ namespace WorldOfTanks {
 
 		private void PlayerBCommanderVisionSystemValueByFoliageTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerB.CommanderVisionSystemValueByFoliage = float.Parse (PlayerBCommanderVisionSystemValueByFoliageTextBox.Text) / 100;
+				if (string.IsNullOrWhiteSpace (PlayerBCommanderVisionSystemValueByFoliageTextBox.Text)) {
+					return;
+				}
+				PlayerB.CommanderVisionSystemValueByFoliage = double.Parse (PlayerBCommanderVisionSystemValueByFoliageTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -159,7 +186,10 @@ namespace WorldOfTanks {
 
 		private void PlayerBCommanderVisionSystemValueByMoveTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerB.CommanderVisionSystemValueByMove = float.Parse (PlayerBCommanderVisionSystemValueByMoveTextBox.Text) / 100;
+				if (string.IsNullOrWhiteSpace (PlayerBCommanderVisionSystemValueByMoveTextBox.Text)) {
+					return;
+				}
+				PlayerB.CommanderVisionSystemValueByMove = double.Parse (PlayerBCommanderVisionSystemValueByMoveTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());

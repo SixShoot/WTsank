@@ -19,7 +19,7 @@ namespace WorldOfTanks {
 			PageChanger.Add (Page.SpottingDistanceCalculator, new SpottingDistanceCalculatorForm ());
 			PageChanger.Add (Page.AimTimeCalculator, new AimTimeCalculatorForm ());
 #if DEBUG
-			OujBoxCombatRecordQueryRadioButton.Checked = true;
+			AimTimeCalculatorRadioButton.Checked = true;
 #else
 			OujBoxCombatRecordQueryRadioButton.Checked = true;
 #endif

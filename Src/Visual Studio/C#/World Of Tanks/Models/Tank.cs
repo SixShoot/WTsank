@@ -3,20 +3,20 @@
 	class Tank {
 
 		public string Name { get; set; }
-		public float AimTime { get; set; }
-		public float Dispersion { get; set; }
-		public float MoveDispersionFactor { get; set; }
-		public float HullTraverseDispersionFactor { get; set; }
-		public float TurretTraverseDispersionFactor { get; set; }
-		public float FireDispersionFactor { get; set; }
-		public float DamagedDispersionFactor { get; set; }
-		public float MoveSpeedByHard { get; set; }
-		public float MoveSpeedByMedium { get; set; }
-		public float MoveSpeedBySoft { get; set; }
-		public float HullTraverseSpeedByHard { get; set; }
-		public float HullTraverseSpeedByMedium { get; set; }
-		public float HullTraverseSpeedBySoft { get; set; }
-		public float TurretTraverseSpeed { get; set; }
+		public double AimTime { get; set; }
+		public double Dispersion { get; set; }
+		public double MoveDispersionFactor { get; set; }
+		public double HullTraverseDispersionFactor { get; set; }
+		public double TurretTraverseDispersionFactor { get; set; }
+		public double FireDispersionFactor { get; set; }
+		public double DamagedDispersionFactor { get; set; }
+		public double MoveSpeedByHard { get; set; }
+		public double MoveSpeedByMedium { get; set; }
+		public double MoveSpeedBySoft { get; set; }
+		public double HullTraverseSpeedByHard { get; set; }
+		public double HullTraverseSpeedByMedium { get; set; }
+		public double HullTraverseSpeedBySoft { get; set; }
+		public double TurretTraverseSpeed { get; set; }
 
 	}
 

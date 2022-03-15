@@ -24,6 +24,7 @@ namespace WorldOfTanks {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent () {
+			this.components = new System.ComponentModel.Container();
 			this.TankAMoveSpeedByMediumTextBox = new System.Windows.Forms.TextBox();
 			this.label10 = new System.Windows.Forms.Label();
 			this.TankAMoveSpeedByHardTextBox = new System.Windows.Forms.TextBox();
@@ -43,7 +44,6 @@ namespace WorldOfTanks {
 			this.TankAAimTimeTextBox = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.TankANameTextBox = new System.Windows.Forms.TextBox();
-			this.label1 = new System.Windows.Forms.Label();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.TankAHullTraverseSpeedBySoftTextBox = new System.Windows.Forms.TextBox();
 			this.label15 = new System.Windows.Forms.Label();
@@ -78,6 +78,11 @@ namespace WorldOfTanks {
 			this.TankAAutoInputTanksGGTextBox = new System.Windows.Forms.TextBox();
 			this.label28 = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+			this.Panel = new System.Windows.Forms.Panel();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.CurrentTimeTextBox = new System.Windows.Forms.TextBox();
+			this.TimeTrackBar = new System.Windows.Forms.TrackBar();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.TankBHullTraverseSpeedBySoftTextBox = new System.Windows.Forms.TextBox();
 			this.label29 = new System.Windows.Forms.Label();
@@ -90,7 +95,6 @@ namespace WorldOfTanks {
 			this.label33 = new System.Windows.Forms.Label();
 			this.TankBMoveSpeedByMediumTextBox = new System.Windows.Forms.TextBox();
 			this.label34 = new System.Windows.Forms.Label();
-			this.label35 = new System.Windows.Forms.Label();
 			this.label36 = new System.Windows.Forms.Label();
 			this.TankBNameTextBox = new System.Windows.Forms.TextBox();
 			this.label37 = new System.Windows.Forms.Label();
@@ -131,8 +135,14 @@ namespace WorldOfTanks {
 			this.label55 = new System.Windows.Forms.Label();
 			this.TankBAutoInputTanksGGTextBox = new System.Windows.Forms.TextBox();
 			this.label56 = new System.Windows.Forms.Label();
+			this.Timer = new System.Windows.Forms.Timer(this.components);
+			this.label1 = new System.Windows.Forms.Label();
+			this.PlayButton = new System.Windows.Forms.Button();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
+			this.tableLayoutPanel4.SuspendLayout();
+			this.panel1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.TimeTrackBar)).BeginInit();
 			this.tableLayoutPanel3.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -142,7 +152,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAMoveSpeedByMediumTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAMoveSpeedByMediumTextBox.Location = new System.Drawing.Point(150, 314);
+			this.TankAMoveSpeedByMediumTextBox.Location = new System.Drawing.Point(150, 283);
 			this.TankAMoveSpeedByMediumTextBox.Name = "TankAMoveSpeedByMediumTextBox";
 			this.TankAMoveSpeedByMediumTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAMoveSpeedByMediumTextBox.TabIndex = 38;
@@ -156,7 +166,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label10.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label10.Location = new System.Drawing.Point(4, 280);
+			this.label10.Location = new System.Drawing.Point(4, 249);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(139, 30);
 			this.label10.TabIndex = 37;
@@ -169,7 +179,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAMoveSpeedByHardTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAMoveSpeedByHardTextBox.Location = new System.Drawing.Point(150, 283);
+			this.TankAMoveSpeedByHardTextBox.Location = new System.Drawing.Point(150, 252);
 			this.TankAMoveSpeedByHardTextBox.Name = "TankAMoveSpeedByHardTextBox";
 			this.TankAMoveSpeedByHardTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAMoveSpeedByHardTextBox.TabIndex = 36;
@@ -183,7 +193,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label9.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label9.Location = new System.Drawing.Point(4, 249);
+			this.label9.Location = new System.Drawing.Point(4, 218);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(139, 30);
 			this.label9.TabIndex = 35;
@@ -196,7 +206,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankADamagedDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankADamagedDispersionFactorTextBox.Location = new System.Drawing.Point(150, 252);
+			this.TankADamagedDispersionFactorTextBox.Location = new System.Drawing.Point(150, 221);
 			this.TankADamagedDispersionFactorTextBox.Name = "TankADamagedDispersionFactorTextBox";
 			this.TankADamagedDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankADamagedDispersionFactorTextBox.TabIndex = 34;
@@ -210,7 +220,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label8.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label8.Location = new System.Drawing.Point(4, 218);
+			this.label8.Location = new System.Drawing.Point(4, 187);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(139, 30);
 			this.label8.TabIndex = 33;
@@ -223,7 +233,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAFireDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAFireDispersionFactorTextBox.Location = new System.Drawing.Point(150, 221);
+			this.TankAFireDispersionFactorTextBox.Location = new System.Drawing.Point(150, 190);
 			this.TankAFireDispersionFactorTextBox.Name = "TankAFireDispersionFactorTextBox";
 			this.TankAFireDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAFireDispersionFactorTextBox.TabIndex = 32;
@@ -237,7 +247,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label7.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label7.Location = new System.Drawing.Point(4, 187);
+			this.label7.Location = new System.Drawing.Point(4, 156);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(139, 30);
 			this.label7.TabIndex = 31;
@@ -250,7 +260,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankATurretTraverseDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankATurretTraverseDispersionFactorTextBox.Location = new System.Drawing.Point(150, 190);
+			this.TankATurretTraverseDispersionFactorTextBox.Location = new System.Drawing.Point(150, 159);
 			this.TankATurretTraverseDispersionFactorTextBox.Name = "TankATurretTraverseDispersionFactorTextBox";
 			this.TankATurretTraverseDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankATurretTraverseDispersionFactorTextBox.TabIndex = 30;
@@ -264,7 +274,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label6.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label6.Location = new System.Drawing.Point(4, 156);
+			this.label6.Location = new System.Drawing.Point(4, 125);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(139, 30);
 			this.label6.TabIndex = 29;
@@ -277,7 +287,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAHullTraverseDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAHullTraverseDispersionFactorTextBox.Location = new System.Drawing.Point(150, 159);
+			this.TankAHullTraverseDispersionFactorTextBox.Location = new System.Drawing.Point(150, 128);
 			this.TankAHullTraverseDispersionFactorTextBox.Name = "TankAHullTraverseDispersionFactorTextBox";
 			this.TankAHullTraverseDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAHullTraverseDispersionFactorTextBox.TabIndex = 28;
@@ -291,7 +301,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label5.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label5.Location = new System.Drawing.Point(4, 125);
+			this.label5.Location = new System.Drawing.Point(4, 94);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(139, 30);
 			this.label5.TabIndex = 27;
@@ -304,7 +314,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAMoveDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAMoveDispersionFactorTextBox.Location = new System.Drawing.Point(150, 128);
+			this.TankAMoveDispersionFactorTextBox.Location = new System.Drawing.Point(150, 97);
 			this.TankAMoveDispersionFactorTextBox.Name = "TankAMoveDispersionFactorTextBox";
 			this.TankAMoveDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAMoveDispersionFactorTextBox.TabIndex = 26;
@@ -318,7 +328,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label4.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label4.Location = new System.Drawing.Point(4, 94);
+			this.label4.Location = new System.Drawing.Point(4, 63);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(139, 30);
 			this.label4.TabIndex = 25;
@@ -331,7 +341,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankADispersionTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankADispersionTextBox.Location = new System.Drawing.Point(150, 97);
+			this.TankADispersionTextBox.Location = new System.Drawing.Point(150, 66);
 			this.TankADispersionTextBox.Name = "TankADispersionTextBox";
 			this.TankADispersionTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankADispersionTextBox.TabIndex = 24;
@@ -345,7 +355,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label3.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label3.Location = new System.Drawing.Point(4, 63);
+			this.label3.Location = new System.Drawing.Point(4, 32);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(139, 30);
 			this.label3.TabIndex = 23;
@@ -358,7 +368,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAAimTimeTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAAimTimeTextBox.Location = new System.Drawing.Point(150, 66);
+			this.TankAAimTimeTextBox.Location = new System.Drawing.Point(150, 35);
 			this.TankAAimTimeTextBox.Name = "TankAAimTimeTextBox";
 			this.TankAAimTimeTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAAimTimeTextBox.TabIndex = 22;
@@ -372,7 +382,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label2.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label2.Location = new System.Drawing.Point(4, 32);
+			this.label2.Location = new System.Drawing.Point(4, 1);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(139, 30);
 			this.label2.TabIndex = 21;
@@ -385,26 +395,12 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankANameTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankANameTextBox.Location = new System.Drawing.Point(150, 35);
+			this.TankANameTextBox.Location = new System.Drawing.Point(150, 4);
 			this.TankANameTextBox.Name = "TankANameTextBox";
 			this.TankANameTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankANameTextBox.TabIndex = 20;
 			this.TankANameTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.TankANameTextBox.TextChanged += new System.EventHandler(this.TankANameTextBox_TextChanged);
-			// 
-			// label1
-			// 
-			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel2.SetColumnSpan(this.label1, 2);
-			this.label1.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label1.Location = new System.Drawing.Point(4, 1);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(286, 30);
-			this.label1.TabIndex = 19;
-			this.label1.Text = "坦克A";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// tableLayoutPanel2
 			// 
@@ -414,62 +410,62 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel2.ColumnCount = 2;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel2.Controls.Add(this.TankAHullTraverseSpeedBySoftTextBox, 1, 14);
-			this.tableLayoutPanel2.Controls.Add(this.label15, 0, 14);
-			this.tableLayoutPanel2.Controls.Add(this.TankAHullTraverseSpeedByMediumTextBox, 1, 13);
-			this.tableLayoutPanel2.Controls.Add(this.label14, 0, 13);
-			this.tableLayoutPanel2.Controls.Add(this.TankAHullTraverseSpeedByHardTextBox, 1, 12);
-			this.tableLayoutPanel2.Controls.Add(this.TankAMoveSpeedBySoftTextBox, 1, 11);
-			this.tableLayoutPanel2.Controls.Add(this.label12, 0, 11);
-			this.tableLayoutPanel2.Controls.Add(this.label11, 0, 10);
-			this.tableLayoutPanel2.Controls.Add(this.label10, 0, 9);
-			this.tableLayoutPanel2.Controls.Add(this.TankAMoveSpeedByMediumTextBox, 1, 10);
-			this.tableLayoutPanel2.Controls.Add(this.label9, 0, 8);
-			this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
-			this.tableLayoutPanel2.Controls.Add(this.label8, 0, 7);
-			this.tableLayoutPanel2.Controls.Add(this.TankANameTextBox, 1, 1);
-			this.tableLayoutPanel2.Controls.Add(this.label7, 0, 6);
-			this.tableLayoutPanel2.Controls.Add(this.TankAMoveSpeedByHardTextBox, 1, 9);
-			this.tableLayoutPanel2.Controls.Add(this.label6, 0, 5);
-			this.tableLayoutPanel2.Controls.Add(this.label2, 0, 1);
-			this.tableLayoutPanel2.Controls.Add(this.label3, 0, 2);
-			this.tableLayoutPanel2.Controls.Add(this.TankADamagedDispersionFactorTextBox, 1, 8);
-			this.tableLayoutPanel2.Controls.Add(this.TankAAimTimeTextBox, 1, 2);
-			this.tableLayoutPanel2.Controls.Add(this.label4, 0, 3);
-			this.tableLayoutPanel2.Controls.Add(this.TankAFireDispersionFactorTextBox, 1, 7);
-			this.tableLayoutPanel2.Controls.Add(this.TankADispersionTextBox, 1, 3);
-			this.tableLayoutPanel2.Controls.Add(this.label5, 0, 4);
-			this.tableLayoutPanel2.Controls.Add(this.TankATurretTraverseDispersionFactorTextBox, 1, 6);
-			this.tableLayoutPanel2.Controls.Add(this.TankAMoveDispersionFactorTextBox, 1, 4);
-			this.tableLayoutPanel2.Controls.Add(this.TankAHullTraverseDispersionFactorTextBox, 1, 5);
-			this.tableLayoutPanel2.Controls.Add(this.label13, 0, 12);
-			this.tableLayoutPanel2.Controls.Add(this.label16, 0, 15);
-			this.tableLayoutPanel2.Controls.Add(this.TankATurretTraverseSpeedTextBox, 1, 15);
-			this.tableLayoutPanel2.Controls.Add(this.TankAIsTraversingTurretCheckBox, 1, 20);
-			this.tableLayoutPanel2.Controls.Add(this.label23, 0, 16);
-			this.tableLayoutPanel2.Controls.Add(this.TankATerrainComboBox, 1, 17);
-			this.tableLayoutPanel2.Controls.Add(this.label19, 0, 17);
-			this.tableLayoutPanel2.Controls.Add(this.label17, 0, 18);
-			this.tableLayoutPanel2.Controls.Add(this.label18, 0, 19);
-			this.tableLayoutPanel2.Controls.Add(this.TankAIsMovingCheckBox, 1, 18);
-			this.tableLayoutPanel2.Controls.Add(this.label20, 0, 20);
-			this.tableLayoutPanel2.Controls.Add(this.TankAIsTraversingHullCheckBox, 1, 19);
-			this.tableLayoutPanel2.Controls.Add(this.TankAIsDamagedCheckBox, 1, 22);
-			this.tableLayoutPanel2.Controls.Add(this.label22, 0, 22);
-			this.tableLayoutPanel2.Controls.Add(this.TankAIsFiringCheckBox, 1, 21);
-			this.tableLayoutPanel2.Controls.Add(this.label21, 0, 21);
-			this.tableLayoutPanel2.Controls.Add(this.label24, 0, 23);
-			this.tableLayoutPanel2.Controls.Add(this.label25, 0, 24);
-			this.tableLayoutPanel2.Controls.Add(this.TankAActualAimTimeTextBox, 1, 24);
-			this.tableLayoutPanel2.Controls.Add(this.label26, 0, 25);
-			this.tableLayoutPanel2.Controls.Add(this.TankAActualDispersionTextBox, 1, 25);
-			this.tableLayoutPanel2.Controls.Add(this.label27, 0, 26);
-			this.tableLayoutPanel2.Controls.Add(this.TankAAutoInputTanksGGTextBox, 1, 27);
-			this.tableLayoutPanel2.Controls.Add(this.label28, 0, 27);
+			this.tableLayoutPanel2.Controls.Add(this.TankAHullTraverseSpeedBySoftTextBox, 1, 13);
+			this.tableLayoutPanel2.Controls.Add(this.label15, 0, 13);
+			this.tableLayoutPanel2.Controls.Add(this.TankAHullTraverseSpeedByMediumTextBox, 1, 12);
+			this.tableLayoutPanel2.Controls.Add(this.label14, 0, 12);
+			this.tableLayoutPanel2.Controls.Add(this.TankAHullTraverseSpeedByHardTextBox, 1, 11);
+			this.tableLayoutPanel2.Controls.Add(this.TankAMoveSpeedBySoftTextBox, 1, 10);
+			this.tableLayoutPanel2.Controls.Add(this.label12, 0, 10);
+			this.tableLayoutPanel2.Controls.Add(this.label11, 0, 9);
+			this.tableLayoutPanel2.Controls.Add(this.label10, 0, 8);
+			this.tableLayoutPanel2.Controls.Add(this.TankAMoveSpeedByMediumTextBox, 1, 9);
+			this.tableLayoutPanel2.Controls.Add(this.label9, 0, 7);
+			this.tableLayoutPanel2.Controls.Add(this.label8, 0, 6);
+			this.tableLayoutPanel2.Controls.Add(this.TankANameTextBox, 1, 0);
+			this.tableLayoutPanel2.Controls.Add(this.label7, 0, 5);
+			this.tableLayoutPanel2.Controls.Add(this.TankAMoveSpeedByHardTextBox, 1, 8);
+			this.tableLayoutPanel2.Controls.Add(this.label6, 0, 4);
+			this.tableLayoutPanel2.Controls.Add(this.label2, 0, 0);
+			this.tableLayoutPanel2.Controls.Add(this.label3, 0, 1);
+			this.tableLayoutPanel2.Controls.Add(this.TankADamagedDispersionFactorTextBox, 1, 7);
+			this.tableLayoutPanel2.Controls.Add(this.TankAAimTimeTextBox, 1, 1);
+			this.tableLayoutPanel2.Controls.Add(this.label4, 0, 2);
+			this.tableLayoutPanel2.Controls.Add(this.TankAFireDispersionFactorTextBox, 1, 6);
+			this.tableLayoutPanel2.Controls.Add(this.TankADispersionTextBox, 1, 2);
+			this.tableLayoutPanel2.Controls.Add(this.label5, 0, 3);
+			this.tableLayoutPanel2.Controls.Add(this.TankATurretTraverseDispersionFactorTextBox, 1, 5);
+			this.tableLayoutPanel2.Controls.Add(this.TankAMoveDispersionFactorTextBox, 1, 3);
+			this.tableLayoutPanel2.Controls.Add(this.TankAHullTraverseDispersionFactorTextBox, 1, 4);
+			this.tableLayoutPanel2.Controls.Add(this.label13, 0, 11);
+			this.tableLayoutPanel2.Controls.Add(this.label16, 0, 14);
+			this.tableLayoutPanel2.Controls.Add(this.TankATurretTraverseSpeedTextBox, 1, 14);
+			this.tableLayoutPanel2.Controls.Add(this.TankAIsTraversingTurretCheckBox, 1, 19);
+			this.tableLayoutPanel2.Controls.Add(this.label23, 0, 15);
+			this.tableLayoutPanel2.Controls.Add(this.TankATerrainComboBox, 1, 16);
+			this.tableLayoutPanel2.Controls.Add(this.label19, 0, 16);
+			this.tableLayoutPanel2.Controls.Add(this.label17, 0, 17);
+			this.tableLayoutPanel2.Controls.Add(this.label18, 0, 18);
+			this.tableLayoutPanel2.Controls.Add(this.TankAIsMovingCheckBox, 1, 17);
+			this.tableLayoutPanel2.Controls.Add(this.label20, 0, 19);
+			this.tableLayoutPanel2.Controls.Add(this.TankAIsTraversingHullCheckBox, 1, 18);
+			this.tableLayoutPanel2.Controls.Add(this.TankAIsDamagedCheckBox, 1, 21);
+			this.tableLayoutPanel2.Controls.Add(this.label22, 0, 21);
+			this.tableLayoutPanel2.Controls.Add(this.TankAIsFiringCheckBox, 1, 20);
+			this.tableLayoutPanel2.Controls.Add(this.label21, 0, 20);
+			this.tableLayoutPanel2.Controls.Add(this.label24, 0, 22);
+			this.tableLayoutPanel2.Controls.Add(this.label25, 0, 23);
+			this.tableLayoutPanel2.Controls.Add(this.TankAActualAimTimeTextBox, 1, 23);
+			this.tableLayoutPanel2.Controls.Add(this.label26, 0, 24);
+			this.tableLayoutPanel2.Controls.Add(this.TankAActualDispersionTextBox, 1, 24);
+			this.tableLayoutPanel2.Controls.Add(this.label27, 0, 25);
+			this.tableLayoutPanel2.Controls.Add(this.TankAAutoInputTanksGGTextBox, 1, 26);
+			this.tableLayoutPanel2.Controls.Add(this.label28, 0, 26);
 			this.tableLayoutPanel2.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.tableLayoutPanel2.ForeColor = System.Drawing.Color.Green;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-			this.tableLayoutPanel2.RowCount = 28;
+			this.tableLayoutPanel2.RowCount = 27;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
@@ -498,7 +494,7 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(294, 870);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(294, 838);
 			this.tableLayoutPanel2.TabIndex = 22;
 			// 
 			// TankAHullTraverseSpeedBySoftTextBox
@@ -507,7 +503,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAHullTraverseSpeedBySoftTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAHullTraverseSpeedBySoftTextBox.Location = new System.Drawing.Point(150, 438);
+			this.TankAHullTraverseSpeedBySoftTextBox.Location = new System.Drawing.Point(150, 407);
 			this.TankAHullTraverseSpeedBySoftTextBox.Name = "TankAHullTraverseSpeedBySoftTextBox";
 			this.TankAHullTraverseSpeedBySoftTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAHullTraverseSpeedBySoftTextBox.TabIndex = 47;
@@ -521,7 +517,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label15.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label15.Location = new System.Drawing.Point(4, 435);
+			this.label15.Location = new System.Drawing.Point(4, 404);
 			this.label15.Name = "label15";
 			this.label15.Size = new System.Drawing.Size(139, 30);
 			this.label15.TabIndex = 46;
@@ -534,7 +530,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAHullTraverseSpeedByMediumTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAHullTraverseSpeedByMediumTextBox.Location = new System.Drawing.Point(150, 407);
+			this.TankAHullTraverseSpeedByMediumTextBox.Location = new System.Drawing.Point(150, 376);
 			this.TankAHullTraverseSpeedByMediumTextBox.Name = "TankAHullTraverseSpeedByMediumTextBox";
 			this.TankAHullTraverseSpeedByMediumTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAHullTraverseSpeedByMediumTextBox.TabIndex = 45;
@@ -548,7 +544,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label14.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label14.Location = new System.Drawing.Point(4, 404);
+			this.label14.Location = new System.Drawing.Point(4, 373);
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(139, 30);
 			this.label14.TabIndex = 44;
@@ -561,7 +557,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAHullTraverseSpeedByHardTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAHullTraverseSpeedByHardTextBox.Location = new System.Drawing.Point(150, 376);
+			this.TankAHullTraverseSpeedByHardTextBox.Location = new System.Drawing.Point(150, 345);
 			this.TankAHullTraverseSpeedByHardTextBox.Name = "TankAHullTraverseSpeedByHardTextBox";
 			this.TankAHullTraverseSpeedByHardTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAHullTraverseSpeedByHardTextBox.TabIndex = 43;
@@ -575,7 +571,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAMoveSpeedBySoftTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAMoveSpeedBySoftTextBox.Location = new System.Drawing.Point(150, 345);
+			this.TankAMoveSpeedBySoftTextBox.Location = new System.Drawing.Point(150, 314);
 			this.TankAMoveSpeedBySoftTextBox.Name = "TankAMoveSpeedBySoftTextBox";
 			this.TankAMoveSpeedBySoftTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankAMoveSpeedBySoftTextBox.TabIndex = 42;
@@ -589,7 +585,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label12.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label12.Location = new System.Drawing.Point(4, 342);
+			this.label12.Location = new System.Drawing.Point(4, 311);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(139, 30);
 			this.label12.TabIndex = 40;
@@ -602,7 +598,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label11.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label11.Location = new System.Drawing.Point(4, 311);
+			this.label11.Location = new System.Drawing.Point(4, 280);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(139, 30);
 			this.label11.TabIndex = 39;
@@ -615,7 +611,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label13.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label13.Location = new System.Drawing.Point(4, 373);
+			this.label13.Location = new System.Drawing.Point(4, 342);
 			this.label13.Name = "label13";
 			this.label13.Size = new System.Drawing.Size(139, 30);
 			this.label13.TabIndex = 41;
@@ -628,7 +624,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label16.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label16.Location = new System.Drawing.Point(4, 466);
+			this.label16.Location = new System.Drawing.Point(4, 435);
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(139, 30);
 			this.label16.TabIndex = 48;
@@ -641,7 +637,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankATurretTraverseSpeedTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankATurretTraverseSpeedTextBox.Location = new System.Drawing.Point(150, 469);
+			this.TankATurretTraverseSpeedTextBox.Location = new System.Drawing.Point(150, 438);
 			this.TankATurretTraverseSpeedTextBox.Name = "TankATurretTraverseSpeedTextBox";
 			this.TankATurretTraverseSpeedTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankATurretTraverseSpeedTextBox.TabIndex = 49;
@@ -657,7 +653,7 @@ namespace WorldOfTanks {
 			this.TankAIsTraversingTurretCheckBox.AutoSize = true;
 			this.TankAIsTraversingTurretCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankAIsTraversingTurretCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAIsTraversingTurretCheckBox.Location = new System.Drawing.Point(150, 624);
+			this.TankAIsTraversingTurretCheckBox.Location = new System.Drawing.Point(150, 593);
 			this.TankAIsTraversingTurretCheckBox.Name = "TankAIsTraversingTurretCheckBox";
 			this.TankAIsTraversingTurretCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankAIsTraversingTurretCheckBox.TabIndex = 59;
@@ -671,7 +667,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel2.SetColumnSpan(this.label23, 2);
 			this.label23.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label23.Location = new System.Drawing.Point(4, 497);
+			this.label23.Location = new System.Drawing.Point(4, 466);
 			this.label23.Name = "label23";
 			this.label23.Size = new System.Drawing.Size(286, 30);
 			this.label23.TabIndex = 62;
@@ -686,7 +682,7 @@ namespace WorldOfTanks {
 			this.TankATerrainComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.TankATerrainComboBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TankATerrainComboBox.FormattingEnabled = true;
-			this.TankATerrainComboBox.Location = new System.Drawing.Point(150, 531);
+			this.TankATerrainComboBox.Location = new System.Drawing.Point(150, 500);
 			this.TankATerrainComboBox.Name = "TankATerrainComboBox";
 			this.TankATerrainComboBox.Size = new System.Drawing.Size(140, 22);
 			this.TankATerrainComboBox.TabIndex = 55;
@@ -698,7 +694,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label19.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label19.Location = new System.Drawing.Point(4, 528);
+			this.label19.Location = new System.Drawing.Point(4, 497);
 			this.label19.Name = "label19";
 			this.label19.Size = new System.Drawing.Size(139, 30);
 			this.label19.TabIndex = 54;
@@ -711,7 +707,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label17.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label17.Location = new System.Drawing.Point(4, 559);
+			this.label17.Location = new System.Drawing.Point(4, 528);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(139, 30);
 			this.label17.TabIndex = 50;
@@ -724,7 +720,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label18.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label18.Location = new System.Drawing.Point(4, 590);
+			this.label18.Location = new System.Drawing.Point(4, 559);
 			this.label18.Name = "label18";
 			this.label18.Size = new System.Drawing.Size(139, 30);
 			this.label18.TabIndex = 52;
@@ -739,7 +735,7 @@ namespace WorldOfTanks {
 			this.TankAIsMovingCheckBox.AutoSize = true;
 			this.TankAIsMovingCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankAIsMovingCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAIsMovingCheckBox.Location = new System.Drawing.Point(150, 562);
+			this.TankAIsMovingCheckBox.Location = new System.Drawing.Point(150, 531);
 			this.TankAIsMovingCheckBox.Name = "TankAIsMovingCheckBox";
 			this.TankAIsMovingCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankAIsMovingCheckBox.TabIndex = 53;
@@ -752,7 +748,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label20.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label20.Location = new System.Drawing.Point(4, 621);
+			this.label20.Location = new System.Drawing.Point(4, 590);
 			this.label20.Name = "label20";
 			this.label20.Size = new System.Drawing.Size(139, 30);
 			this.label20.TabIndex = 56;
@@ -767,7 +763,7 @@ namespace WorldOfTanks {
 			this.TankAIsTraversingHullCheckBox.AutoSize = true;
 			this.TankAIsTraversingHullCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankAIsTraversingHullCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAIsTraversingHullCheckBox.Location = new System.Drawing.Point(150, 593);
+			this.TankAIsTraversingHullCheckBox.Location = new System.Drawing.Point(150, 562);
 			this.TankAIsTraversingHullCheckBox.Name = "TankAIsTraversingHullCheckBox";
 			this.TankAIsTraversingHullCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankAIsTraversingHullCheckBox.TabIndex = 57;
@@ -782,7 +778,7 @@ namespace WorldOfTanks {
 			this.TankAIsDamagedCheckBox.AutoSize = true;
 			this.TankAIsDamagedCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankAIsDamagedCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAIsDamagedCheckBox.Location = new System.Drawing.Point(150, 686);
+			this.TankAIsDamagedCheckBox.Location = new System.Drawing.Point(150, 655);
 			this.TankAIsDamagedCheckBox.Name = "TankAIsDamagedCheckBox";
 			this.TankAIsDamagedCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankAIsDamagedCheckBox.TabIndex = 61;
@@ -795,7 +791,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label22.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label22.Location = new System.Drawing.Point(4, 683);
+			this.label22.Location = new System.Drawing.Point(4, 652);
 			this.label22.Name = "label22";
 			this.label22.Size = new System.Drawing.Size(139, 30);
 			this.label22.TabIndex = 60;
@@ -810,7 +806,7 @@ namespace WorldOfTanks {
 			this.TankAIsFiringCheckBox.AutoSize = true;
 			this.TankAIsFiringCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankAIsFiringCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAIsFiringCheckBox.Location = new System.Drawing.Point(150, 655);
+			this.TankAIsFiringCheckBox.Location = new System.Drawing.Point(150, 624);
 			this.TankAIsFiringCheckBox.Name = "TankAIsFiringCheckBox";
 			this.TankAIsFiringCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankAIsFiringCheckBox.TabIndex = 51;
@@ -823,7 +819,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label21.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label21.Location = new System.Drawing.Point(4, 652);
+			this.label21.Location = new System.Drawing.Point(4, 621);
 			this.label21.Name = "label21";
 			this.label21.Size = new System.Drawing.Size(139, 30);
 			this.label21.TabIndex = 58;
@@ -837,7 +833,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel2.SetColumnSpan(this.label24, 2);
 			this.label24.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label24.Location = new System.Drawing.Point(4, 714);
+			this.label24.Location = new System.Drawing.Point(4, 683);
 			this.label24.Name = "label24";
 			this.label24.Size = new System.Drawing.Size(286, 30);
 			this.label24.TabIndex = 63;
@@ -850,7 +846,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label25.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label25.Location = new System.Drawing.Point(4, 745);
+			this.label25.Location = new System.Drawing.Point(4, 714);
 			this.label25.Name = "label25";
 			this.label25.Size = new System.Drawing.Size(139, 30);
 			this.label25.TabIndex = 64;
@@ -863,7 +859,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAActualAimTimeTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAActualAimTimeTextBox.Location = new System.Drawing.Point(150, 748);
+			this.TankAActualAimTimeTextBox.Location = new System.Drawing.Point(150, 717);
 			this.TankAActualAimTimeTextBox.Name = "TankAActualAimTimeTextBox";
 			this.TankAActualAimTimeTextBox.ReadOnly = true;
 			this.TankAActualAimTimeTextBox.Size = new System.Drawing.Size(140, 23);
@@ -877,7 +873,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label26.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label26.Location = new System.Drawing.Point(4, 776);
+			this.label26.Location = new System.Drawing.Point(4, 745);
 			this.label26.Name = "label26";
 			this.label26.Size = new System.Drawing.Size(139, 30);
 			this.label26.TabIndex = 66;
@@ -890,7 +886,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAActualDispersionTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAActualDispersionTextBox.Location = new System.Drawing.Point(150, 779);
+			this.TankAActualDispersionTextBox.Location = new System.Drawing.Point(150, 748);
 			this.TankAActualDispersionTextBox.Name = "TankAActualDispersionTextBox";
 			this.TankAActualDispersionTextBox.ReadOnly = true;
 			this.TankAActualDispersionTextBox.Size = new System.Drawing.Size(140, 23);
@@ -905,7 +901,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel2.SetColumnSpan(this.label27, 2);
 			this.label27.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label27.Location = new System.Drawing.Point(4, 807);
+			this.label27.Location = new System.Drawing.Point(4, 776);
 			this.label27.Name = "label27";
 			this.label27.Size = new System.Drawing.Size(286, 30);
 			this.label27.TabIndex = 68;
@@ -918,7 +914,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankAAutoInputTanksGGTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankAAutoInputTanksGGTextBox.Location = new System.Drawing.Point(150, 841);
+			this.TankAAutoInputTanksGGTextBox.Location = new System.Drawing.Point(150, 810);
 			this.TankAAutoInputTanksGGTextBox.MaxLength = 2147483647;
 			this.TankAAutoInputTanksGGTextBox.Name = "TankAAutoInputTanksGGTextBox";
 			this.TankAAutoInputTanksGGTextBox.Size = new System.Drawing.Size(140, 23);
@@ -934,9 +930,9 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label28.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label28.Location = new System.Drawing.Point(4, 838);
+			this.label28.Location = new System.Drawing.Point(4, 807);
 			this.label28.Name = "label28";
-			this.label28.Size = new System.Drawing.Size(139, 31);
+			this.label28.Size = new System.Drawing.Size(139, 30);
 			this.label28.TabIndex = 69;
 			this.label28.Text = "tanks.gg网页html";
 			this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -949,6 +945,7 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
+			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 1, 0);
 			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 2, 0);
 			this.tableLayoutPanel1.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
@@ -956,8 +953,72 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 1;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(1190, 880);
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1240, 845);
 			this.tableLayoutPanel1.TabIndex = 23;
+			// 
+			// tableLayoutPanel4
+			// 
+			this.tableLayoutPanel4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel4.ColumnCount = 1;
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel4.Controls.Add(this.Panel, 0, 0);
+			this.tableLayoutPanel4.Controls.Add(this.panel1, 0, 1);
+			this.tableLayoutPanel4.Location = new System.Drawing.Point(303, 3);
+			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+			this.tableLayoutPanel4.RowCount = 2;
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 75F));
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(634, 839);
+			this.tableLayoutPanel4.TabIndex = 26;
+			// 
+			// Panel
+			// 
+			this.Panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.Panel.Location = new System.Drawing.Point(3, 3);
+			this.Panel.Name = "Panel";
+			this.Panel.Size = new System.Drawing.Size(628, 758);
+			this.Panel.TabIndex = 0;
+			this.Panel.Paint += new System.Windows.Forms.PaintEventHandler(this.Panel_Paint);
+			// 
+			// panel1
+			// 
+			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel1.Controls.Add(this.PlayButton);
+			this.panel1.Controls.Add(this.label1);
+			this.panel1.Controls.Add(this.CurrentTimeTextBox);
+			this.panel1.Controls.Add(this.TimeTrackBar);
+			this.panel1.Location = new System.Drawing.Point(3, 767);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(628, 69);
+			this.panel1.TabIndex = 1;
+			// 
+			// CurrentTimeTextBox
+			// 
+			this.CurrentTimeTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.CurrentTimeTextBox.Location = new System.Drawing.Point(5, 40);
+			this.CurrentTimeTextBox.Name = "CurrentTimeTextBox";
+			this.CurrentTimeTextBox.Size = new System.Drawing.Size(80, 23);
+			this.CurrentTimeTextBox.TabIndex = 50;
+			this.CurrentTimeTextBox.Text = " ";
+			this.CurrentTimeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.CurrentTimeTextBox.TextChanged += new System.EventHandler(this.CurrentTimeTextBox_TextChanged);
+			// 
+			// TimeTrackBar
+			// 
+			this.TimeTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.TimeTrackBar.Location = new System.Drawing.Point(0, 0);
+			this.TimeTrackBar.Name = "TimeTrackBar";
+			this.TimeTrackBar.Size = new System.Drawing.Size(625, 45);
+			this.TimeTrackBar.TabIndex = 1;
+			this.TimeTrackBar.Scroll += new System.EventHandler(this.TimeTrackBar_Scroll);
 			// 
 			// tableLayoutPanel3
 			// 
@@ -967,62 +1028,62 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel3.ColumnCount = 2;
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel3.Controls.Add(this.TankBHullTraverseSpeedBySoftTextBox, 1, 14);
-			this.tableLayoutPanel3.Controls.Add(this.label29, 0, 14);
-			this.tableLayoutPanel3.Controls.Add(this.TankBHullTraverseSpeedByMediumTextBox, 1, 13);
-			this.tableLayoutPanel3.Controls.Add(this.label30, 0, 13);
-			this.tableLayoutPanel3.Controls.Add(this.TankBHullTraverseSpeedByHardTextBox, 1, 12);
-			this.tableLayoutPanel3.Controls.Add(this.TankBMoveSpeedBySoftTextBox, 1, 11);
-			this.tableLayoutPanel3.Controls.Add(this.label31, 0, 11);
-			this.tableLayoutPanel3.Controls.Add(this.label32, 0, 10);
-			this.tableLayoutPanel3.Controls.Add(this.label33, 0, 9);
-			this.tableLayoutPanel3.Controls.Add(this.TankBMoveSpeedByMediumTextBox, 1, 10);
-			this.tableLayoutPanel3.Controls.Add(this.label34, 0, 8);
-			this.tableLayoutPanel3.Controls.Add(this.label35, 0, 0);
-			this.tableLayoutPanel3.Controls.Add(this.label36, 0, 7);
-			this.tableLayoutPanel3.Controls.Add(this.TankBNameTextBox, 1, 1);
-			this.tableLayoutPanel3.Controls.Add(this.label37, 0, 6);
-			this.tableLayoutPanel3.Controls.Add(this.TankBMoveSpeedByHardTextBox, 1, 9);
-			this.tableLayoutPanel3.Controls.Add(this.label38, 0, 5);
-			this.tableLayoutPanel3.Controls.Add(this.label39, 0, 1);
-			this.tableLayoutPanel3.Controls.Add(this.label40, 0, 2);
-			this.tableLayoutPanel3.Controls.Add(this.TankBDamagedDispersionFactorTextBox, 1, 8);
-			this.tableLayoutPanel3.Controls.Add(this.TankBAimTimeTextBox, 1, 2);
-			this.tableLayoutPanel3.Controls.Add(this.label41, 0, 3);
-			this.tableLayoutPanel3.Controls.Add(this.TankBFireDispersionFactorTextBox, 1, 7);
-			this.tableLayoutPanel3.Controls.Add(this.TankBDispersionTextBox, 1, 3);
-			this.tableLayoutPanel3.Controls.Add(this.label42, 0, 4);
-			this.tableLayoutPanel3.Controls.Add(this.TankBTurretTraverseDispersionFactorTextBox, 1, 6);
-			this.tableLayoutPanel3.Controls.Add(this.TankBMoveDispersionFactorTextBox, 1, 4);
-			this.tableLayoutPanel3.Controls.Add(this.TankBHullTraverseDispersionFactorTextBox, 1, 5);
-			this.tableLayoutPanel3.Controls.Add(this.label43, 0, 12);
-			this.tableLayoutPanel3.Controls.Add(this.label44, 0, 15);
-			this.tableLayoutPanel3.Controls.Add(this.TankBTurretTraverseSpeedTextBox, 1, 15);
-			this.tableLayoutPanel3.Controls.Add(this.TankBIsTraversingTurretCheckBox, 1, 20);
-			this.tableLayoutPanel3.Controls.Add(this.label45, 0, 16);
-			this.tableLayoutPanel3.Controls.Add(this.TankBTerrainComboBox, 1, 17);
-			this.tableLayoutPanel3.Controls.Add(this.label46, 0, 17);
-			this.tableLayoutPanel3.Controls.Add(this.label47, 0, 18);
-			this.tableLayoutPanel3.Controls.Add(this.label48, 0, 19);
-			this.tableLayoutPanel3.Controls.Add(this.TankBIsMovingCheckBox, 1, 18);
-			this.tableLayoutPanel3.Controls.Add(this.label49, 0, 20);
-			this.tableLayoutPanel3.Controls.Add(this.TankBIsTraversingHullCheckBox, 1, 19);
-			this.tableLayoutPanel3.Controls.Add(this.TankBIsDamagedCheckBox, 1, 22);
-			this.tableLayoutPanel3.Controls.Add(this.label50, 0, 22);
-			this.tableLayoutPanel3.Controls.Add(this.TankBIsFiringCheckBox, 1, 21);
-			this.tableLayoutPanel3.Controls.Add(this.label51, 0, 21);
-			this.tableLayoutPanel3.Controls.Add(this.label52, 0, 23);
-			this.tableLayoutPanel3.Controls.Add(this.label53, 0, 24);
-			this.tableLayoutPanel3.Controls.Add(this.TankBActualAimTimeTextBox, 1, 24);
-			this.tableLayoutPanel3.Controls.Add(this.label54, 0, 25);
-			this.tableLayoutPanel3.Controls.Add(this.TankBActualDispersionTextBox, 1, 25);
-			this.tableLayoutPanel3.Controls.Add(this.label55, 0, 26);
-			this.tableLayoutPanel3.Controls.Add(this.TankBAutoInputTanksGGTextBox, 1, 27);
-			this.tableLayoutPanel3.Controls.Add(this.label56, 0, 27);
+			this.tableLayoutPanel3.Controls.Add(this.TankBHullTraverseSpeedBySoftTextBox, 1, 13);
+			this.tableLayoutPanel3.Controls.Add(this.label29, 0, 13);
+			this.tableLayoutPanel3.Controls.Add(this.TankBHullTraverseSpeedByMediumTextBox, 1, 12);
+			this.tableLayoutPanel3.Controls.Add(this.label30, 0, 12);
+			this.tableLayoutPanel3.Controls.Add(this.TankBHullTraverseSpeedByHardTextBox, 1, 11);
+			this.tableLayoutPanel3.Controls.Add(this.TankBMoveSpeedBySoftTextBox, 1, 10);
+			this.tableLayoutPanel3.Controls.Add(this.label31, 0, 10);
+			this.tableLayoutPanel3.Controls.Add(this.label32, 0, 9);
+			this.tableLayoutPanel3.Controls.Add(this.label33, 0, 8);
+			this.tableLayoutPanel3.Controls.Add(this.TankBMoveSpeedByMediumTextBox, 1, 9);
+			this.tableLayoutPanel3.Controls.Add(this.label34, 0, 7);
+			this.tableLayoutPanel3.Controls.Add(this.label36, 0, 6);
+			this.tableLayoutPanel3.Controls.Add(this.TankBNameTextBox, 1, 0);
+			this.tableLayoutPanel3.Controls.Add(this.label37, 0, 5);
+			this.tableLayoutPanel3.Controls.Add(this.TankBMoveSpeedByHardTextBox, 1, 8);
+			this.tableLayoutPanel3.Controls.Add(this.label38, 0, 4);
+			this.tableLayoutPanel3.Controls.Add(this.label39, 0, 0);
+			this.tableLayoutPanel3.Controls.Add(this.label40, 0, 1);
+			this.tableLayoutPanel3.Controls.Add(this.TankBDamagedDispersionFactorTextBox, 1, 7);
+			this.tableLayoutPanel3.Controls.Add(this.TankBAimTimeTextBox, 1, 1);
+			this.tableLayoutPanel3.Controls.Add(this.label41, 0, 2);
+			this.tableLayoutPanel3.Controls.Add(this.TankBFireDispersionFactorTextBox, 1, 6);
+			this.tableLayoutPanel3.Controls.Add(this.TankBDispersionTextBox, 1, 2);
+			this.tableLayoutPanel3.Controls.Add(this.label42, 0, 3);
+			this.tableLayoutPanel3.Controls.Add(this.TankBTurretTraverseDispersionFactorTextBox, 1, 5);
+			this.tableLayoutPanel3.Controls.Add(this.TankBMoveDispersionFactorTextBox, 1, 3);
+			this.tableLayoutPanel3.Controls.Add(this.TankBHullTraverseDispersionFactorTextBox, 1, 4);
+			this.tableLayoutPanel3.Controls.Add(this.label43, 0, 11);
+			this.tableLayoutPanel3.Controls.Add(this.label44, 0, 14);
+			this.tableLayoutPanel3.Controls.Add(this.TankBTurretTraverseSpeedTextBox, 1, 14);
+			this.tableLayoutPanel3.Controls.Add(this.TankBIsTraversingTurretCheckBox, 1, 19);
+			this.tableLayoutPanel3.Controls.Add(this.label45, 0, 15);
+			this.tableLayoutPanel3.Controls.Add(this.TankBTerrainComboBox, 1, 16);
+			this.tableLayoutPanel3.Controls.Add(this.label46, 0, 16);
+			this.tableLayoutPanel3.Controls.Add(this.label47, 0, 17);
+			this.tableLayoutPanel3.Controls.Add(this.label48, 0, 18);
+			this.tableLayoutPanel3.Controls.Add(this.TankBIsMovingCheckBox, 1, 17);
+			this.tableLayoutPanel3.Controls.Add(this.label49, 0, 19);
+			this.tableLayoutPanel3.Controls.Add(this.TankBIsTraversingHullCheckBox, 1, 18);
+			this.tableLayoutPanel3.Controls.Add(this.TankBIsDamagedCheckBox, 1, 21);
+			this.tableLayoutPanel3.Controls.Add(this.label50, 0, 21);
+			this.tableLayoutPanel3.Controls.Add(this.TankBIsFiringCheckBox, 1, 20);
+			this.tableLayoutPanel3.Controls.Add(this.label51, 0, 20);
+			this.tableLayoutPanel3.Controls.Add(this.label52, 0, 22);
+			this.tableLayoutPanel3.Controls.Add(this.label53, 0, 23);
+			this.tableLayoutPanel3.Controls.Add(this.TankBActualAimTimeTextBox, 1, 23);
+			this.tableLayoutPanel3.Controls.Add(this.label54, 0, 24);
+			this.tableLayoutPanel3.Controls.Add(this.TankBActualDispersionTextBox, 1, 24);
+			this.tableLayoutPanel3.Controls.Add(this.label55, 0, 25);
+			this.tableLayoutPanel3.Controls.Add(this.TankBAutoInputTanksGGTextBox, 1, 26);
+			this.tableLayoutPanel3.Controls.Add(this.label56, 0, 26);
 			this.tableLayoutPanel3.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.tableLayoutPanel3.Location = new System.Drawing.Point(893, 3);
+			this.tableLayoutPanel3.ForeColor = System.Drawing.Color.Red;
+			this.tableLayoutPanel3.Location = new System.Drawing.Point(943, 3);
 			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-			this.tableLayoutPanel3.RowCount = 28;
+			this.tableLayoutPanel3.RowCount = 27;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
@@ -1051,7 +1112,7 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(294, 870);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(294, 838);
 			this.tableLayoutPanel3.TabIndex = 23;
 			// 
 			// TankBHullTraverseSpeedBySoftTextBox
@@ -1060,7 +1121,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBHullTraverseSpeedBySoftTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBHullTraverseSpeedBySoftTextBox.Location = new System.Drawing.Point(150, 438);
+			this.TankBHullTraverseSpeedBySoftTextBox.Location = new System.Drawing.Point(150, 407);
 			this.TankBHullTraverseSpeedBySoftTextBox.Name = "TankBHullTraverseSpeedBySoftTextBox";
 			this.TankBHullTraverseSpeedBySoftTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBHullTraverseSpeedBySoftTextBox.TabIndex = 47;
@@ -1074,7 +1135,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label29.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label29.Location = new System.Drawing.Point(4, 435);
+			this.label29.Location = new System.Drawing.Point(4, 404);
 			this.label29.Name = "label29";
 			this.label29.Size = new System.Drawing.Size(139, 30);
 			this.label29.TabIndex = 46;
@@ -1087,7 +1148,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBHullTraverseSpeedByMediumTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBHullTraverseSpeedByMediumTextBox.Location = new System.Drawing.Point(150, 407);
+			this.TankBHullTraverseSpeedByMediumTextBox.Location = new System.Drawing.Point(150, 376);
 			this.TankBHullTraverseSpeedByMediumTextBox.Name = "TankBHullTraverseSpeedByMediumTextBox";
 			this.TankBHullTraverseSpeedByMediumTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBHullTraverseSpeedByMediumTextBox.TabIndex = 45;
@@ -1101,7 +1162,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label30.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label30.Location = new System.Drawing.Point(4, 404);
+			this.label30.Location = new System.Drawing.Point(4, 373);
 			this.label30.Name = "label30";
 			this.label30.Size = new System.Drawing.Size(139, 30);
 			this.label30.TabIndex = 44;
@@ -1114,7 +1175,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBHullTraverseSpeedByHardTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBHullTraverseSpeedByHardTextBox.Location = new System.Drawing.Point(150, 376);
+			this.TankBHullTraverseSpeedByHardTextBox.Location = new System.Drawing.Point(150, 345);
 			this.TankBHullTraverseSpeedByHardTextBox.Name = "TankBHullTraverseSpeedByHardTextBox";
 			this.TankBHullTraverseSpeedByHardTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBHullTraverseSpeedByHardTextBox.TabIndex = 43;
@@ -1128,7 +1189,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBMoveSpeedBySoftTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBMoveSpeedBySoftTextBox.Location = new System.Drawing.Point(150, 345);
+			this.TankBMoveSpeedBySoftTextBox.Location = new System.Drawing.Point(150, 314);
 			this.TankBMoveSpeedBySoftTextBox.Name = "TankBMoveSpeedBySoftTextBox";
 			this.TankBMoveSpeedBySoftTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBMoveSpeedBySoftTextBox.TabIndex = 42;
@@ -1142,7 +1203,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label31.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label31.Location = new System.Drawing.Point(4, 342);
+			this.label31.Location = new System.Drawing.Point(4, 311);
 			this.label31.Name = "label31";
 			this.label31.Size = new System.Drawing.Size(139, 30);
 			this.label31.TabIndex = 40;
@@ -1155,7 +1216,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label32.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label32.Location = new System.Drawing.Point(4, 311);
+			this.label32.Location = new System.Drawing.Point(4, 280);
 			this.label32.Name = "label32";
 			this.label32.Size = new System.Drawing.Size(139, 30);
 			this.label32.TabIndex = 39;
@@ -1168,7 +1229,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label33.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label33.Location = new System.Drawing.Point(4, 280);
+			this.label33.Location = new System.Drawing.Point(4, 249);
 			this.label33.Name = "label33";
 			this.label33.Size = new System.Drawing.Size(139, 30);
 			this.label33.TabIndex = 37;
@@ -1181,7 +1242,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBMoveSpeedByMediumTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBMoveSpeedByMediumTextBox.Location = new System.Drawing.Point(150, 314);
+			this.TankBMoveSpeedByMediumTextBox.Location = new System.Drawing.Point(150, 283);
 			this.TankBMoveSpeedByMediumTextBox.Name = "TankBMoveSpeedByMediumTextBox";
 			this.TankBMoveSpeedByMediumTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBMoveSpeedByMediumTextBox.TabIndex = 38;
@@ -1195,26 +1256,12 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label34.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label34.Location = new System.Drawing.Point(4, 249);
+			this.label34.Location = new System.Drawing.Point(4, 218);
 			this.label34.Name = "label34";
 			this.label34.Size = new System.Drawing.Size(139, 30);
 			this.label34.TabIndex = 35;
 			this.label34.Text = "炮受损扩圈";
 			this.label34.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// label35
-			// 
-			this.label35.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel3.SetColumnSpan(this.label35, 2);
-			this.label35.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label35.Location = new System.Drawing.Point(4, 1);
-			this.label35.Name = "label35";
-			this.label35.Size = new System.Drawing.Size(286, 30);
-			this.label35.TabIndex = 19;
-			this.label35.Text = "坦克B";
-			this.label35.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// label36
 			// 
@@ -1222,7 +1269,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label36.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label36.Location = new System.Drawing.Point(4, 218);
+			this.label36.Location = new System.Drawing.Point(4, 187);
 			this.label36.Name = "label36";
 			this.label36.Size = new System.Drawing.Size(139, 30);
 			this.label36.TabIndex = 33;
@@ -1235,7 +1282,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBNameTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBNameTextBox.Location = new System.Drawing.Point(150, 35);
+			this.TankBNameTextBox.Location = new System.Drawing.Point(150, 4);
 			this.TankBNameTextBox.Name = "TankBNameTextBox";
 			this.TankBNameTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBNameTextBox.TabIndex = 20;
@@ -1248,7 +1295,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label37.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label37.Location = new System.Drawing.Point(4, 187);
+			this.label37.Location = new System.Drawing.Point(4, 156);
 			this.label37.Name = "label37";
 			this.label37.Size = new System.Drawing.Size(139, 30);
 			this.label37.TabIndex = 31;
@@ -1261,7 +1308,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBMoveSpeedByHardTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBMoveSpeedByHardTextBox.Location = new System.Drawing.Point(150, 283);
+			this.TankBMoveSpeedByHardTextBox.Location = new System.Drawing.Point(150, 252);
 			this.TankBMoveSpeedByHardTextBox.Name = "TankBMoveSpeedByHardTextBox";
 			this.TankBMoveSpeedByHardTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBMoveSpeedByHardTextBox.TabIndex = 36;
@@ -1275,7 +1322,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label38.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label38.Location = new System.Drawing.Point(4, 156);
+			this.label38.Location = new System.Drawing.Point(4, 125);
 			this.label38.Name = "label38";
 			this.label38.Size = new System.Drawing.Size(139, 30);
 			this.label38.TabIndex = 29;
@@ -1288,7 +1335,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label39.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label39.Location = new System.Drawing.Point(4, 32);
+			this.label39.Location = new System.Drawing.Point(4, 1);
 			this.label39.Name = "label39";
 			this.label39.Size = new System.Drawing.Size(139, 30);
 			this.label39.TabIndex = 21;
@@ -1301,7 +1348,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label40.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label40.Location = new System.Drawing.Point(4, 63);
+			this.label40.Location = new System.Drawing.Point(4, 32);
 			this.label40.Name = "label40";
 			this.label40.Size = new System.Drawing.Size(139, 30);
 			this.label40.TabIndex = 23;
@@ -1314,7 +1361,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBDamagedDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBDamagedDispersionFactorTextBox.Location = new System.Drawing.Point(150, 252);
+			this.TankBDamagedDispersionFactorTextBox.Location = new System.Drawing.Point(150, 221);
 			this.TankBDamagedDispersionFactorTextBox.Name = "TankBDamagedDispersionFactorTextBox";
 			this.TankBDamagedDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBDamagedDispersionFactorTextBox.TabIndex = 34;
@@ -1328,7 +1375,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBAimTimeTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBAimTimeTextBox.Location = new System.Drawing.Point(150, 66);
+			this.TankBAimTimeTextBox.Location = new System.Drawing.Point(150, 35);
 			this.TankBAimTimeTextBox.Name = "TankBAimTimeTextBox";
 			this.TankBAimTimeTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBAimTimeTextBox.TabIndex = 22;
@@ -1342,7 +1389,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label41.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label41.Location = new System.Drawing.Point(4, 94);
+			this.label41.Location = new System.Drawing.Point(4, 63);
 			this.label41.Name = "label41";
 			this.label41.Size = new System.Drawing.Size(139, 30);
 			this.label41.TabIndex = 25;
@@ -1355,7 +1402,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBFireDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBFireDispersionFactorTextBox.Location = new System.Drawing.Point(150, 221);
+			this.TankBFireDispersionFactorTextBox.Location = new System.Drawing.Point(150, 190);
 			this.TankBFireDispersionFactorTextBox.Name = "TankBFireDispersionFactorTextBox";
 			this.TankBFireDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBFireDispersionFactorTextBox.TabIndex = 32;
@@ -1369,7 +1416,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBDispersionTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBDispersionTextBox.Location = new System.Drawing.Point(150, 97);
+			this.TankBDispersionTextBox.Location = new System.Drawing.Point(150, 66);
 			this.TankBDispersionTextBox.Name = "TankBDispersionTextBox";
 			this.TankBDispersionTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBDispersionTextBox.TabIndex = 24;
@@ -1383,7 +1430,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label42.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label42.Location = new System.Drawing.Point(4, 125);
+			this.label42.Location = new System.Drawing.Point(4, 94);
 			this.label42.Name = "label42";
 			this.label42.Size = new System.Drawing.Size(139, 30);
 			this.label42.TabIndex = 27;
@@ -1396,7 +1443,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBTurretTraverseDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBTurretTraverseDispersionFactorTextBox.Location = new System.Drawing.Point(150, 190);
+			this.TankBTurretTraverseDispersionFactorTextBox.Location = new System.Drawing.Point(150, 159);
 			this.TankBTurretTraverseDispersionFactorTextBox.Name = "TankBTurretTraverseDispersionFactorTextBox";
 			this.TankBTurretTraverseDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBTurretTraverseDispersionFactorTextBox.TabIndex = 30;
@@ -1410,7 +1457,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBMoveDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBMoveDispersionFactorTextBox.Location = new System.Drawing.Point(150, 128);
+			this.TankBMoveDispersionFactorTextBox.Location = new System.Drawing.Point(150, 97);
 			this.TankBMoveDispersionFactorTextBox.Name = "TankBMoveDispersionFactorTextBox";
 			this.TankBMoveDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBMoveDispersionFactorTextBox.TabIndex = 26;
@@ -1424,7 +1471,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBHullTraverseDispersionFactorTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBHullTraverseDispersionFactorTextBox.Location = new System.Drawing.Point(150, 159);
+			this.TankBHullTraverseDispersionFactorTextBox.Location = new System.Drawing.Point(150, 128);
 			this.TankBHullTraverseDispersionFactorTextBox.Name = "TankBHullTraverseDispersionFactorTextBox";
 			this.TankBHullTraverseDispersionFactorTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBHullTraverseDispersionFactorTextBox.TabIndex = 28;
@@ -1438,7 +1485,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label43.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label43.Location = new System.Drawing.Point(4, 373);
+			this.label43.Location = new System.Drawing.Point(4, 342);
 			this.label43.Name = "label43";
 			this.label43.Size = new System.Drawing.Size(139, 30);
 			this.label43.TabIndex = 41;
@@ -1451,7 +1498,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label44.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label44.Location = new System.Drawing.Point(4, 466);
+			this.label44.Location = new System.Drawing.Point(4, 435);
 			this.label44.Name = "label44";
 			this.label44.Size = new System.Drawing.Size(139, 30);
 			this.label44.TabIndex = 48;
@@ -1464,7 +1511,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBTurretTraverseSpeedTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBTurretTraverseSpeedTextBox.Location = new System.Drawing.Point(150, 469);
+			this.TankBTurretTraverseSpeedTextBox.Location = new System.Drawing.Point(150, 438);
 			this.TankBTurretTraverseSpeedTextBox.Name = "TankBTurretTraverseSpeedTextBox";
 			this.TankBTurretTraverseSpeedTextBox.Size = new System.Drawing.Size(140, 23);
 			this.TankBTurretTraverseSpeedTextBox.TabIndex = 49;
@@ -1480,7 +1527,7 @@ namespace WorldOfTanks {
 			this.TankBIsTraversingTurretCheckBox.AutoSize = true;
 			this.TankBIsTraversingTurretCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankBIsTraversingTurretCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBIsTraversingTurretCheckBox.Location = new System.Drawing.Point(150, 624);
+			this.TankBIsTraversingTurretCheckBox.Location = new System.Drawing.Point(150, 593);
 			this.TankBIsTraversingTurretCheckBox.Name = "TankBIsTraversingTurretCheckBox";
 			this.TankBIsTraversingTurretCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankBIsTraversingTurretCheckBox.TabIndex = 59;
@@ -1494,7 +1541,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel3.SetColumnSpan(this.label45, 2);
 			this.label45.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label45.Location = new System.Drawing.Point(4, 497);
+			this.label45.Location = new System.Drawing.Point(4, 466);
 			this.label45.Name = "label45";
 			this.label45.Size = new System.Drawing.Size(286, 30);
 			this.label45.TabIndex = 62;
@@ -1509,7 +1556,7 @@ namespace WorldOfTanks {
 			this.TankBTerrainComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.TankBTerrainComboBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TankBTerrainComboBox.FormattingEnabled = true;
-			this.TankBTerrainComboBox.Location = new System.Drawing.Point(150, 531);
+			this.TankBTerrainComboBox.Location = new System.Drawing.Point(150, 500);
 			this.TankBTerrainComboBox.Name = "TankBTerrainComboBox";
 			this.TankBTerrainComboBox.Size = new System.Drawing.Size(140, 22);
 			this.TankBTerrainComboBox.TabIndex = 55;
@@ -1521,7 +1568,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label46.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label46.Location = new System.Drawing.Point(4, 528);
+			this.label46.Location = new System.Drawing.Point(4, 497);
 			this.label46.Name = "label46";
 			this.label46.Size = new System.Drawing.Size(139, 30);
 			this.label46.TabIndex = 54;
@@ -1534,7 +1581,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label47.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label47.Location = new System.Drawing.Point(4, 559);
+			this.label47.Location = new System.Drawing.Point(4, 528);
 			this.label47.Name = "label47";
 			this.label47.Size = new System.Drawing.Size(139, 30);
 			this.label47.TabIndex = 50;
@@ -1547,7 +1594,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label48.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label48.Location = new System.Drawing.Point(4, 590);
+			this.label48.Location = new System.Drawing.Point(4, 559);
 			this.label48.Name = "label48";
 			this.label48.Size = new System.Drawing.Size(139, 30);
 			this.label48.TabIndex = 52;
@@ -1562,7 +1609,7 @@ namespace WorldOfTanks {
 			this.TankBIsMovingCheckBox.AutoSize = true;
 			this.TankBIsMovingCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankBIsMovingCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBIsMovingCheckBox.Location = new System.Drawing.Point(150, 562);
+			this.TankBIsMovingCheckBox.Location = new System.Drawing.Point(150, 531);
 			this.TankBIsMovingCheckBox.Name = "TankBIsMovingCheckBox";
 			this.TankBIsMovingCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankBIsMovingCheckBox.TabIndex = 53;
@@ -1575,7 +1622,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label49.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label49.Location = new System.Drawing.Point(4, 621);
+			this.label49.Location = new System.Drawing.Point(4, 590);
 			this.label49.Name = "label49";
 			this.label49.Size = new System.Drawing.Size(139, 30);
 			this.label49.TabIndex = 56;
@@ -1590,7 +1637,7 @@ namespace WorldOfTanks {
 			this.TankBIsTraversingHullCheckBox.AutoSize = true;
 			this.TankBIsTraversingHullCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankBIsTraversingHullCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBIsTraversingHullCheckBox.Location = new System.Drawing.Point(150, 593);
+			this.TankBIsTraversingHullCheckBox.Location = new System.Drawing.Point(150, 562);
 			this.TankBIsTraversingHullCheckBox.Name = "TankBIsTraversingHullCheckBox";
 			this.TankBIsTraversingHullCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankBIsTraversingHullCheckBox.TabIndex = 57;
@@ -1605,7 +1652,7 @@ namespace WorldOfTanks {
 			this.TankBIsDamagedCheckBox.AutoSize = true;
 			this.TankBIsDamagedCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankBIsDamagedCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBIsDamagedCheckBox.Location = new System.Drawing.Point(150, 686);
+			this.TankBIsDamagedCheckBox.Location = new System.Drawing.Point(150, 655);
 			this.TankBIsDamagedCheckBox.Name = "TankBIsDamagedCheckBox";
 			this.TankBIsDamagedCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankBIsDamagedCheckBox.TabIndex = 61;
@@ -1618,7 +1665,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label50.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label50.Location = new System.Drawing.Point(4, 683);
+			this.label50.Location = new System.Drawing.Point(4, 652);
 			this.label50.Name = "label50";
 			this.label50.Size = new System.Drawing.Size(139, 30);
 			this.label50.TabIndex = 60;
@@ -1633,7 +1680,7 @@ namespace WorldOfTanks {
 			this.TankBIsFiringCheckBox.AutoSize = true;
 			this.TankBIsFiringCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TankBIsFiringCheckBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBIsFiringCheckBox.Location = new System.Drawing.Point(150, 655);
+			this.TankBIsFiringCheckBox.Location = new System.Drawing.Point(150, 624);
 			this.TankBIsFiringCheckBox.Name = "TankBIsFiringCheckBox";
 			this.TankBIsFiringCheckBox.Size = new System.Drawing.Size(140, 24);
 			this.TankBIsFiringCheckBox.TabIndex = 51;
@@ -1646,7 +1693,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label51.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label51.Location = new System.Drawing.Point(4, 652);
+			this.label51.Location = new System.Drawing.Point(4, 621);
 			this.label51.Name = "label51";
 			this.label51.Size = new System.Drawing.Size(139, 30);
 			this.label51.TabIndex = 58;
@@ -1660,7 +1707,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel3.SetColumnSpan(this.label52, 2);
 			this.label52.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label52.Location = new System.Drawing.Point(4, 714);
+			this.label52.Location = new System.Drawing.Point(4, 683);
 			this.label52.Name = "label52";
 			this.label52.Size = new System.Drawing.Size(286, 30);
 			this.label52.TabIndex = 63;
@@ -1673,7 +1720,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label53.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label53.Location = new System.Drawing.Point(4, 745);
+			this.label53.Location = new System.Drawing.Point(4, 714);
 			this.label53.Name = "label53";
 			this.label53.Size = new System.Drawing.Size(139, 30);
 			this.label53.TabIndex = 64;
@@ -1686,7 +1733,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBActualAimTimeTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBActualAimTimeTextBox.Location = new System.Drawing.Point(150, 748);
+			this.TankBActualAimTimeTextBox.Location = new System.Drawing.Point(150, 717);
 			this.TankBActualAimTimeTextBox.Name = "TankBActualAimTimeTextBox";
 			this.TankBActualAimTimeTextBox.ReadOnly = true;
 			this.TankBActualAimTimeTextBox.Size = new System.Drawing.Size(140, 23);
@@ -1700,7 +1747,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label54.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label54.Location = new System.Drawing.Point(4, 776);
+			this.label54.Location = new System.Drawing.Point(4, 745);
 			this.label54.Name = "label54";
 			this.label54.Size = new System.Drawing.Size(139, 30);
 			this.label54.TabIndex = 66;
@@ -1713,7 +1760,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBActualDispersionTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBActualDispersionTextBox.Location = new System.Drawing.Point(150, 779);
+			this.TankBActualDispersionTextBox.Location = new System.Drawing.Point(150, 748);
 			this.TankBActualDispersionTextBox.Name = "TankBActualDispersionTextBox";
 			this.TankBActualDispersionTextBox.ReadOnly = true;
 			this.TankBActualDispersionTextBox.Size = new System.Drawing.Size(140, 23);
@@ -1728,7 +1775,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel3.SetColumnSpan(this.label55, 2);
 			this.label55.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label55.Location = new System.Drawing.Point(4, 807);
+			this.label55.Location = new System.Drawing.Point(4, 776);
 			this.label55.Name = "label55";
 			this.label55.Size = new System.Drawing.Size(286, 30);
 			this.label55.TabIndex = 68;
@@ -1741,7 +1788,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankBAutoInputTanksGGTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TankBAutoInputTanksGGTextBox.Location = new System.Drawing.Point(150, 841);
+			this.TankBAutoInputTanksGGTextBox.Location = new System.Drawing.Point(150, 810);
 			this.TankBAutoInputTanksGGTextBox.MaxLength = 2147483647;
 			this.TankBAutoInputTanksGGTextBox.Name = "TankBAutoInputTanksGGTextBox";
 			this.TankBAutoInputTanksGGTextBox.Size = new System.Drawing.Size(140, 23);
@@ -1757,18 +1804,45 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label56.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label56.Location = new System.Drawing.Point(4, 838);
+			this.label56.Location = new System.Drawing.Point(4, 807);
 			this.label56.Name = "label56";
-			this.label56.Size = new System.Drawing.Size(139, 31);
+			this.label56.Size = new System.Drawing.Size(139, 30);
 			this.label56.TabIndex = 69;
 			this.label56.Text = "tanks.gg网页html";
 			this.label56.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// Timer
+			// 
+			this.Timer.Interval = 5;
+			this.Timer.Tick += new System.EventHandler(this.Timer_Tick);
+			// 
+			// label1
+			// 
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label1.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.label1.Location = new System.Drawing.Point(210, 40);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(330, 25);
+			this.label1.TabIndex = 53;
+			this.label1.Text = "瞄准圈大小仅供参考，并未考虑游戏FOV等因素";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// PlayButton
+			// 
+			this.PlayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.PlayButton.Location = new System.Drawing.Point(545, 40);
+			this.PlayButton.Name = "PlayButton";
+			this.PlayButton.Size = new System.Drawing.Size(75, 23);
+			this.PlayButton.TabIndex = 54;
+			this.PlayButton.Text = "播放";
+			this.PlayButton.UseVisualStyleBackColor = true;
+			this.PlayButton.Click += new System.EventHandler(this.PlayButton_Click);
 			// 
 			// AimTimeCalculatorForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(1193, 967);
+			this.ClientSize = new System.Drawing.Size(1243, 991);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "AimTimeCalculatorForm";
 			this.Text = "AimTimeCalculatorForm";
@@ -1776,6 +1850,10 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel2.ResumeLayout(false);
 			this.tableLayoutPanel2.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel4.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.TimeTrackBar)).EndInit();
 			this.tableLayoutPanel3.ResumeLayout(false);
 			this.tableLayoutPanel3.PerformLayout();
 			this.ResumeLayout(false);
@@ -1788,7 +1866,6 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.TextBox TankAAimTimeTextBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox TankANameTextBox;
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox TankAMoveSpeedByHardTextBox;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TextBox TankADamagedDispersionFactorTextBox;
@@ -1849,7 +1926,6 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.Label label33;
 		private System.Windows.Forms.TextBox TankBMoveSpeedByMediumTextBox;
 		private System.Windows.Forms.Label label34;
-		private System.Windows.Forms.Label label35;
 		private System.Windows.Forms.Label label36;
 		private System.Windows.Forms.TextBox TankBNameTextBox;
 		private System.Windows.Forms.Label label37;
@@ -1890,5 +1966,13 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.Label label55;
 		private System.Windows.Forms.TextBox TankBAutoInputTanksGGTextBox;
 		private System.Windows.Forms.Label label56;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+		private System.Windows.Forms.Panel Panel;
+		private System.Windows.Forms.TrackBar TimeTrackBar;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.TextBox CurrentTimeTextBox;
+		private System.Windows.Forms.Timer Timer;
+		private System.Windows.Forms.Button PlayButton;
+		private System.Windows.Forms.Label label1;
 	}
 }

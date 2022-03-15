@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace WorldOfTanks {
 
@@ -30,8 +31,11 @@ namespace WorldOfTanks {
 		public bool IsDamaged { get; set; }
 		public double ActualAimTime { get; set; }
 		public double ActualDispersion { get; set; }
-		public float MoveSpeed { get; set; }
-		public float HullTraverseSpeed { get; set; }
+		public double MoveSpeed { get; set; }
+		public double HullTraverseSpeed { get; set; }
+		public double CurrentAimTime { get; set; }
+		public double CurrentDispersion { get; set; }
+		public Pen Pen { get; set; }
 
 	}
 

@@ -27,8 +27,7 @@ namespace WorldOfTanks {
 			this.label1 = new System.Windows.Forms.Label();
 			this.NameTextBox = new System.Windows.Forms.TextBox();
 			this.QueryButton = new System.Windows.Forms.Button();
-			this.DateTimePicker = new System.Windows.Forms.DateTimePicker();
-			this.ToTodayButton = new System.Windows.Forms.Button();
+			this.StartDateTimePicker = new System.Windows.Forms.DateTimePicker();
 			this.ResultListView = new System.Windows.Forms.ListView();
 			this.LabelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.ContentColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -47,6 +46,8 @@ namespace WorldOfTanks {
 			this.AverageAssistColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.ExportButton = new System.Windows.Forms.Button();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+			this.EndDateTimePicker = new System.Windows.Forms.DateTimePicker();
+			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -67,7 +68,7 @@ namespace WorldOfTanks {
 			this.NameTextBox.Location = new System.Drawing.Point(45, 5);
 			this.NameTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.NameTextBox.Name = "NameTextBox";
-			this.NameTextBox.Size = new System.Drawing.Size(569, 23);
+			this.NameTextBox.Size = new System.Drawing.Size(420, 23);
 			this.NameTextBox.TabIndex = 1;
 			this.NameTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.NameTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameTextBox_KeyUp);
@@ -76,35 +77,23 @@ namespace WorldOfTanks {
 			// 
 			this.QueryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.QueryButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.QueryButton.Location = new System.Drawing.Point(825, 5);
+			this.QueryButton.Location = new System.Drawing.Point(905, 5);
 			this.QueryButton.Name = "QueryButton";
 			this.QueryButton.Size = new System.Drawing.Size(75, 25);
 			this.QueryButton.TabIndex = 2;
-			this.QueryButton.Text = "当天";
+			this.QueryButton.Text = "查询";
 			this.QueryButton.UseVisualStyleBackColor = true;
 			this.QueryButton.Click += new System.EventHandler(this.QueryButton_Click);
 			// 
-			// DateTimePicker
+			// StartDateTimePicker
 			// 
-			this.DateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DateTimePicker.CalendarFont = new System.Drawing.Font("宋体", 9F);
-			this.DateTimePicker.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.DateTimePicker.Location = new System.Drawing.Point(620, 5);
-			this.DateTimePicker.Name = "DateTimePicker";
-			this.DateTimePicker.Size = new System.Drawing.Size(200, 23);
-			this.DateTimePicker.TabIndex = 3;
-			// 
-			// ToTodayButton
-			// 
-			this.ToTodayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ToTodayButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.ToTodayButton.Location = new System.Drawing.Point(905, 5);
-			this.ToTodayButton.Name = "ToTodayButton";
-			this.ToTodayButton.Size = new System.Drawing.Size(75, 25);
-			this.ToTodayButton.TabIndex = 9;
-			this.ToTodayButton.Text = "至今";
-			this.ToTodayButton.UseVisualStyleBackColor = true;
-			this.ToTodayButton.Click += new System.EventHandler(this.ToTodayButton_Click);
+			this.StartDateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.StartDateTimePicker.CalendarFont = new System.Drawing.Font("宋体", 9F);
+			this.StartDateTimePicker.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.StartDateTimePicker.Location = new System.Drawing.Point(470, 5);
+			this.StartDateTimePicker.Name = "StartDateTimePicker";
+			this.StartDateTimePicker.Size = new System.Drawing.Size(200, 23);
+			this.StartDateTimePicker.TabIndex = 3;
 			// 
 			// ResultListView
 			// 
@@ -160,15 +149,17 @@ namespace WorldOfTanks {
 			this.TankResultListView.TabIndex = 25;
 			this.TankResultListView.UseCompatibleStateImageBehavior = false;
 			this.TankResultListView.View = System.Windows.Forms.View.Details;
+			this.TankResultListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.TankResultListView_ColumnClick);
 			// 
 			// NameColumnHeader
 			// 
 			this.NameColumnHeader.Text = "名称";
-			this.NameColumnHeader.Width = 135;
+			this.NameColumnHeader.Width = 40;
 			// 
 			// CombatNumberColumnHeader
 			// 
 			this.CombatNumberColumnHeader.Text = "场数";
+			this.CombatNumberColumnHeader.Width = 45;
 			// 
 			// VictoryRateColumnHeader
 			// 
@@ -234,15 +225,41 @@ namespace WorldOfTanks {
 			this.ExportButton.UseVisualStyleBackColor = true;
 			this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
 			// 
+			// saveFileDialog1
+			// 
+			this.saveFileDialog1.Filter = "CSV 文件|*.csv|所有文件|*.*";
+			// 
+			// EndDateTimePicker
+			// 
+			this.EndDateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.EndDateTimePicker.CalendarFont = new System.Drawing.Font("宋体", 9F);
+			this.EndDateTimePicker.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.EndDateTimePicker.Location = new System.Drawing.Point(700, 5);
+			this.EndDateTimePicker.Name = "EndDateTimePicker";
+			this.EndDateTimePicker.Size = new System.Drawing.Size(200, 23);
+			this.EndDateTimePicker.TabIndex = 33;
+			// 
+			// label2
+			// 
+			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label2.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.label2.Location = new System.Drawing.Point(675, 5);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(100, 23);
+			this.label2.TabIndex = 34;
+			this.label2.Text = "至";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// OujBoxCombatRecordQueryForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(984, 561);
+			this.Controls.Add(this.EndDateTimePicker);
+			this.Controls.Add(this.label2);
 			this.Controls.Add(this.ExportButton);
 			this.Controls.Add(this.ResultListView);
 			this.Controls.Add(this.TankResultListView);
-			this.Controls.Add(this.ToTodayButton);
-			this.Controls.Add(this.DateTimePicker);
+			this.Controls.Add(this.StartDateTimePicker);
 			this.Controls.Add(this.QueryButton);
 			this.Controls.Add(this.NameTextBox);
 			this.Controls.Add(this.label1);
@@ -258,8 +275,7 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox NameTextBox;
 		private System.Windows.Forms.Button QueryButton;
-		private System.Windows.Forms.DateTimePicker DateTimePicker;
-		private System.Windows.Forms.Button ToTodayButton;
+		private System.Windows.Forms.DateTimePicker StartDateTimePicker;
 		private System.Windows.Forms.ListView ResultListView;
 		private System.Windows.Forms.ColumnHeader LabelColumnHeader;
 		private System.Windows.Forms.ColumnHeader ContentColumnHeader;
@@ -278,5 +294,7 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.ColumnHeader AverageAssistColumnHeader;
 		private System.Windows.Forms.Button ExportButton;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+		private System.Windows.Forms.DateTimePicker EndDateTimePicker;
+		private System.Windows.Forms.Label label2;
 	}
 }

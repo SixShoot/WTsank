@@ -4,12 +4,12 @@ namespace WorldOfTanks {
 
 	class SpottingPlayer {
 
-		public float ViewRange { get; set; }
-		public float StaticConcealment { get; set; }
-		public float MoveConcealment { get; set; }
+		public double ViewRange { get; set; }
+		public double StaticConcealment { get; set; }
+		public double MoveConcealment { get; set; }
 		public bool IsMoving { get; set; }
 		public CommanderVisionSystemType CommanderVisionSystemType { get; set; }
-		public float CommanderVisionSystemValueByFoliage {
+		public double CommanderVisionSystemValueByFoliage {
 
 			get => _CommanderVisionSystemValueByFoliage;
 
@@ -21,7 +21,7 @@ namespace WorldOfTanks {
 			}
 
 		}
-		public float CommanderVisionSystemValueByMove {
+		public double CommanderVisionSystemValueByMove {
 
 			get => _CommanderVisionSystemValueByMove;
 
@@ -33,13 +33,13 @@ namespace WorldOfTanks {
 			}
 
 		}
-		public float CustomCommanderVisionSystemValueByFoliage { get; set; }
-		public float CustomCommanderVisionSystemValueByMove { get; set; }
+		public double CustomCommanderVisionSystemValueByFoliage { get; set; }
+		public double CustomCommanderVisionSystemValueByMove { get; set; }
 		public int SmallFoliageNumber { get; set; }
 		public int LargeFoliageNumber { get; set; }
 
-		float _CommanderVisionSystemValueByFoliage;
-		float _CommanderVisionSystemValueByMove;
+		double _CommanderVisionSystemValueByFoliage;
+		double _CommanderVisionSystemValueByMove;
 
 		public bool CanInput () {
 			switch (CommanderVisionSystemType) {

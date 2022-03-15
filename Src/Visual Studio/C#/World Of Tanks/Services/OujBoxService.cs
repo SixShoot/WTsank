@@ -1,6 +1,7 @@
 ﻿using Eruru.Html;
 using Eruru.Http;
 using Eruru.Json;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,12 +12,17 @@ namespace WorldOfTanks {
 
 	class OujBoxService {
 
-		readonly Http Http = new Http ();
+		readonly Http Http = new Http () {
+			OnRequest = httpWebRequest => {
+				httpWebRequest.Proxy = null;
+				return true;
+			}
+		};
 		readonly Encoding Big5 = Encoding.GetEncoding ("Big5");
 		readonly Encoding ShiftJis = Encoding.GetEncoding ("Shift_Jis");
 		readonly Encoding GBK = Encoding.GetEncoding ("GBK");
 		readonly object RequestLock = new object ();
-		readonly int RequestInterval = 100;
+		readonly int RequestInterval = 50;
 		readonly Stopwatch Stopwatch = new Stopwatch ();
 
 		long RequestTime = 0;
@@ -45,8 +51,12 @@ namespace WorldOfTanks {
 			return combat;
 		}
 
-		public List<CombatRecord> GetCombatRecords (string name, int page, ref DateTime dateTime, out bool hasPreviousPage, out bool hasNextPage) {
+		public List<CombatRecord> GetCombatRecords (string name, int page, ref DateTime dateTime, ref CombatRecordPlayer player, out bool hasPreviousPage, out bool hasNextPage) {
 			Request ();
+			if (player == null) {
+				player = new CombatRecordPlayer ();
+				player.Names.Add (name);
+			}
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = "http://wotbox.ouj.com/wotbox/index.php",
@@ -73,7 +83,9 @@ namespace WorldOfTanks {
 			hasPreviousPage = previousPageHtmlElement != null;
 			hasNextPage = page < 215 && nextPageHtmlElement != null;
 			List<CombatRecord> combatRecords = new List<CombatRecord> ();
+			int i = -1;
 			foreach (HtmlElement htmlElement in htmlElements) {
+				i++;
 				string arenaID = htmlElement.GetAttribute ("arena-id");
 				CombatResult combatResult = ParseCombatResult (htmlElement.GetElementByClassName ("state").TextContent);
 				string[] datas = htmlElement.GetElementByClassName ("game").TextContent.Split (' ');
@@ -85,7 +97,10 @@ namespace WorldOfTanks {
 				int day = int.Parse (dates[1]);
 				string mode = datas[0];
 				CombatRecord combatRecord = new CombatRecord () {
+					Player = player,
 					Name = name,
+					Page = page,
+					IndexInPage = i,
 					ArenaID = arenaID,
 					Result = combatResult,
 					Mode = mode,
@@ -104,11 +119,13 @@ namespace WorldOfTanks {
 			int page = 1;
 			DateTime dateTime = DateTime.Now.Date;
 			List<CombatRecord> combatRecords = new List<CombatRecord> ();
+			CombatRecordPlayer player = new CombatRecordPlayer ();
+			player.Names.Add (name);
 			while (true) {
 				if (!pageFilter?.Invoke (page) ?? false) {
 					break;
 				}
-				List<CombatRecord> pageCombatRecords = GetCombatRecords (name, page, ref dateTime, out bool _, out bool hasNextPage);
+				List<CombatRecord> pageCombatRecords = GetCombatRecords (name, page, ref dateTime, ref player, out bool _, out bool hasNextPage);
 				bool needBreak = false;
 				foreach (CombatRecord combatRecord in pageCombatRecords) {
 					FilterResult filterResult = combatRecordFilter?.Invoke (combatRecord) ?? FilterResult.Execute;
@@ -139,33 +156,44 @@ namespace WorldOfTanks {
 			return combatRecords;
 		}
 
-		public List<CombatRecord> GetCombatRecords (string name, DateTime dateTime, bool isSameDay = true) {
-			dateTime = dateTime.Date;
+		public List<CombatRecord> GetCombatRecords (string name, DateTime startDateTime, DateTime endDateTime, bool isSameDay = true) {
+			startDateTime = startDateTime.Date;
+			endDateTime = endDateTime.Date;
 			return GetCombatRecords (name, null, battleRecord => {
-				if (battleRecord.DateTime < dateTime) {
-					return FilterResult.Break;
-				}
-				if (isSameDay && battleRecord.DateTime > dateTime) {
+				if (battleRecord.DateTime > endDateTime || (isSameDay && battleRecord.DateTime > startDateTime)) {
 					return FilterResult.Continue;
+				}
+				if (battleRecord.DateTime < startDateTime) {
+					return FilterResult.Break;
 				}
 				return FilterResult.Execute;
 			});
 		}
+		public List<CombatRecord> GetCombatRecords (string name, DateTime dateTime, bool isSameDay = true) {
+			return GetCombatRecords (name, dateTime, DateTime.Now, isSameDay);
+		}
 
 		public void FillCombatRecord (CombatRecord combatRecord) {
-			Request ();
-			string response = Http.Request (new HttpRequestInformation () {
-				Type = HttpRequestType.Get,
-				Url = "http://wotapp.ouj.com/",
-				QueryStringParameters = {
-					{ "r", "wotboxapi/battledetail" },
-					{ "pn", combatRecord.Name },
-					{ "arena_id", combatRecord.ArenaID }
-				},
-				OnResponseError = (httpWebResponse, webException) => {
-					throw webException;
-				},
-			}).Trim ('(', ')');
+			Console.WriteLine ($"请求 {combatRecord.ArenaID}");
+			if (BoxDao.Instance.TryGetArenaJson (combatRecord.ArenaID, out string response)) {
+				Console.WriteLine ($"已缓存 {combatRecord.ArenaID}");
+			} else {
+				Console.WriteLine ($"拉取 {combatRecord.ArenaID}");
+				Request ();
+				response = Http.Request (new HttpRequestInformation () {
+					Type = HttpRequestType.Get,
+					Url = "http://wotapp.ouj.com/",
+					QueryStringParameters = {
+						{ "r", "wotboxapi/battledetail" },
+						{ "pn", combatRecord.Name },
+						{ "arena_id", combatRecord.ArenaID }
+					},
+					OnResponseError = (httpWebResponse, webException) => {
+						throw webException;
+					},
+				}).Trim ('(', ')');
+				BoxDao.Instance.SaveArenaJson (combatRecord.ArenaID, response);
+			}
 			JsonObject jsonObject = JsonObject.Parse (response);
 			if (jsonObject["code"] != 200) {
 				throw new Exception ("获取战斗记录失败");
@@ -184,19 +212,27 @@ namespace WorldOfTanks {
 			combatRecord.DateTime.AddMinutes (dateTime.Minute);
 			combatRecord.Duration = duration;
 			combatRecord.TeamA = resultJsonObject["team_a"];
-			JsonObject playerJsonObject = combatRecord.TeamA.Find (item => item["name"] == combatRecord.Name);
-			if (playerJsonObject == null) {
-				playerJsonObject = combatRecord.TeamA.Find (item => Big5.GetString (GBK.GetBytes (item["name"])) == combatRecord.Name);
-			}
-			if (playerJsonObject == null) {
-				playerJsonObject = combatRecord.TeamA.Find (item => ShiftJis.GetString (GBK.GetBytes (item["name"])) == combatRecord.Name);
-			}
-			if (playerJsonObject == null) {
-				throw new Exception ($"战斗日志出现乱码{Environment.NewLine}" +
-					$"玩家：{combatRecord.Name}{Environment.NewLine}" +
-					$"战斗结果：{combatRecord.Result}{Environment.NewLine}" +
-					$"战斗日期：{combatRecord.DateTime:MM月dd日}{dateTime:HH时mm分}"
-				);
+			combatRecord.TeamA.AddRange (resultJsonObject["team_b"].Array);
+			JsonObject playerJsonObject;
+			while (true) {
+				playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.Names.Contains (item["name"]));
+				if (playerJsonObject == null) {
+					playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.Names.Contains (Big5.GetString (GBK.GetBytes (item["name"]))));
+				}
+				if (playerJsonObject == null) {
+					playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.Names.Contains (ShiftJis.GetString (GBK.GetBytes (item["name"]))));
+				}
+				if (playerJsonObject == null) {
+					string name = Interaction.InputBox ($"战斗日志中没有找到名为：\"{combatRecord.Name}\"的玩家，疑似乱码或更名，请重新指定玩家名称，或留空忽略此战斗日志。{Environment.NewLine}" +
+						$"战斗日期：{combatRecord.DateTime:MM月dd日}{dateTime:HH时mm分}{Environment.NewLine}" +
+						$"战斗日志第 {combatRecord.Page} 页，第 {combatRecord.IndexInPage + 1} 个", DefaultResponse: combatRecord.Name);
+					if (string.IsNullOrEmpty (name)) {
+						return;
+					}
+					combatRecord.Player.Names.Add (name);
+					continue;
+				}
+				break;
 			}
 			JsonObject vehicleJsonObject = playerJsonObject["vehicle"];
 			combatRecord.Combat = playerJsonObject["combat"];

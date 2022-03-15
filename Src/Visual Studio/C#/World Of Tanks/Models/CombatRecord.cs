@@ -1,10 +1,14 @@
 ﻿using Eruru.Json;
 using System;
+using System.Collections.Generic;
 
 namespace WorldOfTanks {
 
 	class CombatRecord {
 
+		public CombatRecordPlayer Player { get; set; }
+		public int Page { get; set; }
+		public int IndexInPage { get; set; }
 		public string Name { get; set; }
 		public string ArenaID { get; set; }
 		public CombatResult Result { get; set; }
@@ -18,6 +22,13 @@ namespace WorldOfTanks {
 		public float XP { get; set; }
 		public string TankName { get; set; }
 		public JsonArray TeamA { get; set; }
+		public object Tag { get; set; }
+
+	}
+
+	class CombatRecordPlayer {
+
+		public List<string> Names = new List<string> ();
 
 	}
 
