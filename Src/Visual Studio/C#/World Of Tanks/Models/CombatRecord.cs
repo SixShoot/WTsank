@@ -28,7 +28,8 @@ namespace WorldOfTanks {
 
 	class CombatRecordPlayer {
 
-		public List<string> Names = new List<string> ();
+		public string ID { get; set; }
+		public int Combat { get; set; }
 
 	}
 

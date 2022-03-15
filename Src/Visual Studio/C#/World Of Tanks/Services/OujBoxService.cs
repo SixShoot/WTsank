@@ -5,7 +5,6 @@ using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 
 namespace WorldOfTanks {
@@ -18,9 +17,6 @@ namespace WorldOfTanks {
 				return true;
 			}
 		};
-		readonly Encoding Big5 = Encoding.GetEncoding ("Big5");
-		readonly Encoding ShiftJis = Encoding.GetEncoding ("Shift_Jis");
-		readonly Encoding GBK = Encoding.GetEncoding ("GBK");
 		readonly object RequestLock = new object ();
 		readonly int RequestInterval = 50;
 		readonly Stopwatch Stopwatch = new Stopwatch ();
@@ -31,10 +27,10 @@ namespace WorldOfTanks {
 			Stopwatch.Start ();
 		}
 
-		public float GetCombat (string name) {
+		public string GetID (string name, out int combat) {
 			Request ();
 			string response = Http.Request (new HttpRequestInformation () {
-				Url = "https://wotbox.ouj.com/wotbox/index.php?r=default%2Findex&pn=E+ru+ru",
+				Url = "https://wotbox.ouj.com/wotbox/index.php",
 				QueryStringParameters = {
 					{ "r", "default/index" },
 					{ "pn", name }
@@ -47,15 +43,19 @@ namespace WorldOfTanks {
 			HtmlDocument htmlDocument = HtmlDocument.Parse (response);
 			HtmlElement powerHtmlElement = htmlDocument.GetElementByClassName ("power");
 			HtmlElement numHtmlElement = powerHtmlElement.GetElementByClassName ("num");
-			int combat = int.Parse (numHtmlElement.TextContent);
+			combat = int.Parse (numHtmlElement.TextContent);
+			return htmlDocument.GetElementById ("p_id").GetAttribute ("value");
+		}
+
+		public int GetCombat (string name) {
+			GetID (name, out int combat);
 			return combat;
 		}
 
 		public List<CombatRecord> GetCombatRecords (string name, int page, ref DateTime dateTime, ref CombatRecordPlayer player, out bool hasPreviousPage, out bool hasNextPage) {
 			Request ();
 			if (player == null) {
-				player = new CombatRecordPlayer ();
-				player.Names.Add (name);
+				player = CreatePlayer (name);
 			}
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
@@ -119,8 +119,7 @@ namespace WorldOfTanks {
 			int page = 1;
 			DateTime dateTime = DateTime.Now.Date;
 			List<CombatRecord> combatRecords = new List<CombatRecord> ();
-			CombatRecordPlayer player = new CombatRecordPlayer ();
-			player.Names.Add (name);
+			CombatRecordPlayer player = CreatePlayer (name);
 			while (true) {
 				if (!pageFilter?.Invoke (page) ?? false) {
 					break;
@@ -213,8 +212,8 @@ namespace WorldOfTanks {
 			combatRecord.Duration = duration;
 			combatRecord.TeamA = resultJsonObject["team_a"];
 			combatRecord.TeamA.AddRange (resultJsonObject["team_b"].Array);
-			JsonObject playerJsonObject;
-			while (true) {
+			JsonObject playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.ID == item["vehicle"]["accountDBID"]);
+			/*while (true) {
 				playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.Names.Contains (item["name"]));
 				if (playerJsonObject == null) {
 					playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.Names.Contains (Big5.GetString (GBK.GetBytes (item["name"]))));
@@ -233,7 +232,7 @@ namespace WorldOfTanks {
 					continue;
 				}
 				break;
-			}
+			}*/
 			JsonObject vehicleJsonObject = playerJsonObject["vehicle"];
 			combatRecord.Combat = playerJsonObject["combat"];
 			combatRecord.Damage = vehicleJsonObject["damageDealt"];
@@ -343,6 +342,13 @@ namespace WorldOfTanks {
 				default:
 					throw new NotImplementedException (text);
 			}
+		}
+
+		CombatRecordPlayer CreatePlayer (string name) {
+			return new CombatRecordPlayer () {
+				ID = GetID (name, out int combat),
+				Combat = combat
+			};
 		}
 
 		void Request () {

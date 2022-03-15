@@ -1,4 +1,6 @@
-﻿using System.Data.SQLite;
+﻿using System.Collections.Generic;
+using System.Data.SQLite;
+using System.Threading;
 
 namespace WorldOfTanks {
 
@@ -24,6 +26,9 @@ namespace WorldOfTanks {
 
 		public void SaveArenaJson (string id, string json) {
 			lock (Lock) {
+				if (TryGetArenaJson (id, out _)) {
+					return;
+				}
 				new SQLiteCommand ($@"insert into box_battle_detail (id, json) values ('{id}', '{json}')", SQLiteConnection).ExecuteNonQuery ();
 			}
 		}

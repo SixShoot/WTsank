@@ -197,7 +197,7 @@ namespace WorldOfTanks {
 						clanMemberNumber++;
 					}
 				}
-				if (clanMemberNumber > (combatRecord.TeamA.Count - clanMemberNumber)) {
+				if (clanMemberNumber >= 5) {
 					days[days.Count - 1]++;
 					filteredCombatRecords.Add (combatRecord);
 				}
