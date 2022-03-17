@@ -352,7 +352,7 @@ namespace WorldOfTanks {
 			this.PlayerBSmallFoliageNumberTextBox.Size = new System.Drawing.Size(151, 23);
 			this.PlayerBSmallFoliageNumberTextBox.TabIndex = 10;
 			this.PlayerBSmallFoliageNumberTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.PlayerBSmallFoliageNumberTextBox.TextChanged += new System.EventHandler(this.PlayerASmallFoliageNumberTextBox_TextChanged);
+			this.PlayerBSmallFoliageNumberTextBox.TextChanged += new System.EventHandler(this.PlayerBSmallFoliageNumberTextBox_TextChanged);
 			// 
 			// PlayerBMoveConcealmentTextBox
 			// 

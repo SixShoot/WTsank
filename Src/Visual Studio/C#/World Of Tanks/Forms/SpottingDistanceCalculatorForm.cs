@@ -37,9 +37,10 @@ namespace WorldOfTanks {
 		private void PlayerAViewRangeTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerAViewRangeTextBox.Text)) {
-					return;
+					PlayerA.ViewRange = 0;
+				} else {
+					PlayerA.ViewRange = double.Parse (PlayerAViewRangeTextBox.Text);
 				}
-				PlayerA.ViewRange = double.Parse (PlayerAViewRangeTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -49,9 +50,10 @@ namespace WorldOfTanks {
 		private void PlayerAStaticConcealmentTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerAStaticConcealmentTextBox.Text)) {
-					return;
+					PlayerA.StaticConcealment = 0;
+				} else {
+					PlayerA.StaticConcealment = double.Parse (PlayerAStaticConcealmentTextBox.Text) / 100;
 				}
-				PlayerA.StaticConcealment = double.Parse (PlayerAStaticConcealmentTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -61,9 +63,10 @@ namespace WorldOfTanks {
 		private void PlayerAMoveConcealmentTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerAMoveConcealmentTextBox.Text)) {
-					return;
+					PlayerA.MoveConcealment = 0;
+				} else {
+					PlayerA.MoveConcealment = double.Parse (PlayerAMoveConcealmentTextBox.Text) / 100;
 				}
-				PlayerA.MoveConcealment = double.Parse (PlayerAMoveConcealmentTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -87,9 +90,10 @@ namespace WorldOfTanks {
 		private void PlayerACommanderVisionSystemValueByFoliageTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerACommanderVisionSystemValueByFoliageTextBox.Text)) {
-					return;
+					PlayerA.CommanderVisionSystemValueByFoliage = 0;
+				} else {
+					PlayerA.CommanderVisionSystemValueByFoliage = double.Parse (PlayerACommanderVisionSystemValueByFoliageTextBox.Text) / 100;
 				}
-				PlayerA.CommanderVisionSystemValueByFoliage = double.Parse (PlayerACommanderVisionSystemValueByFoliageTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -99,9 +103,10 @@ namespace WorldOfTanks {
 		private void PlayerACommanderVisionSystemValueByMoveTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerACommanderVisionSystemValueByMoveTextBox.Text)) {
-					return;
+					PlayerA.CommanderVisionSystemValueByMove = 0;
+				} else {
+					PlayerA.CommanderVisionSystemValueByMove = double.Parse (PlayerACommanderVisionSystemValueByMoveTextBox.Text) / 100;
 				}
-				PlayerA.CommanderVisionSystemValueByMove = double.Parse (PlayerACommanderVisionSystemValueByMoveTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -110,7 +115,11 @@ namespace WorldOfTanks {
 
 		private void PlayerASmallFoliageNumberTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerA.SmallFoliageNumber = int.Parse (PlayerASmallFoliageNumberTextBox.Text);
+				if (string.IsNullOrWhiteSpace (PlayerASmallFoliageNumberTextBox.Text)) {
+					PlayerA.SmallFoliageNumber = 0;
+				} else {
+					PlayerA.SmallFoliageNumber = int.Parse (PlayerASmallFoliageNumberTextBox.Text);
+				}
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -119,7 +128,11 @@ namespace WorldOfTanks {
 
 		private void PlayerALargeFoliageNumberTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerA.LargeFoliageNumber = int.Parse (PlayerALargeFoliageNumberTextBox.Text);
+				if (string.IsNullOrWhiteSpace (PlayerALargeFoliageNumberTextBox.Text)) {
+					PlayerA.LargeFoliageNumber = 0;
+				} else {
+					PlayerA.LargeFoliageNumber = int.Parse (PlayerALargeFoliageNumberTextBox.Text);
+				}
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -129,9 +142,10 @@ namespace WorldOfTanks {
 		private void PlayerBViewRangeTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerBViewRangeTextBox.Text)) {
-					return;
+					PlayerB.ViewRange = 0;
+				} else {
+					PlayerB.ViewRange = double.Parse (PlayerBViewRangeTextBox.Text);
 				}
-				PlayerB.ViewRange = double.Parse (PlayerBViewRangeTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -141,9 +155,10 @@ namespace WorldOfTanks {
 		private void PlayerBStaticConcealmentTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerBStaticConcealmentTextBox.Text)) {
-					return;
+					PlayerB.StaticConcealment = 0;
+				} else {
+					PlayerB.StaticConcealment = double.Parse (PlayerBStaticConcealmentTextBox.Text) / 100;
 				}
-				PlayerB.StaticConcealment = double.Parse (PlayerBStaticConcealmentTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -153,9 +168,10 @@ namespace WorldOfTanks {
 		private void PlayerBMoveConcealmentTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerBMoveConcealmentTextBox.Text)) {
-					return;
+					PlayerB.MoveConcealment = 0;
+				} else {
+					PlayerB.MoveConcealment = double.Parse (PlayerBMoveConcealmentTextBox.Text) / 100;
 				}
-				PlayerB.MoveConcealment = double.Parse (PlayerBMoveConcealmentTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -175,9 +191,10 @@ namespace WorldOfTanks {
 		private void PlayerBCommanderVisionSystemValueByFoliageTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerBCommanderVisionSystemValueByFoliageTextBox.Text)) {
-					return;
+					PlayerB.CommanderVisionSystemValueByFoliage = 0;
+				} else {
+					PlayerB.CommanderVisionSystemValueByFoliage = double.Parse (PlayerBCommanderVisionSystemValueByFoliageTextBox.Text) / 100;
 				}
-				PlayerB.CommanderVisionSystemValueByFoliage = double.Parse (PlayerBCommanderVisionSystemValueByFoliageTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -187,9 +204,10 @@ namespace WorldOfTanks {
 		private void PlayerBCommanderVisionSystemValueByMoveTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (PlayerBCommanderVisionSystemValueByMoveTextBox.Text)) {
-					return;
+					PlayerB.CommanderVisionSystemValueByMove = 0;
+				} else {
+					PlayerB.CommanderVisionSystemValueByMove = double.Parse (PlayerBCommanderVisionSystemValueByMoveTextBox.Text) / 100;
 				}
-				PlayerB.CommanderVisionSystemValueByMove = double.Parse (PlayerBCommanderVisionSystemValueByMoveTextBox.Text) / 100;
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -198,7 +216,11 @@ namespace WorldOfTanks {
 
 		private void PlayerBSmallFoliageNumberTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerB.SmallFoliageNumber = int.Parse (PlayerBSmallFoliageNumberTextBox.Text);
+				if (string.IsNullOrWhiteSpace (PlayerBSmallFoliageNumberTextBox.Text)) {
+					PlayerB.SmallFoliageNumber = 0;
+				} else {
+					PlayerB.SmallFoliageNumber = int.Parse (PlayerBSmallFoliageNumberTextBox.Text);
+				}
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -207,7 +229,11 @@ namespace WorldOfTanks {
 
 		private void PlayerBLargeFoliageNumberTextBox_TextChanged (object sender, EventArgs e) {
 			try {
-				PlayerB.LargeFoliageNumber = int.Parse (PlayerBLargeFoliageNumberTextBox.Text);
+				if (string.IsNullOrWhiteSpace (PlayerBLargeFoliageNumberTextBox.Text)) {
+					PlayerB.LargeFoliageNumber = 0;
+				} else {
+					PlayerB.LargeFoliageNumber = int.Parse (PlayerBLargeFoliageNumberTextBox.Text);
+				}
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());

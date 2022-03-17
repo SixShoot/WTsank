@@ -151,9 +151,10 @@ namespace WorldOfTanks {
 		private void TankAAimTimeTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAAimTimeTextBox.Text)) {
-					return;
+					TankA.AimTime = 0;
+				} else {
+					TankA.AimTime = double.Parse (TankAAimTimeTextBox.Text);
 				}
-				TankA.AimTime = double.Parse (TankAAimTimeTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -163,9 +164,10 @@ namespace WorldOfTanks {
 		private void TankADispersionTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankADispersionTextBox.Text)) {
-					return;
+					TankA.Dispersion = 0;
+				} else {
+					TankA.Dispersion = double.Parse (TankADispersionTextBox.Text);
 				}
-				TankA.Dispersion = double.Parse (TankADispersionTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -175,9 +177,10 @@ namespace WorldOfTanks {
 		private void TankAMoveDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAMoveDispersionFactorTextBox.Text)) {
-					return;
+					TankA.MoveDispersionFactor = 0;
+				} else {
+					TankA.MoveDispersionFactor = double.Parse (TankAMoveDispersionFactorTextBox.Text);
 				}
-				TankA.MoveDispersionFactor = double.Parse (TankAMoveDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -187,9 +190,10 @@ namespace WorldOfTanks {
 		private void TankAHullTraverseDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAHullTraverseDispersionFactorTextBox.Text)) {
-					return;
+					TankA.HullTraverseDispersionFactor = 0;
+				} else {
+					TankA.HullTraverseDispersionFactor = double.Parse (TankAHullTraverseDispersionFactorTextBox.Text);
 				}
-				TankA.HullTraverseDispersionFactor = double.Parse (TankAHullTraverseDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -199,9 +203,10 @@ namespace WorldOfTanks {
 		private void TankATurretTraverseDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankATurretTraverseDispersionFactorTextBox.Text)) {
-					return;
+					TankA.TurretTraverseDispersionFactor = 0;
+				} else {
+					TankA.TurretTraverseDispersionFactor = double.Parse (TankATurretTraverseDispersionFactorTextBox.Text);
 				}
-				TankA.TurretTraverseDispersionFactor = double.Parse (TankATurretTraverseDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -211,9 +216,10 @@ namespace WorldOfTanks {
 		private void TankAFireDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAFireDispersionFactorTextBox.Text)) {
-					return;
+					TankA.FireDispersionFactor = 0;
+				} else {
+					TankA.FireDispersionFactor = double.Parse (TankAFireDispersionFactorTextBox.Text);
 				}
-				TankA.FireDispersionFactor = double.Parse (TankAFireDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -223,9 +229,10 @@ namespace WorldOfTanks {
 		private void TankADamagedDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankADamagedDispersionFactorTextBox.Text)) {
-					return;
+					TankA.DamagedDispersionFactor = 0;
+				} else {
+					TankA.DamagedDispersionFactor = double.Parse (TankADamagedDispersionFactorTextBox.Text);
 				}
-				TankA.DamagedDispersionFactor = double.Parse (TankADamagedDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -235,9 +242,10 @@ namespace WorldOfTanks {
 		private void TankAMoveSpeedByHardTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAMoveSpeedByHardTextBox.Text)) {
-					return;
+					TankA.MoveSpeedByHard = 0;
+				} else {
+					TankA.MoveSpeedByHard = double.Parse (TankAMoveSpeedByHardTextBox.Text);
 				}
-				TankA.MoveSpeedByHard = double.Parse (TankAMoveSpeedByHardTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -247,9 +255,10 @@ namespace WorldOfTanks {
 		private void TankAMoveSpeedByMediumTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAMoveSpeedByMediumTextBox.Text)) {
-					return;
+					TankA.MoveSpeedByMedium = 0;
+				} else {
+					TankA.MoveSpeedByMedium = double.Parse (TankAMoveSpeedByMediumTextBox.Text);
 				}
-				TankA.MoveSpeedByMedium = double.Parse (TankAMoveSpeedByMediumTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -259,9 +268,10 @@ namespace WorldOfTanks {
 		private void TankAMoveSpeedBySoftTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAMoveSpeedBySoftTextBox.Text)) {
-					return;
+					TankA.MoveSpeedBySoft = 0;
+				} else {
+					TankA.MoveSpeedBySoft = double.Parse (TankAMoveSpeedBySoftTextBox.Text);
 				}
-				TankA.MoveSpeedBySoft = double.Parse (TankAMoveSpeedBySoftTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -271,9 +281,10 @@ namespace WorldOfTanks {
 		private void TankAHullTraverseSpeedByHardTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAHullTraverseSpeedByHardTextBox.Text)) {
-					return;
+					TankA.HullTraverseSpeedByHard = 0;
+				} else {
+					TankA.HullTraverseSpeedByHard = double.Parse (TankAHullTraverseSpeedByHardTextBox.Text);
 				}
-				TankA.HullTraverseSpeedByHard = double.Parse (TankAHullTraverseSpeedByHardTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -283,9 +294,10 @@ namespace WorldOfTanks {
 		private void TankAHullTraverseSpeedByMediumTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAHullTraverseSpeedByMediumTextBox.Text)) {
-					return;
+					TankA.HullTraverseSpeedByMedium = 0;
+				} else {
+					TankA.HullTraverseSpeedByMedium = double.Parse (TankAHullTraverseSpeedByMediumTextBox.Text);
 				}
-				TankA.HullTraverseSpeedByMedium = double.Parse (TankAHullTraverseSpeedByMediumTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -295,9 +307,10 @@ namespace WorldOfTanks {
 		private void TankAHullTraverseSpeedBySoftTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankAHullTraverseSpeedBySoftTextBox.Text)) {
-					return;
+					TankA.HullTraverseSpeedBySoft = 0;
+				} else {
+					TankA.HullTraverseSpeedBySoft = double.Parse (TankAHullTraverseSpeedBySoftTextBox.Text);
 				}
-				TankA.HullTraverseSpeedBySoft = double.Parse (TankAHullTraverseSpeedBySoftTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -307,9 +320,10 @@ namespace WorldOfTanks {
 		private void TankATurretTraverseSpeedTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankATurretTraverseSpeedTextBox.Text)) {
-					return;
+					TankA.TurretTraverseSpeed = 0;
+				} else {
+					TankA.TurretTraverseSpeed = double.Parse (TankATurretTraverseSpeedTextBox.Text);
 				}
-				TankA.TurretTraverseSpeed = double.Parse (TankATurretTraverseSpeedTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -387,9 +401,10 @@ namespace WorldOfTanks {
 		private void TankBAimTimeTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBAimTimeTextBox.Text)) {
-					return;
+					TankB.AimTime = 0;
+				} else {
+					TankB.AimTime = double.Parse (TankBAimTimeTextBox.Text);
 				}
-				TankB.AimTime = double.Parse (TankBAimTimeTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -399,9 +414,10 @@ namespace WorldOfTanks {
 		private void TankBDispersionTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBDispersionTextBox.Text)) {
-					return;
+					TankB.Dispersion = 0;
+				} else {
+					TankB.Dispersion = double.Parse (TankBDispersionTextBox.Text);
 				}
-				TankB.Dispersion = double.Parse (TankBDispersionTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -411,9 +427,10 @@ namespace WorldOfTanks {
 		private void TankBMoveDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBMoveDispersionFactorTextBox.Text)) {
-					return;
+					TankB.MoveDispersionFactor = 0;
+				} else {
+					TankB.MoveDispersionFactor = double.Parse (TankBMoveDispersionFactorTextBox.Text);
 				}
-				TankB.MoveDispersionFactor = double.Parse (TankBMoveDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -423,9 +440,10 @@ namespace WorldOfTanks {
 		private void TankBHullTraverseDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBHullTraverseDispersionFactorTextBox.Text)) {
-					return;
+					TankB.HullTraverseDispersionFactor = 0;
+				} else {
+					TankB.HullTraverseDispersionFactor = double.Parse (TankBHullTraverseDispersionFactorTextBox.Text);
 				}
-				TankB.HullTraverseDispersionFactor = double.Parse (TankBHullTraverseDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -435,9 +453,10 @@ namespace WorldOfTanks {
 		private void TankBTurretTraverseDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBTurretTraverseDispersionFactorTextBox.Text)) {
-					return;
+					TankB.TurretTraverseDispersionFactor = 0;
+				} else {
+					TankB.TurretTraverseDispersionFactor = double.Parse (TankBTurretTraverseDispersionFactorTextBox.Text);
 				}
-				TankB.TurretTraverseDispersionFactor = double.Parse (TankBTurretTraverseDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -447,9 +466,10 @@ namespace WorldOfTanks {
 		private void TankBFireDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBFireDispersionFactorTextBox.Text)) {
-					return;
+					TankB.FireDispersionFactor = 0;
+				} else {
+					TankB.FireDispersionFactor = double.Parse (TankBFireDispersionFactorTextBox.Text);
 				}
-				TankB.FireDispersionFactor = double.Parse (TankBFireDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -459,9 +479,10 @@ namespace WorldOfTanks {
 		private void TankBDamagedDispersionFactorTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBDamagedDispersionFactorTextBox.Text)) {
-					return;
+					TankB.DamagedDispersionFactor = 0;
+				} else {
+					TankB.DamagedDispersionFactor = double.Parse (TankBDamagedDispersionFactorTextBox.Text);
 				}
-				TankB.DamagedDispersionFactor = double.Parse (TankBDamagedDispersionFactorTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -471,9 +492,10 @@ namespace WorldOfTanks {
 		private void TankBMoveSpeedByHardTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBMoveSpeedByHardTextBox.Text)) {
-					return;
+					TankB.MoveSpeedByHard = 0;
+				} else {
+					TankB.MoveSpeedByHard = double.Parse (TankBMoveSpeedByHardTextBox.Text);
 				}
-				TankB.MoveSpeedByHard = double.Parse (TankBMoveSpeedByHardTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -483,9 +505,10 @@ namespace WorldOfTanks {
 		private void TankBMoveSpeedByMediumTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBMoveSpeedByMediumTextBox.Text)) {
-					return;
+					TankB.MoveSpeedByMedium = 0;
+				} else {
+					TankB.MoveSpeedByMedium = double.Parse (TankBMoveSpeedByMediumTextBox.Text);
 				}
-				TankB.MoveSpeedByMedium = double.Parse (TankBMoveSpeedByMediumTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -495,9 +518,10 @@ namespace WorldOfTanks {
 		private void TankBMoveSpeedBySoftTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBMoveSpeedBySoftTextBox.Text)) {
-					return;
+					TankB.MoveSpeedBySoft = 0;
+				} else {
+					TankB.MoveSpeedBySoft = double.Parse (TankBMoveSpeedBySoftTextBox.Text);
 				}
-				TankB.MoveSpeedBySoft = double.Parse (TankBMoveSpeedBySoftTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -507,9 +531,10 @@ namespace WorldOfTanks {
 		private void TankBHullTraverseSpeedByHardTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBHullTraverseSpeedByHardTextBox.Text)) {
-					return;
+					TankB.HullTraverseSpeedByHard = 0;
+				} else {
+					TankB.HullTraverseSpeedByHard = double.Parse (TankBHullTraverseSpeedByHardTextBox.Text);
 				}
-				TankB.HullTraverseSpeedByHard = double.Parse (TankBHullTraverseSpeedByHardTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -519,9 +544,10 @@ namespace WorldOfTanks {
 		private void TankBHullTraverseSpeedByMediumTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBHullTraverseSpeedByMediumTextBox.Text)) {
-					return;
+					TankB.HullTraverseSpeedByMedium = 0;
+				} else {
+					TankB.HullTraverseSpeedByMedium = double.Parse (TankBHullTraverseSpeedByMediumTextBox.Text);
 				}
-				TankB.HullTraverseSpeedByMedium = double.Parse (TankBHullTraverseSpeedByMediumTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -531,9 +557,10 @@ namespace WorldOfTanks {
 		private void TankBHullTraverseSpeedBySoftTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBHullTraverseSpeedBySoftTextBox.Text)) {
-					return;
+					TankB.HullTraverseSpeedBySoft = 0;
+				} else {
+					TankB.HullTraverseSpeedBySoft = double.Parse (TankBHullTraverseSpeedBySoftTextBox.Text);
 				}
-				TankB.HullTraverseSpeedBySoft = double.Parse (TankBHullTraverseSpeedBySoftTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -543,9 +570,10 @@ namespace WorldOfTanks {
 		private void TankBTurretTraverseSpeedTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (TankBTurretTraverseSpeedTextBox.Text)) {
-					return;
+					TankB.TurretTraverseSpeed = 0;
+				} else {
+					TankB.TurretTraverseSpeed = double.Parse (TankBTurretTraverseSpeedTextBox.Text);
 				}
-				TankB.TurretTraverseSpeed = double.Parse (TankBTurretTraverseSpeedTextBox.Text);
 				Calculate ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
@@ -625,9 +653,10 @@ namespace WorldOfTanks {
 		private void CurrentTimeTextBox_TextChanged (object sender, EventArgs e) {
 			try {
 				if (string.IsNullOrWhiteSpace (CurrentTimeTextBox.Text)) {
-					return;
+					CurrentAimTime = 0;
+				} else {
+					CurrentAimTime = double.Parse (CurrentTimeTextBox.Text);
 				}
-				CurrentAimTime = double.Parse (CurrentTimeTextBox.Text);
 				Panel.Refresh ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
