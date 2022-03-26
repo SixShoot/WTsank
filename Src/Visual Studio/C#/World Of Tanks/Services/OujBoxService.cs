@@ -213,26 +213,6 @@ namespace WorldOfTanks {
 			combatRecord.TeamA = resultJsonObject["team_a"];
 			combatRecord.TeamA.AddRange (resultJsonObject["team_b"].Array);
 			JsonObject playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.ID == item["vehicle"]["accountDBID"]);
-			/*while (true) {
-				playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.Names.Contains (item["name"]));
-				if (playerJsonObject == null) {
-					playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.Names.Contains (Big5.GetString (GBK.GetBytes (item["name"]))));
-				}
-				if (playerJsonObject == null) {
-					playerJsonObject = combatRecord.TeamA.Find (item => combatRecord.Player.Names.Contains (ShiftJis.GetString (GBK.GetBytes (item["name"]))));
-				}
-				if (playerJsonObject == null) {
-					string name = Interaction.InputBox ($"战斗日志中没有找到名为：\"{combatRecord.Name}\"的玩家，疑似乱码或更名，请重新指定玩家名称，或留空忽略此战斗日志。{Environment.NewLine}" +
-						$"战斗日期：{combatRecord.DateTime:MM月dd日}{dateTime:HH时mm分}{Environment.NewLine}" +
-						$"战斗日志第 {combatRecord.Page} 页，第 {combatRecord.IndexInPage + 1} 个", DefaultResponse: combatRecord.Name);
-					if (string.IsNullOrEmpty (name)) {
-						return;
-					}
-					combatRecord.Player.Names.Add (name);
-					continue;
-				}
-				break;
-			}*/
 			JsonObject vehicleJsonObject = playerJsonObject["vehicle"];
 			combatRecord.Combat = playerJsonObject["combat"];
 			combatRecord.Damage = vehicleJsonObject["damageDealt"];
@@ -241,6 +221,10 @@ namespace WorldOfTanks {
 			combatRecord.Assist += vehicleJsonObject["damageAssistedSmoke"];
 			combatRecord.Assist += vehicleJsonObject["damageAssistedStun"];
 			combatRecord.Assist += vehicleJsonObject["damageAssistedTrack"];
+			combatRecord.ShootCount = vehicleJsonObject["shots"];
+			combatRecord.HitCount = vehicleJsonObject["directEnemyHits"];
+			combatRecord.PenetrationCount = vehicleJsonObject["piercingEnemyHits"];
+			combatRecord.ArmorResistence = vehicleJsonObject["damageBlockedByArmor"];
 			combatRecord.SurvivalTime = vehicleJsonObject["lifeTime"];
 			combatRecord.XP = vehicleJsonObject["xp"];
 			combatRecord.TankName = playerJsonObject["tank_title"];
@@ -263,26 +247,12 @@ namespace WorldOfTanks {
 								CombatRecord innerCombatRecord = (CombatRecord)state;
 								FillCombatRecord (innerCombatRecord);
 								lock (summaryLock) {
-									combatRecordSummary.CombatNumber++;
-									combatRecordSummary.AddCombatResult (innerCombatRecord.Result);
-									combatRecordSummary.TotalDuration += innerCombatRecord.Duration;
-									combatRecordSummary.TotalCombat += innerCombatRecord.Combat;
-									combatRecordSummary.TotalDamage += innerCombatRecord.Damage;
-									combatRecordSummary.TotalAssist += innerCombatRecord.Assist;
-									combatRecordSummary.TotalSurvivalTime += innerCombatRecord.SurvivalTime;
-									combatRecordSummary.TotalXP += innerCombatRecord.XP;
+									combatRecordSummary.Append (innerCombatRecord);
 									if (!combatRecordSummary.Tanks.TryGetValue (innerCombatRecord.TankName, out CombatRecordSummary tank)) {
 										tank = new CombatRecordSummary ();
 										combatRecordSummary.Tanks[innerCombatRecord.TankName] = tank;
 									}
-									tank.CombatNumber++;
-									tank.AddCombatResult (innerCombatRecord.Result);
-									tank.TotalDuration += innerCombatRecord.Duration;
-									tank.TotalCombat += innerCombatRecord.Combat;
-									tank.TotalDamage += innerCombatRecord.Damage;
-									tank.TotalAssist += innerCombatRecord.Assist;
-									tank.TotalSurvivalTime += innerCombatRecord.SurvivalTime;
-									tank.TotalXP += innerCombatRecord.XP;
+									tank.Append (innerCombatRecord);
 								}
 							} catch (Exception e) {
 								exception = e;

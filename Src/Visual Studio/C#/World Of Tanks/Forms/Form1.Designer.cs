@@ -26,11 +26,11 @@ namespace WorldOfTanks {
 		private void InitializeComponent () {
 			this.FlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.OujBoxCombatRecordQueryRadioButton = new System.Windows.Forms.RadioButton();
+			this.OujBoxClanQueryRadioButton = new System.Windows.Forms.RadioButton();
 			this.SpottingDistanceCalculatorRadioButton = new System.Windows.Forms.RadioButton();
 			this.AimTimeCalculatorRadioButton = new System.Windows.Forms.RadioButton();
 			this.label1 = new System.Windows.Forms.Label();
 			this.Panel = new System.Windows.Forms.Panel();
-			this.OujBoxClanQueryRadioButton = new System.Windows.Forms.RadioButton();
 			this.FlowLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -63,6 +63,19 @@ namespace WorldOfTanks {
 			this.OujBoxCombatRecordQueryRadioButton.UseVisualStyleBackColor = true;
 			this.OujBoxCombatRecordQueryRadioButton.CheckedChanged += new System.EventHandler(this.OujBoxCombatRecordQueryRadioButton_CheckedChanged);
 			// 
+			// OujBoxClanQueryRadioButton
+			// 
+			this.OujBoxClanQueryRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
+			this.OujBoxClanQueryRadioButton.Location = new System.Drawing.Point(3, 49);
+			this.OujBoxClanQueryRadioButton.Name = "OujBoxClanQueryRadioButton";
+			this.OujBoxClanQueryRadioButton.Size = new System.Drawing.Size(147, 40);
+			this.OujBoxClanQueryRadioButton.TabIndex = 7;
+			this.OujBoxClanQueryRadioButton.TabStop = true;
+			this.OujBoxClanQueryRadioButton.Text = "偶游盒子军团查询";
+			this.OujBoxClanQueryRadioButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.OujBoxClanQueryRadioButton.UseVisualStyleBackColor = true;
+			this.OujBoxClanQueryRadioButton.CheckedChanged += new System.EventHandler(this.OujBoxClanQueryRadioButton_CheckedChanged);
+			// 
 			// SpottingDistanceCalculatorRadioButton
 			// 
 			this.SpottingDistanceCalculatorRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
@@ -94,10 +107,10 @@ namespace WorldOfTanks {
 			this.label1.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.label1.Location = new System.Drawing.Point(3, 184);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(150, 40);
+			this.label1.Size = new System.Drawing.Size(147, 86);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "作者：Eruru\r\nQQ群：628613664";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.label1.Text = "作者：Eruru\r\n版本：1.0.0\r\nQQ群：628613664";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// Panel
 			// 
@@ -111,19 +124,6 @@ namespace WorldOfTanks {
 			this.Panel.Size = new System.Drawing.Size(899, 605);
 			this.Panel.TabIndex = 2;
 			this.Panel.Resize += new System.EventHandler(this.Panel_Resize);
-			// 
-			// OujBoxClanQueryRadioButton
-			// 
-			this.OujBoxClanQueryRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
-			this.OujBoxClanQueryRadioButton.Location = new System.Drawing.Point(3, 49);
-			this.OujBoxClanQueryRadioButton.Name = "OujBoxClanQueryRadioButton";
-			this.OujBoxClanQueryRadioButton.Size = new System.Drawing.Size(147, 40);
-			this.OujBoxClanQueryRadioButton.TabIndex = 7;
-			this.OujBoxClanQueryRadioButton.TabStop = true;
-			this.OujBoxClanQueryRadioButton.Text = "偶游盒子军团查询";
-			this.OujBoxClanQueryRadioButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.OujBoxClanQueryRadioButton.UseVisualStyleBackColor = true;
-			this.OujBoxClanQueryRadioButton.CheckedChanged += new System.EventHandler(this.OujBoxClanQueryRadioButton_CheckedChanged);
 			// 
 			// Form1
 			// 

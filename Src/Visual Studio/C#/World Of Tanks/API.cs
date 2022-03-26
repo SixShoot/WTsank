@@ -99,6 +99,18 @@ namespace WorldOfTanks {
 			MessageBox.Show ("完成");
 		}
 
+		public static bool CheckDateTime (DateTime startDateTime, DateTime endDateTime) {
+			if (endDateTime.Date > DateTime.Now.Date) {
+				MessageBox.Show ("结束日期不能大于今天");
+				return false;
+			}
+			if (startDateTime.Date > endDateTime.Date) {
+				MessageBox.Show ("开始日期不能大于结束日期");
+				return false;
+			}
+			return true;
+		}
+
 	}
 
 }

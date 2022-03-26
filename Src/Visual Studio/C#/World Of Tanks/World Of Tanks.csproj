@@ -81,7 +81,9 @@
   <ItemGroup>
     <Compile Include="API.cs" />
     <Compile Include="Comparers\ListViewComparer.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Daos\BoxDao.cs" />
+    <Compile Include="Daos\ConfigDao.cs" />
     <Compile Include="Forms\AimTimeCalculatorForm.cs">
       <SubType>Form</SubType>
     </Compile>

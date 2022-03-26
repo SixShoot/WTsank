@@ -14,12 +14,14 @@ namespace WorldOfTanks {
 		readonly ListViewComparer MemberListViewComparer;
 
 		string[] Modes;
+		ListViewItem.ListViewSubItem CurrentSubItem;
 
 		public OujBoxClanQueryForm () {
 			InitializeComponent ();
 			MemberListViewComparer = new ListViewComparer (MemberResultListView);
 			MemberResultListView.ListViewItemSorter = MemberListViewComparer;
 			ModeComboBox.SelectedIndex = 0;
+			NameTextBox.Text = Config.Instance.BoxClanQueryName;
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
@@ -30,21 +32,22 @@ namespace WorldOfTanks {
 			if (MessageBox.Show ("使用此功能会发送大量请求，由于限制了频率，处理时间会很久，需要耐心等待，是否继续？", "注意", MessageBoxButtons.YesNo) != DialogResult.Yes) {
 				return;
 			}
-			if (CheckDateTime ()) {
+			if (API.CheckDateTime (StartDateTimePicker.Value, EndDateTimePicker.Value)) {
 				Query (NameTextBox.Text, true);
 			}
 		}
+		private void MemberResultListView_MouseClick (object sender, MouseEventArgs e) {
+			if (e.Button == MouseButtons.Right) {
+				CurrentSubItem = MemberResultListView.HitTest (e.X, e.Y).SubItem;
+				if (CurrentSubItem == null) {
+					return;
+				}
+				contextMenuStrip1.Show (MemberResultListView, e.Location);
+			}
+		}
 
-		bool CheckDateTime () {
-			if (StartDateTimePicker.Value.Date > DateTime.Now.Date) {
-				MessageBox.Show ("不能查询未来的战绩");
-				return false;
-			}
-			if (StartDateTimePicker.Value.Date > EndDateTimePicker.Value.Date) {
-				MessageBox.Show ("开始日期不能大于结束日期");
-				return false;
-			}
-			return true;
+		private void CopyToolStripMenuItem_Click (object sender, EventArgs e) {
+			Clipboard.SetText (CurrentSubItem.Text);
 		}
 
 		void SetState (string text) {
@@ -62,6 +65,8 @@ namespace WorldOfTanks {
 			Modes = new string[] { ModeComboBox.Text };
 			ResultListView.Items.Clear ();
 			MemberResultListView.Items.Clear ();
+			Config.Instance.BoxClanQueryName = NameTextBox.Text;
+			ConfigDao.Instance.Save (Config.Instance);
 			int count = 0;
 			object summaryLock = new object ();
 			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
@@ -201,42 +206,6 @@ namespace WorldOfTanks {
 					days[days.Count - 1]++;
 					filteredCombatRecords.Add (combatRecord);
 				}
-				/*
-				count++;
-				ThreadPool.QueueUserWorkItem (state => {
-					try {
-						CombatRecord innerCombatRecord = (CombatRecord)state;
-						int index = (int)innerCombatRecord.Tag;
-						lock (summaryLock) {
-							if (days[index] > 0) {
-								return;
-							}
-						}
-						OujBoxService.FillCombatRecord (innerCombatRecord);
-						lock (summaryLock) {
-							int clanMemberNumber = 0;
-							foreach (JsonValue playerJsonObject in innerCombatRecord.TeamA) {
-								if (playerJsonObject["clanDBID"] == player.ClanID) {
-									clanMemberNumber++;
-								}
-							}
-							if (clanMemberNumber > (innerCombatRecord.TeamA.Count - clanMemberNumber)) {
-								days[days.Count - 1]++;
-								filteredCombatRecords.Add (innerCombatRecord);
-							}
-						}
-					} catch (Exception e) {
-						exception = e;
-					} finally {
-						lock (summaryLock) {
-							count--;
-							if (count <= 0) {
-								autoResetEvent.Set ();
-							}
-						}
-					}
-				}, combatRecord);
-				*/
 			}
 			if (count <= 0) {
 				autoResetEvent.Set ();
@@ -257,6 +226,24 @@ namespace WorldOfTanks {
 		private void NameTextBox_KeyUp (object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.Enter) {
 				QueryButton.PerformClick ();
+			}
+		}
+
+		private void StartDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Enter) {
+				QueryButton.PerformClick ();
+			}
+		}
+
+		private void EndDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Enter) {
+				QueryButton.PerformClick ();
+			}
+		}
+
+		private void EndDateTimePicker_ValueChanged (object sender, EventArgs e) {
+			if (StartDateTimePicker.Value > EndDateTimePicker.Value) {
+				StartDateTimePicker.Value = EndDateTimePicker.Value;
 			}
 		}
 

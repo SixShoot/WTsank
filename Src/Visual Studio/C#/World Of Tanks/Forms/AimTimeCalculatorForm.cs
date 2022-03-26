@@ -46,12 +46,15 @@ namespace WorldOfTanks {
 				}
 				_CurrentAimTime = value;
 				TimeTrackBar.Value = (int)(value * AimTimeTrackBarScale);
-				CurrentTimeTextBox.Text = value.ToString ("F4");
+				if (!BlockCurrentTimeTextBox) {
+					CurrentTimeTextBox.Text = value.ToString ("F4");
+				}
 			}
 
 		}
 		double _CurrentAimTime;
 		bool BlockCalculate = true;
+		bool BlockCurrentTimeTextBox;
 
 		public AimTimeCalculatorForm () {
 			InitializeComponent ();
@@ -652,6 +655,7 @@ namespace WorldOfTanks {
 
 		private void CurrentTimeTextBox_TextChanged (object sender, EventArgs e) {
 			try {
+				BlockCurrentTimeTextBox = true;
 				if (string.IsNullOrWhiteSpace (CurrentTimeTextBox.Text)) {
 					CurrentAimTime = 0;
 				} else {
@@ -660,6 +664,8 @@ namespace WorldOfTanks {
 				Panel.Refresh ();
 			} catch (Exception exception) {
 				MessageBox.Show (exception.ToString ());
+			} finally {
+				BlockCurrentTimeTextBox = false;
 			}
 		}
 
