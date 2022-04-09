@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -8,6 +9,27 @@ using System.Windows.Forms;
 namespace WorldOfTanks {
 
 	class API {
+
+		static readonly CombatColor[] CombatColors = {
+			new CombatColor (600, "FFFFFF", "BB0022"),//0-600
+			new CombatColor (800, "FFFFFF", "FF4444"),//600-800
+			new CombatColor (1000, "FFFFFF", "000000", "22BB22"),//800-1000
+			new CombatColor (1200, "000000", "55FF55"),//1000-1200
+			new CombatColor (1400, "FFFFFF", "66AAFF"),//1200-1400
+			new CombatColor (1600, "FFFFFF", "CC44FF"),//1400-1600
+			new CombatColor (1800, "FFFFFF", "000000", "DDCC00"),//1600-1800
+			new CombatColor (2000, "000000", "FFAA33")//1800-2000
+		};
+
+		public static void Initialize () {
+			for (int i = 0; i < CombatColors.Length; i++) {
+				if (i > 0) {
+					CombatColors[i].Min = CombatColors[i - 1].Max;
+				}
+				CombatColors[i].Difference = CombatColors[i].Max - CombatColors[i].Min;
+				CombatColors[i].Middle = CombatColors[i].Min + CombatColors[i].Difference / 2;
+			}
+		}
 
 		public static void SetCompareColor (Control a, Control b, int compareResult) {
 			if (compareResult == 0) {
@@ -28,6 +50,68 @@ namespace WorldOfTanks {
 			a.BackColor = Color.LightCoral;
 			b.ForeColor = Color.Black;
 			b.BackColor = Color.LightGreen;
+		}
+
+		public static Color GetCombatColor (float combat, float basic, float min, float max) {
+			if (combat <= basic) {
+				return Lerp (Color.LightCoral, Color.LightGreen, Clamp ((combat - min) / (basic - min), 0, 1));
+			}
+			return Lerp (Color.LightGreen, Color.Gold, Clamp ((combat - basic) / (max - basic), 0, 1));
+		}
+		public static Color GetCombatColor (float combat, float basic) {
+			return GetCombatColor (combat, basic, basic - 500, basic + 500);
+		}
+		public static Color GetCombatColor (float combat, out Color contrastColor) {
+			for (int i = 0; i < CombatColors.Length; i++) {
+				if (combat >= CombatColors[i].Min && combat < CombatColors[i].Max) {
+					//return CombatColors[i].Color;
+					int startIndex = i;
+					int endIndex = i;
+					if (combat < CombatColors[i].Middle) {
+						startIndex--;
+						contrastColor = CombatColors[i].DoubleColor.ForeColor;
+					} else {
+						endIndex++;
+						contrastColor = CombatColors[i].RightForeColor;
+					}
+					DoubleColor startColor = CombatColors[startIndex < 0 ? 0 : startIndex].DoubleColor;
+					DoubleColor endColor = CombatColors[endIndex >= CombatColors.Length ? CombatColors.Length - 1 : endIndex].DoubleColor;
+					float startCombat = startIndex < 0 ? CombatColors[0].Min : CombatColors[startIndex].Middle;
+					float endCombat = endIndex >= CombatColors.Length ? CombatColors[CombatColors.Length - 1].Max : CombatColors[endIndex].Middle;
+					float difference = endCombat - startCombat;
+					return Lerp (startColor.BackColor, endColor.BackColor, Clamp ((combat - startCombat) / difference, 0, 1));
+				}
+			}
+			contrastColor = CombatColors[CombatColors.Length - 1].DoubleColor.ForeColor;
+			return CombatColors[CombatColors.Length - 1].DoubleColor.BackColor;
+		}
+		public static DoubleColor GetCombatColor (float combat) {
+			Color backColor = GetCombatColor (combat, out Color foreColor);
+			return new DoubleColor (foreColor, backColor);
+		}
+
+		public static Color HexToColor (string hex) {
+			return Color.FromArgb (
+				int.Parse (hex.Substring (0, 2), NumberStyles.AllowHexSpecifier),
+				int.Parse (hex.Substring (2, 2), NumberStyles.AllowHexSpecifier),
+				int.Parse (hex.Substring (4, 2), NumberStyles.AllowHexSpecifier)
+			);
+		}
+
+		public static bool IsLightColor (Color color) {
+			return (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) / 255 > 0.5;
+		}
+
+		public static Color ReverseColor (Color color) {
+			return Color.FromArgb (color.R ^ 255, color.G ^ 255, color.B ^ 255);
+		}
+
+		public static Color ContrastColor (Color color) {
+			return IsLightColor (color) ? Color.Black : Color.White;
+		}
+
+		public static float Clamp (float value, float min, float max) {
+			return value < min ? min : (value > max ? max : value);
 		}
 
 		public static float GetMedian (IList<float> list) {
@@ -109,6 +193,37 @@ namespace WorldOfTanks {
 				return false;
 			}
 			return true;
+		}
+
+		public static Color Lerp (Color startColor, Color endColor, float amount) {
+			return Color.FromArgb (
+				(int)Lerp (startColor.R, endColor.R, amount),
+				(int)Lerp (startColor.G, endColor.G, amount),
+				(int)Lerp (startColor.B, endColor.B, amount)
+			);
+		}
+		public static float Lerp (float a, float b, float amount) {
+			return a + (b - a) * amount;
+		}
+
+		class CombatColor {
+
+			public float Max { get; set; }
+			public float Middle { get; set; }
+			public float Min { get; set; }
+			public float Difference { get; set; }
+			public Color RightForeColor;
+			public DoubleColor DoubleColor { get; set; }
+
+			public CombatColor (float max, string leftForeColor, string rightForeColor, string backColor) {
+				Max = max;
+				RightForeColor = HexToColor (rightForeColor);
+				DoubleColor = new DoubleColor (HexToColor (leftForeColor), HexToColor (backColor));
+			}
+			public CombatColor (float max, string foreColor, string backColor) : this (max, foreColor, foreColor, backColor) {
+
+			}
+
 		}
 
 	}

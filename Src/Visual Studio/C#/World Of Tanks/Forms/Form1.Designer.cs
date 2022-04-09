@@ -53,6 +53,7 @@ namespace WorldOfTanks {
 			// OujBoxCombatRecordQueryRadioButton
 			// 
 			this.OujBoxCombatRecordQueryRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
+			this.OujBoxCombatRecordQueryRadioButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.OujBoxCombatRecordQueryRadioButton.Location = new System.Drawing.Point(3, 3);
 			this.OujBoxCombatRecordQueryRadioButton.Name = "OujBoxCombatRecordQueryRadioButton";
 			this.OujBoxCombatRecordQueryRadioButton.Size = new System.Drawing.Size(147, 40);
@@ -66,6 +67,7 @@ namespace WorldOfTanks {
 			// OujBoxClanQueryRadioButton
 			// 
 			this.OujBoxClanQueryRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
+			this.OujBoxClanQueryRadioButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.OujBoxClanQueryRadioButton.Location = new System.Drawing.Point(3, 49);
 			this.OujBoxClanQueryRadioButton.Name = "OujBoxClanQueryRadioButton";
 			this.OujBoxClanQueryRadioButton.Size = new System.Drawing.Size(147, 40);
@@ -79,6 +81,7 @@ namespace WorldOfTanks {
 			// SpottingDistanceCalculatorRadioButton
 			// 
 			this.SpottingDistanceCalculatorRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
+			this.SpottingDistanceCalculatorRadioButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.SpottingDistanceCalculatorRadioButton.Location = new System.Drawing.Point(3, 95);
 			this.SpottingDistanceCalculatorRadioButton.Name = "SpottingDistanceCalculatorRadioButton";
 			this.SpottingDistanceCalculatorRadioButton.Size = new System.Drawing.Size(147, 40);
@@ -92,6 +95,7 @@ namespace WorldOfTanks {
 			// AimTimeCalculatorRadioButton
 			// 
 			this.AimTimeCalculatorRadioButton.Appearance = System.Windows.Forms.Appearance.Button;
+			this.AimTimeCalculatorRadioButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.AimTimeCalculatorRadioButton.Location = new System.Drawing.Point(3, 141);
 			this.AimTimeCalculatorRadioButton.Name = "AimTimeCalculatorRadioButton";
 			this.AimTimeCalculatorRadioButton.Size = new System.Drawing.Size(147, 40);
@@ -109,7 +113,7 @@ namespace WorldOfTanks {
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(147, 86);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "作者：Eruru\r\n版本：1.0.0\r\nQQ群：628613664";
+			this.label1.Text = "作者：Eruru\r\n版本：1.1.1\r\nQQ群：628613664";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// Panel

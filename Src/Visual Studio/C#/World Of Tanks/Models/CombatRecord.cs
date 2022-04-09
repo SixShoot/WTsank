@@ -25,15 +25,24 @@ namespace WorldOfTanks {
 		public float SurvivalTime { get; set; }
 		public float XP { get; set; }
 		public string TankName { get; set; }
-		public JsonArray TeamA { get; set; }
+		public JsonArray WinTeamPlayers { get; set; }
+		public JsonArray TeamAPlayers { get; set; }
+		public JsonArray TeamBPlayers { get; set; }
+		public JsonArray PlayerTeamPlayers { get; set; }
 		public object Tag { get; set; }
 
 	}
 
 	class CombatRecordPlayer {
 
+		public string Name { get; set; }
 		public string ID { get; set; }
 		public int Combat { get; set; }
+		public DateTime UpdateTime { get; set; }
+		public float WinRate { get; set; }
+		public float HitRate { get; set; }
+		public float AverageCombatLevel { get; set; }
+		public float AverageDamage { get; set; }
 
 	}
 

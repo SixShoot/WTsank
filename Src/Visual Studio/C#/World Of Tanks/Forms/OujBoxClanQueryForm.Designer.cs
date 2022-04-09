@@ -62,11 +62,14 @@ namespace WorldOfTanks {
 			this.MemberResultListView.HideSelection = false;
 			this.MemberResultListView.Location = new System.Drawing.Point(250, 35);
 			this.MemberResultListView.Name = "MemberResultListView";
+			this.MemberResultListView.OwnerDraw = true;
 			this.MemberResultListView.Size = new System.Drawing.Size(729, 490);
 			this.MemberResultListView.TabIndex = 8;
 			this.MemberResultListView.UseCompatibleStateImageBehavior = false;
 			this.MemberResultListView.View = System.Windows.Forms.View.Details;
 			this.MemberResultListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.MemberResultListView_ColumnClick);
+			this.MemberResultListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.MemberResultListView_DrawColumnHeader);
+			this.MemberResultListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.MemberResultListView_DrawSubItem);
 			this.MemberResultListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MemberResultListView_MouseClick);
 			// 
 			// NameColumnHeader
@@ -105,6 +108,7 @@ namespace WorldOfTanks {
 			this.StartDateTimePicker.Name = "StartDateTimePicker";
 			this.StartDateTimePicker.Size = new System.Drawing.Size(200, 23);
 			this.StartDateTimePicker.TabIndex = 13;
+			this.StartDateTimePicker.ValueChanged += new System.EventHandler(this.StartDateTimePicker_ValueChanged);
 			this.StartDateTimePicker.KeyUp += new System.Windows.Forms.KeyEventHandler(this.StartDateTimePicker_KeyUp);
 			// 
 			// QueryButton
@@ -154,10 +158,13 @@ namespace WorldOfTanks {
 			this.ResultListView.HideSelection = false;
 			this.ResultListView.Location = new System.Drawing.Point(5, 35);
 			this.ResultListView.Name = "ResultListView";
+			this.ResultListView.OwnerDraw = true;
 			this.ResultListView.Size = new System.Drawing.Size(240, 490);
 			this.ResultListView.TabIndex = 27;
 			this.ResultListView.UseCompatibleStateImageBehavior = false;
 			this.ResultListView.View = System.Windows.Forms.View.Details;
+			this.ResultListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.ResultListView_DrawColumnHeader);
+			this.ResultListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.ResultListView_DrawSubItem);
 			// 
 			// LabelColumnHeader
 			// 
@@ -238,12 +245,12 @@ namespace WorldOfTanks {
 			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CopyToolStripMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+			this.contextMenuStrip1.Size = new System.Drawing.Size(101, 26);
 			// 
 			// CopyToolStripMenuItem
 			// 
 			this.CopyToolStripMenuItem.Name = "CopyToolStripMenuItem";
-			this.CopyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.CopyToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
 			this.CopyToolStripMenuItem.Text = "复制";
 			this.CopyToolStripMenuItem.Click += new System.EventHandler(this.CopyToolStripMenuItem_Click);
 			// 

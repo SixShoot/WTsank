@@ -1,6 +1,7 @@
 ﻿using Eruru.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -22,6 +23,16 @@ namespace WorldOfTanks {
 			MemberResultListView.ListViewItemSorter = MemberListViewComparer;
 			ModeComboBox.SelectedIndex = 0;
 			NameTextBox.Text = Config.Instance.BoxClanQueryName;
+			ResultListView.HideSelection = true;
+			MemberResultListView.HideSelection = true;
+#if DEBUG
+			for (int i = 0; i < 2500; i += 10) {
+				MemberResultListView.Items.Add ("").SubItems.Add (new ListViewItem.ListViewSubItem () {
+					Text = i.ToString (),
+					Tag = API.GetCombatColor (i)
+				});
+			}
+#endif
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
@@ -36,6 +47,7 @@ namespace WorldOfTanks {
 				Query (NameTextBox.Text, true);
 			}
 		}
+
 		private void MemberResultListView_MouseClick (object sender, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Right) {
 				CurrentSubItem = MemberResultListView.HitTest (e.X, e.Y).SubItem;
@@ -48,6 +60,77 @@ namespace WorldOfTanks {
 
 		private void CopyToolStripMenuItem_Click (object sender, EventArgs e) {
 			Clipboard.SetText (CurrentSubItem.Text);
+		}
+
+		private void ExportButton_Click (object sender, EventArgs e) {
+			if (saveFileDialog1.ShowDialog () == DialogResult.OK) {
+				API.ExportCSV (ResultListView, MemberResultListView, saveFileDialog1.FileName);
+			}
+		}
+
+		private void NameTextBox_KeyUp (object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Enter) {
+				QueryButton.PerformClick ();
+			}
+		}
+
+		private void StartDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Enter) {
+				QueryButton.PerformClick ();
+			}
+		}
+
+		private void EndDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Enter) {
+				QueryButton.PerformClick ();
+			}
+		}
+
+		private void StartDateTimePicker_ValueChanged (object sender, EventArgs e) {
+			if (EndDateTimePicker.Value < StartDateTimePicker.Value) {
+				EndDateTimePicker.Value = StartDateTimePicker.Value;
+			}
+		}
+
+		private void EndDateTimePicker_ValueChanged (object sender, EventArgs e) {
+			if (StartDateTimePicker.Value > EndDateTimePicker.Value) {
+				StartDateTimePicker.Value = EndDateTimePicker.Value;
+			}
+		}
+
+		private void MemberResultListView_ColumnClick (object sender, ColumnClickEventArgs e) {
+			if (MemberListViewComparer.SelectedColumnIndex == e.Column) {
+				MemberListViewComparer.ToggleSortOrder ();
+			} else {
+				MemberListViewComparer.ListView.Sorting = SortOrder.Descending;
+			}
+			SortMemberResultListViewColumn (e.Column, MemberListViewComparer.ListView.Sorting);
+		}
+
+		private void ResultListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
+			e.DrawDefault = true;
+		}
+
+		private void ResultListView_DrawSubItem (object sender, DrawListViewSubItemEventArgs e) {
+			e.DrawDefault = true;
+			if (e.SubItem.Tag != null) {
+				DoubleColor doubleColor = (DoubleColor)e.SubItem.Tag;
+				e.SubItem.ForeColor = doubleColor.ForeColor;
+				e.SubItem.BackColor = doubleColor.BackColor;
+			}
+		}
+
+		private void MemberResultListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
+			e.DrawDefault = true;
+		}
+
+		private void MemberResultListView_DrawSubItem (object sender, DrawListViewSubItemEventArgs e) {
+			e.DrawDefault = true;
+			if (e.SubItem.Tag != null) {
+				DoubleColor doubleColor = (DoubleColor)e.SubItem.Tag;
+				e.SubItem.ForeColor = doubleColor.ForeColor;
+				e.SubItem.BackColor = doubleColor.BackColor;
+			}
 		}
 
 		void SetState (string text) {
@@ -72,51 +155,44 @@ namespace WorldOfTanks {
 			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
 			new Thread (() => {
 				try {
-					int id = WarGamingNetService.QueryClanID (name);
-					List<string> names = WarGamingNetService.GetClanMemberNames (id);
+					int clanID = WarGamingNetService.QueryClanID (name);
+					List<string> names = WarGamingNetService.GetClanMemberNames (clanID);
 					List<float> combats = new List<float> ();
 					float totalCombat = 0;
 					List<ClanMember> clanMembers = new List<ClanMember> ();
-					if (isAttendance) {
-						count = names.Count;
-					}
+					count = names.Count;
 					SetState ($"进度：{clanMembers.Count}/{names.Count}");
 					foreach (string memberName in names) {
-						ClanMember clanMember = new ClanMember (memberName, id);
-						try {
-							clanMember.Combat = OujBoxService.GetCombat (memberName);
-							clanMember.CombatText = $"{clanMember.Combat:F2}";
-							combats.Add (clanMember.Combat);
-							if (isAttendance) {
-								ThreadPool.QueueUserWorkItem (state => {
-									ClanMember innerClanMember = (ClanMember)state;
+						ClanMember clanMember = new ClanMember (memberName, clanID);
+						clanMembers.Add (clanMember);
+						ThreadPool.QueueUserWorkItem (state => {
+							ClanMember innerClanMember = (ClanMember)state;
+							try {
+								innerClanMember.Player = OujBoxService.CreatePlayer (memberName);
+								clanMember.Combat = clanMember.Player.Combat;
+								clanMember.CombatText = $"{clanMember.Combat:F2}";
+								combats.Add (clanMember.Combat);
+								totalCombat += clanMember.Combat;
+								if (isAttendance) {
 									try {
 										innerClanMember.Attendance = QueryAttendance (innerClanMember);
 										innerClanMember.AttendanceText = innerClanMember.Attendance.ToString ();
 									} catch (Exception e) {
 										innerClanMember.AttendanceText = e.ToString ();
-									} finally {
-										lock (summaryLock) {
-											count--;
-											SetState ($"进度：{names.Count - count}/{names.Count}");
-											if (count <= 0) {
-												autoResetEvent.Set ();
-											}
-										}
 									}
-								}, clanMember);
+								}
+							} catch (Exception combatException) {
+								clanMember.CombatText = combatException.Message;
+							} finally {
+								lock (summaryLock) {
+									count--;
+									SetState ($"进度：{names.Count - count}/{names.Count}");
+									if (count <= 0) {
+										autoResetEvent.Set ();
+									}
+								}
 							}
-							totalCombat += clanMember.Combat;
-						} catch (Exception e) {
-							clanMember.CombatText = e.Message;
-							if (isAttendance) {
-								count--;
-							}
-						}
-						clanMembers.Add (clanMember);
-						if (!isAttendance) {
-							SetState ($"进度：{clanMembers.Count}/{names.Count}");
-						}
+						}, clanMember);
 					}
 					if (count <= 0) {
 						autoResetEvent.Set ();
@@ -135,14 +211,23 @@ namespace WorldOfTanks {
 							ResultListView.Items.Add ($"查询日期").SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
 						}
 						ResultListView.Items.Add ("成员数").SubItems.Add ($"{names.Count}");
-						ResultListView.Items.Add ("平均效率").SubItems.Add ($"{averageCombat:F2}");
-						ResultListView.Items.Add ("效率中位数").SubItems.Add ($"{medianCombat:F2}");
+						ResultListView.Items.Add ("平均效率").SubItems.Add (new ListViewItem.ListViewSubItem () {
+							Text = $"{averageCombat:F2}",
+							Tag = API.GetCombatColor (averageCombat)
+						});
+						ResultListView.Items.Add ("效率中位数").SubItems.Add (new ListViewItem.ListViewSubItem () {
+							Text = $"{medianCombat:F2}",
+							Tag = API.GetCombatColor (medianCombat)
+						});
 						API.AutoResizeListViewColumns (ResultListView);
 						ResultListView.EndUpdate ();
 						MemberResultListView.BeginUpdate ();
 						foreach (ClanMember clanMember in clanMembers) {
 							ListViewItem listViewItem = new ListViewItem (clanMember.Name);
-							listViewItem.SubItems.Add (clanMember.CombatText);
+							listViewItem.SubItems.Add (new ListViewItem.ListViewSubItem () {
+								Text = clanMember.CombatText,
+								Tag = API.GetCombatColor (clanMember.Combat)
+							});
 							listViewItem.SubItems.Add ($"{clanMember.AttendanceText}");
 							MemberResultListView.Items.Add (listViewItem);
 						}
@@ -172,7 +257,7 @@ namespace WorldOfTanks {
 		}
 
 		int QueryAttendance (ClanMember clanMember) {
-			List<CombatRecord> combatRecords = OujBoxService.GetCombatRecords (clanMember.Name, StartDateTimePicker.Value, EndDateTimePicker.Value, false);
+			List<CombatRecord> combatRecords = OujBoxService.GetCombatRecords (clanMember.Player, StartDateTimePicker.Value, EndDateTimePicker.Value, false);
 			List<CombatRecord> filteredCombatRecords = new List<CombatRecord> ();
 			DateTime dateTime = DateTime.MinValue;
 			List<int> days = new List<int> ();
@@ -197,7 +282,7 @@ namespace WorldOfTanks {
 				}
 				OujBoxService.FillCombatRecord (combatRecord);
 				int clanMemberNumber = 0;
-				foreach (JsonValue playerJsonObject in combatRecord.TeamA) {
+				foreach (JsonValue playerJsonObject in combatRecord.PlayerTeamPlayers) {
 					if (playerJsonObject["clanDBID"] == clanMember.ClanID) {
 						clanMemberNumber++;
 					}
@@ -215,45 +300,6 @@ namespace WorldOfTanks {
 				throw exception;
 			}
 			return days.Sum (value => value > 0 ? 1 : 0);
-		}
-
-		private void ExportButton_Click (object sender, EventArgs e) {
-			if (saveFileDialog1.ShowDialog () == DialogResult.OK) {
-				API.ExportCSV (ResultListView, MemberResultListView, saveFileDialog1.FileName);
-			}
-		}
-
-		private void NameTextBox_KeyUp (object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Enter) {
-				QueryButton.PerformClick ();
-			}
-		}
-
-		private void StartDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Enter) {
-				QueryButton.PerformClick ();
-			}
-		}
-
-		private void EndDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Enter) {
-				QueryButton.PerformClick ();
-			}
-		}
-
-		private void EndDateTimePicker_ValueChanged (object sender, EventArgs e) {
-			if (StartDateTimePicker.Value > EndDateTimePicker.Value) {
-				StartDateTimePicker.Value = EndDateTimePicker.Value;
-			}
-		}
-
-		private void MemberResultListView_ColumnClick (object sender, ColumnClickEventArgs e) {
-			if (MemberListViewComparer.SelectedColumnIndex == e.Column) {
-				MemberListViewComparer.ToggleSortOrder ();
-			} else {
-				MemberListViewComparer.ListView.Sorting = SortOrder.Descending;
-			}
-			SortMemberResultListViewColumn (e.Column, MemberListViewComparer.ListView.Sorting);
 		}
 
 		void SortMemberResultListViewColumn (int column, SortOrder sortOrder) {

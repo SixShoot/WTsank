@@ -72,7 +72,7 @@ namespace WorldOfTanks {
 			this.NameTextBox.Location = new System.Drawing.Point(45, 5);
 			this.NameTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.NameTextBox.Name = "NameTextBox";
-			this.NameTextBox.Size = new System.Drawing.Size(609, 23);
+			this.NameTextBox.Size = new System.Drawing.Size(474, 23);
 			this.NameTextBox.TabIndex = 1;
 			this.NameTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.NameTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameTextBox_KeyUp);
@@ -81,7 +81,7 @@ namespace WorldOfTanks {
 			// 
 			this.QueryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.QueryButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.QueryButton.Location = new System.Drawing.Point(1094, 5);
+			this.QueryButton.Location = new System.Drawing.Point(959, 5);
 			this.QueryButton.Name = "QueryButton";
 			this.QueryButton.Size = new System.Drawing.Size(75, 25);
 			this.QueryButton.TabIndex = 2;
@@ -94,10 +94,11 @@ namespace WorldOfTanks {
 			this.StartDateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.StartDateTimePicker.CalendarFont = new System.Drawing.Font("宋体", 9F);
 			this.StartDateTimePicker.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.StartDateTimePicker.Location = new System.Drawing.Point(659, 5);
+			this.StartDateTimePicker.Location = new System.Drawing.Point(524, 5);
 			this.StartDateTimePicker.Name = "StartDateTimePicker";
 			this.StartDateTimePicker.Size = new System.Drawing.Size(200, 23);
 			this.StartDateTimePicker.TabIndex = 3;
+			this.StartDateTimePicker.ValueChanged += new System.EventHandler(this.StartDateTimePicker_ValueChanged);
 			this.StartDateTimePicker.KeyUp += new System.Windows.Forms.KeyEventHandler(this.StartDateTimePicker_KeyUp);
 			// 
 			// ResultListView
@@ -112,10 +113,13 @@ namespace WorldOfTanks {
 			this.ResultListView.HideSelection = false;
 			this.ResultListView.Location = new System.Drawing.Point(5, 35);
 			this.ResultListView.Name = "ResultListView";
-			this.ResultListView.Size = new System.Drawing.Size(260, 490);
+			this.ResultListView.OwnerDraw = true;
+			this.ResultListView.Size = new System.Drawing.Size(325, 490);
 			this.ResultListView.TabIndex = 26;
 			this.ResultListView.UseCompatibleStateImageBehavior = false;
 			this.ResultListView.View = System.Windows.Forms.View.Details;
+			this.ResultListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.ResultListView_DrawColumnHeader);
+			this.ResultListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.ResultListView_DrawSubItem);
 			// 
 			// LabelColumnHeader
 			// 
@@ -152,13 +156,16 @@ namespace WorldOfTanks {
 			this.TankResultListView.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TankResultListView.FullRowSelect = true;
 			this.TankResultListView.HideSelection = false;
-			this.TankResultListView.Location = new System.Drawing.Point(270, 35);
+			this.TankResultListView.Location = new System.Drawing.Point(335, 35);
 			this.TankResultListView.Name = "TankResultListView";
-			this.TankResultListView.Size = new System.Drawing.Size(898, 490);
+			this.TankResultListView.OwnerDraw = true;
+			this.TankResultListView.Size = new System.Drawing.Size(698, 490);
 			this.TankResultListView.TabIndex = 25;
 			this.TankResultListView.UseCompatibleStateImageBehavior = false;
 			this.TankResultListView.View = System.Windows.Forms.View.Details;
 			this.TankResultListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.TankResultListView_ColumnClick);
+			this.TankResultListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.TankResultListView_DrawColumnHeader);
+			this.TankResultListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.TankResultListView_DrawSubItem);
 			// 
 			// NameColumnHeader
 			// 
@@ -241,7 +248,7 @@ namespace WorldOfTanks {
 			// 
 			this.ExportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.ExportButton.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.ExportButton.Location = new System.Drawing.Point(1094, 530);
+			this.ExportButton.Location = new System.Drawing.Point(959, 530);
 			this.ExportButton.Name = "ExportButton";
 			this.ExportButton.Size = new System.Drawing.Size(75, 25);
 			this.ExportButton.TabIndex = 27;
@@ -258,7 +265,7 @@ namespace WorldOfTanks {
 			this.EndDateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.EndDateTimePicker.CalendarFont = new System.Drawing.Font("宋体", 9F);
 			this.EndDateTimePicker.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.EndDateTimePicker.Location = new System.Drawing.Point(889, 5);
+			this.EndDateTimePicker.Location = new System.Drawing.Point(754, 5);
 			this.EndDateTimePicker.Name = "EndDateTimePicker";
 			this.EndDateTimePicker.Size = new System.Drawing.Size(200, 23);
 			this.EndDateTimePicker.TabIndex = 33;
@@ -269,7 +276,7 @@ namespace WorldOfTanks {
 			// 
 			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.label2.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label2.Location = new System.Drawing.Point(864, 5);
+			this.label2.Location = new System.Drawing.Point(729, 5);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(100, 23);
 			this.label2.TabIndex = 34;
@@ -279,7 +286,7 @@ namespace WorldOfTanks {
 			// OujBoxCombatRecordQueryForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(1173, 561);
+			this.ClientSize = new System.Drawing.Size(1038, 561);
 			this.Controls.Add(this.EndDateTimePicker);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.ExportButton);

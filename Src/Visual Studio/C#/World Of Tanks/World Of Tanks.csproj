@@ -84,6 +84,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Daos\BoxDao.cs" />
     <Compile Include="Daos\ConfigDao.cs" />
+    <Compile Include="DoubleColor.cs" />
     <Compile Include="Forms\AimTimeCalculatorForm.cs">
       <SubType>Form</SubType>
     </Compile>

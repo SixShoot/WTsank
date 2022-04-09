@@ -2,6 +2,7 @@
 
 	class ClanMember {
 
+		public CombatRecordPlayer Player;
 		public string Name;
 		public float Combat;
 		public string CombatText;
