@@ -8,6 +8,8 @@ namespace WorldOfTanks {
 
 	class WarGamingNetService {
 
+		public static readonly WarGamingNetService Instance = new WarGamingNetService ();
+
 		readonly Http Http = new Http () {
 			OnRequest = httpWebRequest => {
 				httpWebRequest.Proxy = null;
@@ -20,7 +22,7 @@ namespace WorldOfTanks {
 				Type = HttpRequestType.Get,
 				Url = "https://wgn.wggames.cn/clans/wot/search/api/autocomplete/",
 				QueryStringParameters = {
-					{ "search", name },
+					{ "search", HttpAPI.UrlEncode (name) },
 					{ "type", "clans" }
 				},
 				OnResponseError = (httpWebResponse, webException) => {

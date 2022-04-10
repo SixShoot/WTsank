@@ -649,7 +649,7 @@ namespace WorldOfTanks {
 		}
 
 		private void TimeTrackBar_Scroll (object sender, EventArgs e) {
-			CurrentAimTime = (double)TimeTrackBar.Value / TimeTrackBar.Maximum * MaxAimTime;
+			CurrentAimTime = API.Divide ((double)TimeTrackBar.Value, TimeTrackBar.Maximum) * MaxAimTime;
 			Panel.Refresh ();
 		}
 
@@ -785,7 +785,7 @@ namespace WorldOfTanks {
 			if (!group.Success) {
 				throw new Exception ($"未能解析出相应数据{Environment.NewLine}" +
 					$"请使用浏览器访问tanks.gg，例如：https://tanks.gg/tank/obj-277 {Environment.NewLine}" +
-					$"然后打开浏览器的开发者工具复制整个页面的html代码");
+					$"然后按下F12键打开浏览器的开发者工具复制整个页面的html代码");
 			}
 			return group.Value;
 		}
@@ -828,7 +828,7 @@ namespace WorldOfTanks {
 		void DrawAimCircle (AimTimeCalculatorTank tank, Graphics graphics) {
 			float centerX = Panel.Width / 2F;
 			float centerY = Panel.Height / 2F;
-			double current = 1 - Math.Min (CurrentAimTime / tank.ActualAimTime, 1);
+			double current = 1 - Math.Min (API.Divide (CurrentAimTime, tank.ActualAimTime), 1);
 			if (double.IsNaN (current)) {
 				current = 1;
 			}

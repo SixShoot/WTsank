@@ -1,7 +1,6 @@
 ﻿using Eruru.Html;
 using Eruru.Http;
 using Eruru.Json;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +8,9 @@ using System.Threading;
 
 namespace WorldOfTanks {
 
-	class OujBoxService {
+	class BoxService {
+
+		public static readonly BoxService Instance = new BoxService ();
 
 		readonly Http Http = new Http () {
 			OnRequest = httpWebRequest => {
@@ -23,7 +24,7 @@ namespace WorldOfTanks {
 
 		long RequestTime = 0;
 
-		public OujBoxService () {
+		public BoxService () {
 			Stopwatch.Start ();
 		}
 
@@ -33,7 +34,7 @@ namespace WorldOfTanks {
 				Url = "https://wotbox.ouj.com/wotbox/index.php",
 				QueryStringParameters = {
 					{ "r", "default/index" },
-					{ "pn", name }
+					{ "pn", HttpAPI.UrlEncode (name) }
 				},
 				OnResponseError = (httpWebResponse, webException) => {
 					throw webException;
@@ -41,15 +42,22 @@ namespace WorldOfTanks {
 			});
 			CheckSearch (response);
 			HtmlDocument htmlDocument = HtmlDocument.Parse (response);
+			CombatRecordPlayer player = new CombatRecordPlayer ();
+			int.TryParse (htmlDocument.QuerySelector (".power .num").TextContent, out int combat);
+			DateTime.TryParse (htmlDocument.QuerySelector (".userRecord-history__title p").ChildNodes[0].NodeValue.Substring ("更新时间：".Length), out DateTime updateTime);
+			float.TryParse (htmlDocument.GetElementByClassName ("win-rate-1k").GetAttribute ("win-rate"), out float winRate);
+			float.TryParse (htmlDocument.GetElementByClassName ("hit-rate-1k").GetAttribute ("hit-rate"), out float hitRate);
+			float.TryParse (htmlDocument.GetElementByClassName ("avg-lv-1k").GetAttribute ("avg-lv"), out float averageCombatLevel);
+			float.TryParse (htmlDocument.QuerySelector (".userRecord-data li .num").TextContent, out float averageDamage);
 			return new CombatRecordPlayer () {
 				Name = name,
 				ID = htmlDocument.GetElementById ("p_id").GetAttribute ("value"),
-				Combat = int.Parse (htmlDocument.QuerySelector (".power .num").TextContent),
-				UpdateTime = DateTime.Parse (htmlDocument.QuerySelector (".userRecord-history__title p").ChildNodes[0].NodeValue.Substring ("更新时间：".Length)),
-				WinRate = float.Parse (htmlDocument.GetElementByClassName ("win-rate-1k").GetAttribute ("win-rate")) / 100,
-				HitRate = float.Parse (htmlDocument.GetElementByClassName ("hit-rate-1k").GetAttribute ("hit-rate")) / 100,
-				AverageCombatLevel = float.Parse (htmlDocument.GetElementByClassName ("avg-lv-1k").GetAttribute ("avg-lv")),
-				AverageDamage = float.Parse (htmlDocument.QuerySelector (".userRecord-data li .num").TextContent)
+				Combat = combat,
+				UpdateTime = updateTime,
+				WinRate = winRate / 100,
+				HitRate = hitRate / 100,
+				AverageCombatLevel = averageCombatLevel,
+				AverageDamage = averageDamage
 			};
 		}
 
@@ -60,7 +68,7 @@ namespace WorldOfTanks {
 				Url = "http://wotbox.ouj.com/wotbox/index.php",
 				QueryStringParameters = {
 					{ "r", "default/battleLog" },
-					{ "pn", player.Name },
+					{ "pn", HttpAPI.UrlEncode (player.Name) },
 					{ "p", page }
 				},
 				OnResponseError = (httpWebResponse, webException) => {
@@ -96,7 +104,6 @@ namespace WorldOfTanks {
 				string mode = datas[0];
 				CombatRecord combatRecord = new CombatRecord () {
 					Player = player,
-					Name = player.Name,
 					Page = page,
 					IndexInPage = i,
 					ArenaID = arenaID,
@@ -112,7 +119,7 @@ namespace WorldOfTanks {
 			}
 			return combatRecords;
 		}
-		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, Func<int, bool> pageFilter, Func<CombatRecord, FilterResult> combatRecordFilter) {
+		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, Func<int, bool> pageFilter, Func<CombatRecord, LoopAction> combatRecordFilter) {
 			int page = 1;
 			DateTime dateTime = DateTime.Now.Date;
 			List<CombatRecord> combatRecords = new List<CombatRecord> ();
@@ -123,18 +130,18 @@ namespace WorldOfTanks {
 				List<CombatRecord> pageCombatRecords = GetCombatRecords (player, page, ref dateTime, out bool _, out bool hasNextPage);
 				bool needBreak = false;
 				foreach (CombatRecord combatRecord in pageCombatRecords) {
-					FilterResult filterResult = combatRecordFilter?.Invoke (combatRecord) ?? FilterResult.Execute;
-					switch (filterResult) {
-						case FilterResult.Execute:
+					LoopAction loopAction = combatRecordFilter?.Invoke (combatRecord) ?? LoopAction.Execute;
+					switch (loopAction) {
+						case LoopAction.Execute:
 							combatRecords.Add (combatRecord);
 							break;
-						case FilterResult.Continue:
+						case LoopAction.Continue:
 							break;
-						case FilterResult.Break:
+						case LoopAction.Break:
 							needBreak = true;
 							break;
 						default:
-							throw new NotImplementedException (filterResult.ToString ());
+							throw new NotImplementedException (loopAction.ToString ());
 					}
 					if (needBreak) {
 						break;
@@ -155,12 +162,12 @@ namespace WorldOfTanks {
 			endDateTime = endDateTime.Date;
 			return GetCombatRecords (player, null, battleRecord => {
 				if (battleRecord.DateTime > endDateTime || (isSameDay && battleRecord.DateTime > startDateTime)) {
-					return FilterResult.Continue;
+					return LoopAction.Continue;
 				}
 				if (battleRecord.DateTime < startDateTime) {
-					return FilterResult.Break;
+					return LoopAction.Break;
 				}
-				return FilterResult.Execute;
+				return LoopAction.Execute;
 			});
 		}
 		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, DateTime dateTime, bool isSameDay = true) {
@@ -177,7 +184,7 @@ namespace WorldOfTanks {
 					Url = "http://wotapp.ouj.com/",
 					QueryStringParameters = {
 						{ "r", "wotboxapi/battledetail" },
-						{ "pn", combatRecord.Name },
+						{ "pn", HttpAPI.UrlEncode (combatRecord.Player.Name) },
 						{ "arena_id", combatRecord.ArenaID }
 					},
 					OnResponseError = (httpWebResponse, webException) => {
@@ -213,24 +220,30 @@ namespace WorldOfTanks {
 			} else {
 				combatRecord.PlayerTeamPlayers = combatRecord.TeamAPlayers;
 			}
-			JsonObject vehicleJsonObject = playerJsonObject["vehicle"];
-			combatRecord.Combat = playerJsonObject["combat"];
-			combatRecord.Damage = vehicleJsonObject["damageDealt"];
-			combatRecord.Assist += vehicleJsonObject["damageAssistedInspire"];
-			combatRecord.Assist += vehicleJsonObject["damageAssistedRadio"];
-			combatRecord.Assist += vehicleJsonObject["damageAssistedSmoke"];
-			combatRecord.Assist += vehicleJsonObject["damageAssistedStun"];
-			combatRecord.Assist += vehicleJsonObject["damageAssistedTrack"];
-			combatRecord.ShootCount = vehicleJsonObject["shots"];
-			combatRecord.HitCount = vehicleJsonObject["directEnemyHits"];
-			combatRecord.PenetrationCount = vehicleJsonObject["piercingEnemyHits"];
-			combatRecord.ArmorResistence = vehicleJsonObject["damageBlockedByArmor"];
-			combatRecord.SurvivalTime = vehicleJsonObject["lifeTime"];
-			combatRecord.XP = vehicleJsonObject["xp"];
-			combatRecord.TankName = playerJsonObject["tank_title"];
+			combatRecord.TeamPlayer = new CombatRecordTeamPlayer { };
+			FillCombatRecordTeamPlayer (combatRecord.TeamPlayer, playerJsonObject);
 		}
 
-		public CombatRecordSummary Summary (List<CombatRecord> combatRecords, Func<CombatRecord, FilterResult> filter) {
+		public void FillCombatRecordTeamPlayer (CombatRecordTeamPlayer player, JsonObject jsonObject) {
+			JsonObject vehicleJsonObject = jsonObject["vehicle"];
+			player.Name = jsonObject["realName"];
+			player.Combat = jsonObject["combat"];
+			player.Damage = vehicleJsonObject["damageDealt"];
+			player.Assist += vehicleJsonObject["damageAssistedInspire"];
+			player.Assist += vehicleJsonObject["damageAssistedRadio"];
+			player.Assist += vehicleJsonObject["damageAssistedSmoke"];
+			player.Assist += vehicleJsonObject["damageAssistedStun"];
+			player.Assist += vehicleJsonObject["damageAssistedTrack"];
+			player.ShootCount = vehicleJsonObject["shots"];
+			player.HitCount = vehicleJsonObject["directEnemyHits"];
+			player.PenetrationCount = vehicleJsonObject["piercingEnemyHits"];
+			player.ArmorResistence = vehicleJsonObject["damageBlockedByArmor"];
+			player.SurvivalTime = vehicleJsonObject["lifeTime"];
+			player.XP = vehicleJsonObject["xp"];
+			player.TankName = jsonObject["tank_title"];
+		}
+
+		public CombatRecordSummary Summary (List<CombatRecord> combatRecords, Func<CombatRecord, LoopAction> filter) {
 			CombatRecordSummary combatRecordSummary = new CombatRecordSummary ();
 			int count = 0;
 			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
@@ -238,9 +251,9 @@ namespace WorldOfTanks {
 			object summaryLock = new object ();
 			foreach (CombatRecord combatRecord in combatRecords) {
 				bool needBreak = false;
-				FilterResult filterResult = filter?.Invoke (combatRecord) ?? FilterResult.Execute;
-				switch (filterResult) {
-					case FilterResult.Execute:
+				LoopAction loopAction = filter?.Invoke (combatRecord) ?? LoopAction.Execute;
+				switch (loopAction) {
+					case LoopAction.Execute:
 						count++;
 						ThreadPool.QueueUserWorkItem (state => {
 							try {
@@ -248,9 +261,9 @@ namespace WorldOfTanks {
 								FillCombatRecord (innerCombatRecord);
 								lock (summaryLock) {
 									combatRecordSummary.Append (innerCombatRecord);
-									if (!combatRecordSummary.Tanks.TryGetValue (innerCombatRecord.TankName, out CombatRecordSummary tank)) {
+									if (!combatRecordSummary.Tanks.TryGetValue (innerCombatRecord.TeamPlayer.TankName, out CombatRecordSummary tank)) {
 										tank = new CombatRecordSummary ();
-										combatRecordSummary.Tanks[innerCombatRecord.TankName] = tank;
+										combatRecordSummary.Tanks[innerCombatRecord.TeamPlayer.TankName] = tank;
 									}
 									tank.Append (innerCombatRecord);
 								}
@@ -266,13 +279,13 @@ namespace WorldOfTanks {
 							}
 						}, combatRecord);
 						break;
-					case FilterResult.Continue:
+					case LoopAction.Continue:
 						break;
-					case FilterResult.Break:
+					case LoopAction.Break:
 						needBreak = true;
 						break;
 					default:
-						throw new NotImplementedException (filterResult.ToString ());
+						throw new NotImplementedException (loopAction.ToString ());
 				}
 				if (needBreak) {
 					break;

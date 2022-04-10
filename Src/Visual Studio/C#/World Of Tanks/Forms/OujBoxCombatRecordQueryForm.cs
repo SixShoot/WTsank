@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,7 +9,6 @@ namespace WorldOfTanks {
 
 	public partial class OujBoxCombatRecordQueryForm : Form {
 
-		readonly OujBoxService OujBoxService = new OujBoxService ();
 		readonly string[] Modes = { "标准赛" };
 		readonly ListViewComparer TankListViewComparer;
 		readonly ListViewGroup BoxListViewGroup = new ListViewGroup ("偶游盒子");
@@ -39,19 +37,7 @@ namespace WorldOfTanks {
 			}
 		}
 
-		private void NameTextBox_KeyUp (object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Enter) {
-				QueryButton.PerformClick ();
-			}
-		}
-
-		private void StartDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Enter) {
-				QueryButton.PerformClick ();
-			}
-		}
-
-		private void EndDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
+		private void Control_KeyUp (object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.Enter) {
 				QueryButton.PerformClick ();
 			}
@@ -78,24 +64,11 @@ namespace WorldOfTanks {
 			SortTankResultListViewColumn (e.Column, TankListViewComparer.ListView.Sorting);
 		}
 
-		private void ResultListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
+		private void ListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
 			e.DrawDefault = true;
 		}
 
-		private void ResultListView_DrawSubItem (object sender, DrawListViewSubItemEventArgs e) {
-			e.DrawDefault = true;
-			if (e.SubItem.Tag != null) {
-				DoubleColor doubleColor = (DoubleColor)e.SubItem.Tag;
-				e.SubItem.ForeColor = doubleColor.ForeColor;
-				e.SubItem.BackColor = doubleColor.BackColor;
-			}
-		}
-
-		private void TankResultListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
-			e.DrawDefault = true;
-		}
-
-		private void TankResultListView_DrawSubItem (object sender, DrawListViewSubItemEventArgs e) {
+		private void ListView_DrawSubItem (object sender, DrawListViewSubItemEventArgs e) {
 			e.DrawDefault = true;
 			if (e.SubItem.Tag != null) {
 				DoubleColor doubleColor = (DoubleColor)e.SubItem.Tag;
@@ -127,10 +100,10 @@ namespace WorldOfTanks {
 			ConfigDao.Instance.Save (Config.Instance);
 			new Thread (() => {
 				try {
-					CombatRecordPlayer player = OujBoxService.CreatePlayer (name);
-					List<CombatRecord> combatRecords = OujBoxService.GetCombatRecords (player, StartDateTimePicker.Value, EndDateTimePicker.Value, isSameDay);
-					CombatRecordSummary combatRecordSummary = OujBoxService.Summary (combatRecords, combatRecord => {
-						return Modes.Contains (combatRecord.Mode) ? FilterResult.Execute : FilterResult.Continue;
+					CombatRecordPlayer player = BoxService.Instance.CreatePlayer (name);
+					List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (player, StartDateTimePicker.Value, EndDateTimePicker.Value, isSameDay);
+					CombatRecordSummary combatRecordSummary = BoxService.Instance.Summary (combatRecords, combatRecord => {
+						return Modes.Contains (combatRecord.Mode) ? LoopAction.Execute : LoopAction.Continue;
 					});
 					float maxTankAverageCombat = 0, minTankAverageCombat = 0;
 					int i = -1;

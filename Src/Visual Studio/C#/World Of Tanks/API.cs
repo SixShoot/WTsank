@@ -15,7 +15,7 @@ namespace WorldOfTanks {
 			new CombatColor (800, "FFFFFF", "FF4444"),//600-800
 			new CombatColor (1000, "FFFFFF", "000000", "22BB22"),//800-1000
 			new CombatColor (1200, "000000", "55FF55"),//1000-1200
-			new CombatColor (1400, "FFFFFF", "66AAFF"),//1200-1400
+			new CombatColor (1400, "000000", "FFFFFF", "66AAFF"),//1200-1400
 			new CombatColor (1600, "FFFFFF", "CC44FF"),//1400-1600
 			new CombatColor (1800, "FFFFFF", "000000", "DDCC00"),//1600-1800
 			new CombatColor (2000, "000000", "FFAA33")//1800-2000
@@ -54,9 +54,9 @@ namespace WorldOfTanks {
 
 		public static Color GetCombatColor (float combat, float basic, float min, float max) {
 			if (combat <= basic) {
-				return Lerp (Color.LightCoral, Color.LightGreen, Clamp ((combat - min) / (basic - min), 0, 1));
+				return Lerp (Color.LightCoral, Color.LightGreen, Clamp (API.Divide (combat - min, basic - min), 0, 1));
 			}
-			return Lerp (Color.LightGreen, Color.Gold, Clamp ((combat - basic) / (max - basic), 0, 1));
+			return Lerp (Color.LightGreen, Color.Gold, Clamp (API.Divide (combat - basic, max - basic), 0, 1));
 		}
 		public static Color GetCombatColor (float combat, float basic) {
 			return GetCombatColor (combat, basic, basic - 500, basic + 500);
@@ -79,7 +79,7 @@ namespace WorldOfTanks {
 					float startCombat = startIndex < 0 ? CombatColors[0].Min : CombatColors[startIndex].Middle;
 					float endCombat = endIndex >= CombatColors.Length ? CombatColors[CombatColors.Length - 1].Max : CombatColors[endIndex].Middle;
 					float difference = endCombat - startCombat;
-					return Lerp (startColor.BackColor, endColor.BackColor, Clamp ((combat - startCombat) / difference, 0, 1));
+					return Lerp (startColor.BackColor, endColor.BackColor, Clamp (Divide (combat - startCombat, difference), 0, 1));
 				}
 			}
 			contrastColor = CombatColors[CombatColors.Length - 1].DoubleColor.ForeColor;
@@ -204,6 +204,26 @@ namespace WorldOfTanks {
 		}
 		public static float Lerp (float a, float b, float amount) {
 			return a + (b - a) * amount;
+		}
+
+		public static string CombatResultToString (CombatResult combatResult) {
+			switch (combatResult) {
+				case CombatResult.Victory:
+					return "胜利";
+				case CombatResult.Fail:
+					return "失败";
+				case CombatResult.Even:
+					return "平局";
+				default:
+					throw new NotImplementedException (combatResult.ToString ());
+			}
+		}
+
+		public static float Divide (float a, float b) {
+			return b == 0 ? 0 : a / b;
+		}
+		public static double Divide (double a, double b) {
+			return b == 0 ? 0 : a / b;
 		}
 
 		class CombatColor {

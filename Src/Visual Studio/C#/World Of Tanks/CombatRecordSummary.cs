@@ -36,15 +36,15 @@ namespace WorldOfTanks {
 			CombatNumber++;
 			AddCombatResult (combatRecord.Result);
 			TotalDuration += combatRecord.Duration;
-			TotalCombat += combatRecord.Combat;
-			TotalDamage += combatRecord.Damage;
-			TotalAssist += combatRecord.Assist;
-			TotalShootCount += combatRecord.ShootCount;
-			TotalHitCount += combatRecord.HitCount;
-			TotalPenetrationCount += combatRecord.PenetrationCount;
-			TotalArmorResistence += combatRecord.ArmorResistence;
-			TotalSurvivalTime += combatRecord.SurvivalTime;
-			TotalXP += combatRecord.XP;
+			TotalCombat += combatRecord.TeamPlayer.Combat;
+			TotalDamage += combatRecord.TeamPlayer.Damage;
+			TotalAssist += combatRecord.TeamPlayer.Assist;
+			TotalShootCount += combatRecord.TeamPlayer.ShootCount;
+			TotalHitCount += combatRecord.TeamPlayer.HitCount;
+			TotalPenetrationCount += combatRecord.TeamPlayer.PenetrationCount;
+			TotalArmorResistence += combatRecord.TeamPlayer.ArmorResistence;
+			TotalSurvivalTime += combatRecord.TeamPlayer.SurvivalTime;
+			TotalXP += combatRecord.TeamPlayer.XP;
 		}
 
 		public void AddCombatResult (CombatResult combatResult) {
@@ -64,17 +64,17 @@ namespace WorldOfTanks {
 		}
 
 		public void Summary () {
-			VictoryRate = (float)VictoryNumber / CombatNumber;
-			AverageDuration = TotalDuration / CombatNumber;
-			AverageCombat = TotalCombat / CombatNumber;
-			AverageDamage = TotalDamage / CombatNumber;
-			AverageAssist = TotalAssist / CombatNumber;
-			AverageHitRate = TotalHitCount / TotalShootCount;
-			AveragePenetrationRate = TotalPenetrationCount / TotalHitCount;
-			AveragePenetrationRateIncludeNoHit = TotalPenetrationCount / TotalShootCount;
-			AverageArmorResistence = TotalArmorResistence / CombatNumber;
-			AverageSurvivalTime = TotalSurvivalTime / CombatNumber;
-			AverageXP = TotalXP / CombatNumber;
+			VictoryRate = API.Divide ((float)VictoryNumber, CombatNumber);
+			AverageDuration = API.Divide (TotalDuration, CombatNumber);
+			AverageCombat = API.Divide (TotalCombat, CombatNumber);
+			AverageDamage = API.Divide (TotalDamage, CombatNumber);
+			AverageAssist = API.Divide (TotalAssist, CombatNumber);
+			AverageHitRate = API.Divide (TotalHitCount, TotalShootCount);
+			AveragePenetrationRate = API.Divide (TotalPenetrationCount, TotalHitCount);
+			AveragePenetrationRateIncludeNoHit = API.Divide (TotalPenetrationCount, TotalShootCount);
+			AverageArmorResistence = API.Divide (TotalArmorResistence, CombatNumber);
+			AverageSurvivalTime = API.Divide (TotalSurvivalTime, CombatNumber);
+			AverageXP = API.Divide (TotalXP, CombatNumber);
 		}
 
 	}

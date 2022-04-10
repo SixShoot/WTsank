@@ -1,6 +1,6 @@
 ﻿namespace WorldOfTanks {
 
-	enum FilterResult {
+	enum LoopAction {
 
 		Execute,
 		Continue,

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace WorldOfTanks {
+﻿namespace WorldOfTanks {
 
 	class Config {
 
@@ -11,6 +6,7 @@ namespace WorldOfTanks {
 
 		public string BoxCombatQueryPlayerName { get; set; }
 		public string BoxClanQueryName { get; set; }
+		public string BoxCombatAnalysisPlayerName { get; set; }
 
 	}
 

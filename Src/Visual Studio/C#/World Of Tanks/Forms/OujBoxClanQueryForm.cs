@@ -1,7 +1,6 @@
 ﻿using Eruru.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,8 +9,6 @@ namespace WorldOfTanks {
 
 	public partial class OujBoxClanQueryForm : Form {
 
-		readonly OujBoxService OujBoxService = new OujBoxService ();
-		readonly WarGamingNetService WarGamingNetService = new WarGamingNetService ();
 		readonly ListViewComparer MemberListViewComparer;
 
 		string[] Modes;
@@ -68,19 +65,7 @@ namespace WorldOfTanks {
 			}
 		}
 
-		private void NameTextBox_KeyUp (object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Enter) {
-				QueryButton.PerformClick ();
-			}
-		}
-
-		private void StartDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Enter) {
-				QueryButton.PerformClick ();
-			}
-		}
-
-		private void EndDateTimePicker_KeyUp (object sender, KeyEventArgs e) {
+		private void Control_KeyUp (object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.Enter) {
 				QueryButton.PerformClick ();
 			}
@@ -107,24 +92,11 @@ namespace WorldOfTanks {
 			SortMemberResultListViewColumn (e.Column, MemberListViewComparer.ListView.Sorting);
 		}
 
-		private void ResultListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
+		private void ListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
 			e.DrawDefault = true;
 		}
 
-		private void ResultListView_DrawSubItem (object sender, DrawListViewSubItemEventArgs e) {
-			e.DrawDefault = true;
-			if (e.SubItem.Tag != null) {
-				DoubleColor doubleColor = (DoubleColor)e.SubItem.Tag;
-				e.SubItem.ForeColor = doubleColor.ForeColor;
-				e.SubItem.BackColor = doubleColor.BackColor;
-			}
-		}
-
-		private void MemberResultListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
-			e.DrawDefault = true;
-		}
-
-		private void MemberResultListView_DrawSubItem (object sender, DrawListViewSubItemEventArgs e) {
+		private void ListView_DrawSubItem (object sender, DrawListViewSubItemEventArgs e) {
 			e.DrawDefault = true;
 			if (e.SubItem.Tag != null) {
 				DoubleColor doubleColor = (DoubleColor)e.SubItem.Tag;
@@ -155,8 +127,8 @@ namespace WorldOfTanks {
 			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
 			new Thread (() => {
 				try {
-					int clanID = WarGamingNetService.QueryClanID (name);
-					List<string> names = WarGamingNetService.GetClanMemberNames (clanID);
+					int clanID = WarGamingNetService.Instance.QueryClanID (name);
+					List<string> names = WarGamingNetService.Instance.GetClanMemberNames (clanID);
 					List<float> combats = new List<float> ();
 					float totalCombat = 0;
 					List<ClanMember> clanMembers = new List<ClanMember> ();
@@ -168,7 +140,7 @@ namespace WorldOfTanks {
 						ThreadPool.QueueUserWorkItem (state => {
 							ClanMember innerClanMember = (ClanMember)state;
 							try {
-								innerClanMember.Player = OujBoxService.CreatePlayer (memberName);
+								innerClanMember.Player = BoxService.Instance.CreatePlayer (memberName);
 								clanMember.Combat = clanMember.Player.Combat;
 								clanMember.CombatText = $"{clanMember.Combat:F2}";
 								combats.Add (clanMember.Combat);
@@ -198,7 +170,7 @@ namespace WorldOfTanks {
 						autoResetEvent.Set ();
 					}
 					autoResetEvent.WaitOne ();
-					float averageCombat = totalCombat / clanMembers.Count;
+					float averageCombat = API.Divide (totalCombat, combats.Count);
 					combats.Sort ();
 					float medianCombat = API.GetMedian (combats);
 					Invoke (new Action (() => {
@@ -257,7 +229,7 @@ namespace WorldOfTanks {
 		}
 
 		int QueryAttendance (ClanMember clanMember) {
-			List<CombatRecord> combatRecords = OujBoxService.GetCombatRecords (clanMember.Player, StartDateTimePicker.Value, EndDateTimePicker.Value, false);
+			List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (clanMember.Player, StartDateTimePicker.Value, EndDateTimePicker.Value, false);
 			List<CombatRecord> filteredCombatRecords = new List<CombatRecord> ();
 			DateTime dateTime = DateTime.MinValue;
 			List<int> days = new List<int> ();
@@ -280,7 +252,7 @@ namespace WorldOfTanks {
 					days.Add (0);
 					//combatRecord.Tag = days.Count - 1;
 				}
-				OujBoxService.FillCombatRecord (combatRecord);
+				BoxService.Instance.FillCombatRecord (combatRecord);
 				int clanMemberNumber = 0;
 				foreach (JsonValue playerJsonObject in combatRecord.PlayerTeamPlayers) {
 					if (playerJsonObject["clanDBID"] == clanMember.ClanID) {

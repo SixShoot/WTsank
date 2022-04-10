@@ -80,6 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
+    <Compile Include="Forms\BoxCombatAnalysisForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BoxCombatAnalysisForm.Designer.cs">
+      <DependentUpon>BoxCombatAnalysisForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Comparers\ListViewComparer.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Daos\BoxDao.cs" />
@@ -96,7 +102,7 @@
     <Compile Include="CombatRecordSummary.cs" />
     <Compile Include="Enums\CombatResult.cs" />
     <Compile Include="Enums\CommanderVisionSystemType.cs" />
-    <Compile Include="Enums\FilterResult.cs" />
+    <Compile Include="Enums\LoopAction.cs" />
     <Compile Include="Forms\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,8 +122,10 @@
       <DependentUpon>OujBoxClanQueryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\ClanMember.cs" />
+    <Compile Include="Models\CombatRecordTeamPlayer.cs" />
+    <Compile Include="Models\CombatRecordPlayer.cs" />
     <Compile Include="PageChanger.cs" />
-    <Compile Include="Services\OujBoxService.cs" />
+    <Compile Include="Services\BoxService.cs" />
     <Compile Include="Enums\Page.cs" />
     <Compile Include="Models\SpottingPlayer.cs" />
     <Compile Include="Program.cs" />
@@ -133,6 +141,9 @@
     <Compile Include="Enums\TerrainType.cs" />
     <EmbeddedResource Include="Forms\AimTimeCalculatorForm.resx">
       <DependentUpon>AimTimeCalculatorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BoxCombatAnalysisForm.resx">
+      <DependentUpon>BoxCombatAnalysisForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

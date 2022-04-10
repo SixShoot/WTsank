@@ -6,6 +6,7 @@
 		OujBoxClandQuery,
 		SpottingDistanceCalculator,
 		AimTimeCalculator,
+		BoxCombatAnalysis,
 		None
 
 	}
