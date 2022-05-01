@@ -16,20 +16,29 @@ namespace WorldOfTanks {
 
 		public OujBoxClanQueryForm () {
 			InitializeComponent ();
-			MemberListViewComparer = new ListViewComparer (MemberResultListView);
+			MemberListViewComparer = new ListViewComparer (MemberResultListView) {
+				OnGetColumnType = column => {
+					if (column == NameColumnHeader.Index) {
+						return typeof (string);
+					}
+					if (column == PositionColumnHeader.Index) {
+						return typeof (ClanMemberPosition);
+					}
+					return typeof (float);
+				},
+				OnSorted = () => {
+					int serialNumber = 0;
+					foreach (ListViewItem item in MemberListViewComparer.ListView.Items) {
+						serialNumber++;
+						item.Text = serialNumber.ToString ();
+					}
+				}
+			};
 			MemberResultListView.ListViewItemSorter = MemberListViewComparer;
 			ModeComboBox.SelectedIndex = 0;
 			NameTextBox.Text = Config.Instance.BoxClanQueryName;
-			ResultListView.HideSelection = true;
-			MemberResultListView.HideSelection = true;
-#if DEBUG
-			for (int i = 0; i < 2500; i += 10) {
-				MemberResultListView.Items.Add ("").SubItems.Add (new ListViewItem.ListViewSubItem () {
-					Text = i.ToString (),
-					Tag = API.GetCombatColor (i)
-				});
-			}
-#endif
+			AutoResizeResultListViewColumns ();
+			API.AutoResizeListViewColumns (MemberResultListView);
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
@@ -84,12 +93,7 @@ namespace WorldOfTanks {
 		}
 
 		private void MemberResultListView_ColumnClick (object sender, ColumnClickEventArgs e) {
-			if (MemberListViewComparer.SelectedColumnIndex == e.Column) {
-				MemberListViewComparer.ToggleSortOrder ();
-			} else {
-				MemberListViewComparer.ListView.Sorting = SortOrder.Descending;
-			}
-			SortMemberResultListViewColumn (e.Column, MemberListViewComparer.ListView.Sorting);
+			MemberListViewComparer.OnClickColumn (e.Column);
 		}
 
 		private void ListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
@@ -103,6 +107,12 @@ namespace WorldOfTanks {
 				e.SubItem.ForeColor = doubleColor.ForeColor;
 				e.SubItem.BackColor = doubleColor.BackColor;
 			}
+		}
+
+		void AutoResizeResultListViewColumns () {
+			API.AutoResizeListViewColumns (ResultListView, true);
+			MemberResultListView.Left = ResultListView.Right + 5;
+			MemberResultListView.Width = AttendanceButton.Right - MemberResultListView.Left;
 		}
 
 		void SetState (string text) {
@@ -128,37 +138,42 @@ namespace WorldOfTanks {
 			new Thread (() => {
 				try {
 					int clanID = WarGamingNetService.Instance.QueryClanID (name);
-					List<string> names = WarGamingNetService.Instance.GetClanMemberNames (clanID);
 					List<float> combats = new List<float> ();
 					float totalCombat = 0;
-					List<ClanMember> clanMembers = new List<ClanMember> ();
-					count = names.Count;
-					SetState ($"进度：{clanMembers.Count}/{names.Count}");
-					foreach (string memberName in names) {
-						ClanMember clanMember = new ClanMember (memberName, clanID);
-						clanMembers.Add (clanMember);
+					List<ClanMember> clanMembers = WarGamingNetService.Instance.GetClanMembers (clanID);
+					count = clanMembers.Count;
+					SetState ($"进度：0/{clanMembers.Count}");
+					foreach (ClanMember clanMember in clanMembers) {
 						ThreadPool.QueueUserWorkItem (state => {
 							ClanMember innerClanMember = (ClanMember)state;
 							try {
-								innerClanMember.Player = BoxService.Instance.CreatePlayer (memberName);
-								clanMember.Combat = clanMember.Player.Combat;
-								clanMember.CombatText = $"{clanMember.Combat:F2}";
-								combats.Add (clanMember.Combat);
-								totalCombat += clanMember.Combat;
+								try {
+									innerClanMember.Player = BoxService.Instance.CreatePlayer (innerClanMember.Name);
+									innerClanMember.Player.CombatText = innerClanMember.Player.Combat.ToString ();
+								} catch {
+									innerClanMember.Player = new CombatRecordPlayer () {
+										Name = innerClanMember.Name
+									};
+									throw;
+								}
+								combats.Add (innerClanMember.Player.Combat);
+								totalCombat += innerClanMember.Player.Combat;
 								if (isAttendance) {
 									try {
-										innerClanMember.Attendance = QueryAttendance (innerClanMember);
-										innerClanMember.AttendanceText = innerClanMember.Attendance.ToString ();
+										innerClanMember.AttendanceDays = QueryAttendance (innerClanMember, out int attendanceCount);
+										innerClanMember.AttendanceDaysText = innerClanMember.AttendanceDays.ToString ();
+										innerClanMember.AttendanceCount = attendanceCount;
+										innerClanMember.AttendanceCountText = innerClanMember.AttendanceCount.ToString ();
 									} catch (Exception e) {
-										innerClanMember.AttendanceText = e.ToString ();
+										innerClanMember.AttendanceDaysText = e.ToString ();
 									}
 								}
 							} catch (Exception combatException) {
-								clanMember.CombatText = combatException.Message;
+								innerClanMember.Player.CombatText = combatException.Message;
 							} finally {
 								lock (summaryLock) {
 									count--;
-									SetState ($"进度：{names.Count - count}/{names.Count}");
+									SetState ($"进度：{clanMembers.Count - count}/{clanMembers.Count}");
 									if (count <= 0) {
 										autoResetEvent.Set ();
 									}
@@ -182,7 +197,7 @@ namespace WorldOfTanks {
 						} else {
 							ResultListView.Items.Add ($"查询日期").SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
 						}
-						ResultListView.Items.Add ("成员数").SubItems.Add ($"{names.Count}");
+						ResultListView.Items.Add ("成员数").SubItems.Add ($"{clanMembers.Count}");
 						ResultListView.Items.Add ("平均效率").SubItems.Add (new ListViewItem.ListViewSubItem () {
 							Text = $"{averageCombat:F2}",
 							Tag = API.GetCombatColor (averageCombat)
@@ -191,20 +206,30 @@ namespace WorldOfTanks {
 							Text = $"{medianCombat:F2}",
 							Tag = API.GetCombatColor (medianCombat)
 						});
-						API.AutoResizeListViewColumns (ResultListView);
+						AutoResizeResultListViewColumns ();
 						ResultListView.EndUpdate ();
 						MemberResultListView.BeginUpdate ();
+						int serialNumber = 0;
 						foreach (ClanMember clanMember in clanMembers) {
-							ListViewItem listViewItem = new ListViewItem (clanMember.Name);
-							listViewItem.SubItems.Add (new ListViewItem.ListViewSubItem () {
-								Text = clanMember.CombatText,
-								Tag = API.GetCombatColor (clanMember.Combat)
+							serialNumber++;
+							ListViewItem listViewItem = new ListViewItem (serialNumber.ToString ());
+							listViewItem.Tag = clanMember;
+							listViewItem.SubItems.Insert (NameColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.Name });
+							listViewItem.SubItems.Insert (PositionColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.Position });
+							listViewItem.SubItems.Insert (CombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
+								Text = clanMember.Player.CombatText,
+								Tag = API.GetCombatColor (clanMember.Player.Combat)
 							});
-							listViewItem.SubItems.Add ($"{clanMember.AttendanceText}");
+							listViewItem.SubItems.Insert (WinRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.Player.WinRate:P0}" });
+							listViewItem.SubItems.Insert (HitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.Player.HitRate:P0}" });
+							listViewItem.SubItems.Insert (AverageCombatLevelColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.Player.AverageCombatLevel}" });
+							listViewItem.SubItems.Insert (AverageDamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.Player.AverageDamage}" });
+							listViewItem.SubItems.Insert (AttendanceDaysColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.AttendanceDaysText });
+							listViewItem.SubItems.Insert (AttendanceCountColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.AttendanceCountText });
 							MemberResultListView.Items.Add (listViewItem);
 						}
 						API.AutoResizeListViewColumns (MemberResultListView);
-						SortMemberResultListViewColumn (CombatColumnHeader.Index, SortOrder.Descending);
+						MemberListViewComparer.SortColumn (CombatColumnHeader.Index, SortOrder.Descending);
 						MemberResultListView.EndUpdate ();
 					}));
 				} catch (Exception e) {
@@ -228,32 +253,28 @@ namespace WorldOfTanks {
 			}.Start ();
 		}
 
-		int QueryAttendance (ClanMember clanMember) {
+		int QueryAttendance (ClanMember clanMember, out int count) {
 			List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (clanMember.Player, StartDateTimePicker.Value, EndDateTimePicker.Value, false);
-			List<CombatRecord> filteredCombatRecords = new List<CombatRecord> ();
 			DateTime dateTime = DateTime.MinValue;
 			List<int> days = new List<int> ();
-			int count = 0;
 			int dayIndex = 0;
-			object summaryLock = new object ();
-			Exception exception = null;
-			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
+			Console.WriteLine ($"考情{clanMember.Name} 战斗日志数量{combatRecords.Count}");
 			foreach (CombatRecord combatRecord in combatRecords) {
 				if (!Modes.Contains (combatRecord.Mode)) {
 					continue;
 				}
-				if (dateTime == combatRecord.DateTime) {
+				if (dateTime.Date == combatRecord.DateTime.Date) {
 					if (days[dayIndex] > 0) {
-						continue;
+						//continue;
 					}
 				} else {
 					dateTime = combatRecord.DateTime;
 					dayIndex = days.Count;
 					days.Add (0);
-					//combatRecord.Tag = days.Count - 1;
 				}
 				BoxService.Instance.FillCombatRecord (combatRecord);
 				int clanMemberNumber = 0;
+				Console.WriteLine ($"{clanMember.Name} 当前战斗日志{combatRecord.ArenaID} 玩家列表{combatRecord.PlayerTeamPlayers.Serialize (true)}");
 				foreach (JsonValue playerJsonObject in combatRecord.PlayerTeamPlayers) {
 					if (playerJsonObject["clanDBID"] == clanMember.ClanID) {
 						clanMemberNumber++;
@@ -261,28 +282,10 @@ namespace WorldOfTanks {
 				}
 				if (clanMemberNumber >= 5) {
 					days[days.Count - 1]++;
-					filteredCombatRecords.Add (combatRecord);
 				}
 			}
-			if (count <= 0) {
-				autoResetEvent.Set ();
-			}
-			autoResetEvent.WaitOne ();
-			if (exception != null) {
-				throw exception;
-			}
+			count = days.Sum ();
 			return days.Sum (value => value > 0 ? 1 : 0);
-		}
-
-		void SortMemberResultListViewColumn (int column, SortOrder sortOrder) {
-			MemberListViewComparer.SelectedColumnIndex = column;
-			MemberListViewComparer.ListView.Sorting = sortOrder;
-			if (column == NameColumnHeader.Index) {
-				MemberListViewComparer.SelectedColumnType = typeof (string);
-			} else {
-				MemberListViewComparer.SelectedColumnType = typeof (float);
-			}
-			MemberListViewComparer.ListView.Sort ();
 		}
 
 	}

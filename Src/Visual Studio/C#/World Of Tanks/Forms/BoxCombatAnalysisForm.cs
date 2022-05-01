@@ -19,15 +19,25 @@ namespace WorldOfTanks {
 
 		public BoxCombatAnalysisForm () {
 			InitializeComponent ();
-			TeamAListView.ListViewItemSorter = new ListViewComparer (TeamAListView);
-			TeamBListView.ListViewItemSorter = new ListViewComparer (TeamBListView);
+			TeamAListView.ListViewItemSorter = new ListViewComparer (TeamAListView) {
+				OnGetColumnType = column => {
+					if (column == NameColumnHeader.Index || column == TankColumnHeader.Index) {
+						return typeof (string);
+					}
+					return typeof (float);
+				}
+			};
+			TeamBListView.ListViewItemSorter = new ListViewComparer (TeamBListView) {
+				OnGetColumnType = ((ListViewComparer)TeamAListView.ListViewItemSorter).OnGetColumnType
+			};
 			NameTextBox.Text = Config.Instance.BoxCombatAnalysisPlayerName;
-			CombatListView.HideSelection = false;
-			TeamAListView.HideSelection = true;
 			TeamBListView.Columns.Clear ();
 			foreach (ColumnHeader column in TeamAListView.Columns) {
 				TeamBListView.Columns.Add (column.Text, column.Width);
 			}
+			AutoResizeResultListViewColumns ();
+			API.AutoResizeListViewColumns (TeamAListView);
+			API.AutoResizeListViewColumns (TeamBListView);
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
@@ -71,7 +81,6 @@ namespace WorldOfTanks {
 
 		private void CombatListView_SelectedIndexChanged (object sender, EventArgs e) {
 			if (CombatListView.SelectedItems.Count == 0) {
-				OnSelectedCombatRecord (null);
 				return;
 			}
 			OnSelectedCombatRecord ((CombatRecord)CombatListView.SelectedItems[0].Tag);
@@ -93,12 +102,7 @@ namespace WorldOfTanks {
 		private void ListView_ColumnClick (object sender, ColumnClickEventArgs e) {
 			ListView listView = (ListView)sender;
 			ListViewComparer listViewComparer = (ListViewComparer)listView.ListViewItemSorter;
-			if (listViewComparer.SelectedColumnIndex == e.Column) {
-				listViewComparer.ToggleSortOrder ();
-			} else {
-				listViewComparer.ListView.Sorting = SortOrder.Descending;
-			}
-			SortListViewColumn (listViewComparer, e.Column, listViewComparer.ListView.Sorting);
+			listViewComparer.OnClickColumn (e.Column);
 		}
 
 		private void BoxCombatAnalysisForm_Resize (object sender, EventArgs e) {
@@ -110,15 +114,16 @@ namespace WorldOfTanks {
 			TeamBInformationLabel.Top = TeamBListView.Bottom + 5;
 		}
 
-		void SortListViewColumn (ListViewComparer listViewComparer, int column, SortOrder sortOrder) {
-			listViewComparer.SelectedColumnIndex = column;
-			listViewComparer.ListView.Sorting = sortOrder;
-			if (column == NameColumnHeader.Index || column == TankColumnHeader.Index) {
-				listViewComparer.SelectedColumnType = typeof (string);
-			} else {
-				listViewComparer.SelectedColumnType = typeof (float);
-			}
-			listViewComparer.ListView.Sort ();
+		void AutoResizeResultListViewColumns () {
+			API.AutoResizeListViewColumns (CombatListView, true);
+			TeamAListView.Left = CombatListView.Right + 5;
+			TeamAListView.Width = QueryButton.Right - TeamAListView.Left;
+			TeamAInformationLabel.Left = TeamAListView.Left;
+			TeamAInformationLabel.Width = TeamAListView.Width;
+			TeamBListView.Left = TeamAListView.Left;
+			TeamBListView.Width = TeamAListView.Width;
+			TeamBInformationLabel.Left = TeamAListView.Left;
+			TeamBInformationLabel.Width = TeamAListView.Width;
 		}
 
 		void Query (string name, bool isSameDay = true) {
@@ -133,10 +138,31 @@ namespace WorldOfTanks {
 			TeamBInformationLabel.Text = string.Empty;
 			Config.Instance.BoxCombatAnalysisPlayerName = NameTextBox.Text;
 			ConfigDao.Instance.Save (Config.Instance);
+			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
+			int count = 0;
+			object summaryLock = new object ();
 			new Thread (() => {
 				try {
 					CombatRecordPlayer player = BoxService.Instance.CreatePlayer (name);
 					List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (player, StartDateTimePicker.Value, EndDateTimePicker.Value, isSameDay);
+					count = combatRecords.Count;
+					for (int i = 0; i < combatRecords.Count; i++) {
+						ThreadPool.QueueUserWorkItem (state => {
+							CombatRecord innerCombatRecord = (CombatRecord)state;
+							BoxService.Instance.FillCombatRecord (innerCombatRecord);
+							innerCombatRecord.Tag = innerCombatRecord;
+							lock (summaryLock) {
+								count--;
+								if (count <= 0) {
+									autoResetEvent.Set ();
+								}
+							}
+						}, combatRecords[i]);
+					}
+					if (count <= 0) {
+						autoResetEvent.Set ();
+					}
+					autoResetEvent.WaitOne ();
 					Invoke (new Action (() => {
 						if (combatRecords.Count == 0) {
 							MessageBox.Show (this, "没有战斗数据");
@@ -148,10 +174,14 @@ namespace WorldOfTanks {
 								Tag = combatRecord
 							};
 							listViewItem.SubItems.Insert (ModeColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = combatRecord.Mode });
-							listViewItem.SubItems.Insert (DateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{combatRecord.DateTime:yyyy年MM月dd日}" });
+							listViewItem.SubItems.Insert (DateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{combatRecord.DateTime:yyyy年MM月dd日 HH时mm分}" });
+							listViewItem.SubItems.Insert (CombatListCombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
+								Text = $"{combatRecord.TeamPlayer.Combat:F2}",
+								Tag = API.GetCombatColor (combatRecord.TeamPlayer.Combat)
+							});
 							CombatListView.Items.Add (listViewItem);
 						}
-						API.AutoResizeListViewColumns (CombatListView);
+						AutoResizeResultListViewColumns ();
 						CombatListView.EndUpdate ();
 						if (CombatListView.Items.Count > 0) {
 							CombatListView.Items[0].Selected = true;
@@ -182,51 +212,39 @@ namespace WorldOfTanks {
 				TeamBListView.Items.Clear ();
 				return;
 			}
-			if (combatRecord.Tag == null) {
-				CombatListView.Enabled = false;
-				new Thread (() => {
+			CombatListView.Enabled = false;
+			ThreadPool.QueueUserWorkItem (state => {
+				if (combatRecord.Tag == null) {
 					BoxService.Instance.FillCombatRecord (combatRecord);
 					combatRecord.Tag = combatRecord;
-					AutoResetEvent autoResetEvent = new AutoResetEvent (false);
-					int count = 2;
-					object summaryLock = new object ();
-					new Thread (() => {
+				}
+				AutoResetEvent autoResetEvent = new AutoResetEvent (false);
+				int count = 2;
+				object summaryLock = new object ();
+				Execute (TeamAListView, TeamAInformationLabel, combatRecord.TeamAPlayers);
+				Execute (TeamBListView, TeamBInformationLabel, combatRecord.TeamBPlayers);
+				void Execute (ListView listView, Label label, JsonArray players) {
+					ThreadPool.QueueUserWorkItem (innerState => {
 						try {
-							RefreshTeamListView (TeamAListView, TeamAInformationLabel, combatRecord.TeamAPlayers);
+							RefreshTeamListView (listView, label, players);
 						} finally {
-							Done ();
+							OnDone ();
 						}
-					}) {
-						IsBackground = true
-					}.Start ();
-					new Thread (() => {
-						try {
-							RefreshTeamListView (TeamBListView, TeamBInformationLabel, combatRecord.TeamBPlayers);
-						} finally {
-							Done ();
-						}
-					}) {
-						IsBackground = true
-					}.Start ();
-					void Done () {
-						lock (summaryLock) {
-							count--;
-							if (count <= 0) {
-								autoResetEvent.Set ();
-							}
+					});
+				}
+				void OnDone () {
+					lock (summaryLock) {
+						count--;
+						if (count <= 0) {
+							autoResetEvent.Set ();
 						}
 					}
-					autoResetEvent.WaitOne ();
-					Invoke (new Action (() => {
-						CombatListView.Enabled = true;
-					}));
-				}) {
-					IsBackground = true
-				}.Start ();
-				return;
-			}
-			RefreshTeamListView (TeamAListView, TeamAInformationLabel, combatRecord.TeamAPlayers);
-			RefreshTeamListView (TeamBListView, TeamBInformationLabel, combatRecord.TeamBPlayers);
+				}
+				autoResetEvent.WaitOne ();
+				Invoke (new Action (() => {
+					CombatListView.Enabled = true;
+				}));
+			});
 		}
 
 		void RefreshTeamListView (ListView listView, Label label, JsonArray players) {
@@ -301,6 +319,8 @@ namespace WorldOfTanks {
 						Tag = API.GetCombatColor (cachedPlayer.Player.Combat)
 					});
 					listViewItem.SubItems.Insert (BoxWinRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.Player.WinRate:P0}" });
+					listViewItem.SubItems.Insert (BoxHitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.Player.HitRate:P0}" });
+					listViewItem.SubItems.Insert (BoxCombatLevelColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.Player.AverageCombatLevel}" });
 					listViewItem.SubItems.Insert (BoxDamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.Player.AverageDamage}" });
 					listViewItem.SubItems.Insert (TankColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = cachedPlayer.TeamPlayer.TankName });
 					listViewItem.SubItems.Insert (CombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
@@ -319,7 +339,7 @@ namespace WorldOfTanks {
 					listView.Items.Add (listViewItem);
 				}
 				API.AutoResizeListViewColumns (listView);
-				SortListViewColumn ((ListViewComparer)listView.ListViewItemSorter, CombatColumnHeader.Index, SortOrder.Descending);
+				((ListViewComparer)listView.ListViewItemSorter).SortColumn (CombatColumnHeader.Index, SortOrder.Descending);
 				listView.EndUpdate ();
 				label.Text = string.Format (
 					$"平均千场效率：{API.Divide (totalBoxCombat, effectiveCount):F2} " +

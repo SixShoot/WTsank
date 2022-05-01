@@ -47,7 +47,7 @@ namespace WorldOfTanks {
 			DateTime.TryParse (htmlDocument.QuerySelector (".userRecord-history__title p").ChildNodes[0].NodeValue.Substring ("更新时间：".Length), out DateTime updateTime);
 			float.TryParse (htmlDocument.GetElementByClassName ("win-rate-1k").GetAttribute ("win-rate"), out float winRate);
 			float.TryParse (htmlDocument.GetElementByClassName ("hit-rate-1k").GetAttribute ("hit-rate"), out float hitRate);
-			float.TryParse (htmlDocument.GetElementByClassName ("avg-lv-1k").GetAttribute ("avg-lv"), out float averageCombatLevel);
+			float.TryParse (htmlDocument.GetElementByClassName ("avg-lv-1k").NextElementSibling.TextContent.TrimEnd ('级'), out float averageCombatLevel);
 			float.TryParse (htmlDocument.QuerySelector (".userRecord-data li .num").TextContent, out float averageDamage);
 			return new CombatRecordPlayer () {
 				Name = name,
@@ -207,8 +207,8 @@ namespace WorldOfTanks {
 				}
 			}
 			DateTime dateTime = resultJsonObject["end_time"];
-			combatRecord.DateTime.AddHours (dateTime.Hour);
-			combatRecord.DateTime.AddMinutes (dateTime.Minute);
+			combatRecord.DateTime = combatRecord.DateTime.AddHours (dateTime.Hour);
+			combatRecord.DateTime = combatRecord.DateTime.AddMinutes (dateTime.Minute);
 			combatRecord.Duration = duration;
 			combatRecord.TeamAPlayers = resultJsonObject["team_a"];
 			combatRecord.TeamBPlayers = resultJsonObject["team_b"];

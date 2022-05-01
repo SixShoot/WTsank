@@ -123,8 +123,11 @@ namespace WorldOfTanks {
 			}
 		}
 
-		public static void AutoResizeListViewColumns (ListView listView) {
+		public static void AutoResizeListViewColumns (ListView listView, bool autoWidth = false) {
+			int width = listView.Width;
+			int totalWidth = 0;
 			listView.BeginUpdate ();
+			listView.Width = 0;
 			int[] widths = new int[listView.Columns.Count];
 			listView.AutoResizeColumns (ColumnHeaderAutoResizeStyle.HeaderSize);
 			for (int i = 0; i < listView.Columns.Count; i++) {
@@ -135,7 +138,10 @@ namespace WorldOfTanks {
 				if (listView.Columns[i].Width < widths[i]) {
 					listView.Columns[i].Width = widths[i];
 				}
+				totalWidth += listView.Columns[i].Width + 2;
 			}
+			totalWidth += SystemInformation.VerticalScrollBarWidth;
+			listView.Width = autoWidth ? totalWidth : width;
 			listView.EndUpdate ();
 		}
 

@@ -29,6 +29,7 @@ namespace WorldOfTanks {
 			this.ResultColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.ModeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.DateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.CombatListCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.EndDateTimePicker = new System.Windows.Forms.DateTimePicker();
 			this.label2 = new System.Windows.Forms.Label();
 			this.StartDateTimePicker = new System.Windows.Forms.DateTimePicker();
@@ -39,6 +40,7 @@ namespace WorldOfTanks {
 			this.NameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.BoxCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.BoxWinRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.BoxDamageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.TankColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.CombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.DamageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -67,7 +69,8 @@ namespace WorldOfTanks {
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.TeamAInformationLabel = new System.Windows.Forms.Label();
 			this.TeamBInformationLabel = new System.Windows.Forms.Label();
-			this.BoxDamageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.BoxHitRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.BoxCombatLevelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -78,14 +81,15 @@ namespace WorldOfTanks {
 			this.CombatListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ResultColumnHeader,
             this.ModeColumnHeader,
-            this.DateColumnHeader});
+            this.DateColumnHeader,
+            this.CombatListCombatColumnHeader});
 			this.CombatListView.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.CombatListView.FullRowSelect = true;
 			this.CombatListView.HideSelection = false;
 			this.CombatListView.Location = new System.Drawing.Point(5, 35);
 			this.CombatListView.Name = "CombatListView";
 			this.CombatListView.OwnerDraw = true;
-			this.CombatListView.Size = new System.Drawing.Size(210, 500);
+			this.CombatListView.Size = new System.Drawing.Size(225, 500);
 			this.CombatListView.TabIndex = 27;
 			this.CombatListView.UseCompatibleStateImageBehavior = false;
 			this.CombatListView.View = System.Windows.Forms.View.Details;
@@ -105,8 +109,12 @@ namespace WorldOfTanks {
 			// 
 			// DateColumnHeader
 			// 
-			this.DateColumnHeader.Text = "日期";
+			this.DateColumnHeader.Text = "时间";
 			this.DateColumnHeader.Width = 42;
+			// 
+			// CombatListCombatColumnHeader
+			// 
+			this.CombatListCombatColumnHeader.Text = "效率";
 			// 
 			// EndDateTimePicker
 			// 
@@ -186,6 +194,8 @@ namespace WorldOfTanks {
             this.NameColumnHeader,
             this.BoxCombatColumnHeader,
             this.BoxWinRateColumnHeader,
+            this.BoxHitRateColumnHeader,
+            this.BoxCombatLevelColumnHeader,
             this.BoxDamageColumnHeader,
             this.TankColumnHeader,
             this.CombatColumnHeader,
@@ -201,10 +211,10 @@ namespace WorldOfTanks {
 			this.TeamAListView.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TeamAListView.FullRowSelect = true;
 			this.TeamAListView.HideSelection = false;
-			this.TeamAListView.Location = new System.Drawing.Point(220, 35);
+			this.TeamAListView.Location = new System.Drawing.Point(235, 35);
 			this.TeamAListView.Name = "TeamAListView";
 			this.TeamAListView.OwnerDraw = true;
-			this.TeamAListView.Size = new System.Drawing.Size(980, 215);
+			this.TeamAListView.Size = new System.Drawing.Size(965, 215);
 			this.TeamAListView.TabIndex = 41;
 			this.TeamAListView.UseCompatibleStateImageBehavior = false;
 			this.TeamAListView.View = System.Windows.Forms.View.Details;
@@ -227,6 +237,11 @@ namespace WorldOfTanks {
 			// 
 			this.BoxWinRateColumnHeader.Text = "千场胜率";
 			this.BoxWinRateColumnHeader.Width = 75;
+			// 
+			// BoxDamageColumnHeader
+			// 
+			this.BoxDamageColumnHeader.Text = "千场均伤";
+			this.BoxDamageColumnHeader.Width = 76;
 			// 
 			// TankColumnHeader
 			// 
@@ -301,10 +316,10 @@ namespace WorldOfTanks {
 			this.TeamBListView.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TeamBListView.FullRowSelect = true;
 			this.TeamBListView.HideSelection = false;
-			this.TeamBListView.Location = new System.Drawing.Point(220, 275);
+			this.TeamBListView.Location = new System.Drawing.Point(235, 275);
 			this.TeamBListView.Name = "TeamBListView";
 			this.TeamBListView.OwnerDraw = true;
-			this.TeamBListView.Size = new System.Drawing.Size(980, 235);
+			this.TeamBListView.Size = new System.Drawing.Size(965, 235);
 			this.TeamBListView.TabIndex = 42;
 			this.TeamBListView.UseCompatibleStateImageBehavior = false;
 			this.TeamBListView.View = System.Windows.Forms.View.Details;
@@ -389,9 +404,9 @@ namespace WorldOfTanks {
 			this.TeamAInformationLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TeamAInformationLabel.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TeamAInformationLabel.Location = new System.Drawing.Point(220, 250);
+			this.TeamAInformationLabel.Location = new System.Drawing.Point(235, 250);
 			this.TeamAInformationLabel.Name = "TeamAInformationLabel";
-			this.TeamAInformationLabel.Size = new System.Drawing.Size(980, 23);
+			this.TeamAInformationLabel.Size = new System.Drawing.Size(965, 23);
 			this.TeamAInformationLabel.TabIndex = 43;
 			this.TeamAInformationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -400,16 +415,21 @@ namespace WorldOfTanks {
 			this.TeamBInformationLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TeamBInformationLabel.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.TeamBInformationLabel.Location = new System.Drawing.Point(220, 510);
+			this.TeamBInformationLabel.Location = new System.Drawing.Point(235, 510);
 			this.TeamBInformationLabel.Name = "TeamBInformationLabel";
-			this.TeamBInformationLabel.Size = new System.Drawing.Size(980, 23);
+			this.TeamBInformationLabel.Size = new System.Drawing.Size(965, 23);
 			this.TeamBInformationLabel.TabIndex = 44;
 			this.TeamBInformationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// BoxDamageColumnHeader
+			// BoxHitRateColumnHeader
 			// 
-			this.BoxDamageColumnHeader.Text = "千场均伤";
-			this.BoxDamageColumnHeader.Width = 76;
+			this.BoxHitRateColumnHeader.Text = "千场命中率";
+			this.BoxHitRateColumnHeader.Width = 88;
+			// 
+			// BoxCombatLevelColumnHeader
+			// 
+			this.BoxCombatLevelColumnHeader.Text = "千场出战等级";
+			this.BoxCombatLevelColumnHeader.Width = 98;
 			// 
 			// BoxCombatAnalysisForm
 			// 
@@ -480,5 +500,8 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.Label TeamAInformationLabel;
 		private System.Windows.Forms.Label TeamBInformationLabel;
 		private System.Windows.Forms.ColumnHeader BoxDamageColumnHeader;
+		private System.Windows.Forms.ColumnHeader CombatListCombatColumnHeader;
+		private System.Windows.Forms.ColumnHeader BoxHitRateColumnHeader;
+		private System.Windows.Forms.ColumnHeader BoxCombatLevelColumnHeader;
 	}
 }

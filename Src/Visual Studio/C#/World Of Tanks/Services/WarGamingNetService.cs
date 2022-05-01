@@ -44,7 +44,7 @@ namespace WorldOfTanks {
 			return id;
 		}
 
-		public List<string> GetClanMemberNames (int id) {
+		public List<ClanMember> GetClanMembers (int id) {
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = $"https://wgn.wggames.cn/clans/wot/{id}/api/players/",
@@ -55,11 +55,15 @@ namespace WorldOfTanks {
 			});
 			JsonObject jsonObject = JsonObject.Parse (response);
 			JsonArray membersJsonArray = jsonObject["items"];
-			List<string> names = new List<string> ();
+			List<ClanMember> clanMembers = new List<ClanMember> ();
 			foreach (JsonValue memberJsonArray in membersJsonArray) {
-				names.Add (memberJsonArray["name"]);
+				JsonObject role = memberJsonArray["role"];
+				clanMembers.Add (new ClanMember (memberJsonArray["name"], id) {
+					Position = role["localized_name"],
+					PositionRank = role["rank"]
+				});
 			}
-			return names;
+			return clanMembers;
 		}
 
 	}

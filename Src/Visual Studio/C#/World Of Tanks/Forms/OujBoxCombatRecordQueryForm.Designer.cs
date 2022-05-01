@@ -110,7 +110,7 @@ namespace WorldOfTanks {
 			this.ContentColumnHeader});
 			this.ResultListView.Font = new System.Drawing.Font ("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.ResultListView.FullRowSelect = true;
-			this.ResultListView.HideSelection = false;
+			this.ResultListView.HideSelection = true;
 			this.ResultListView.Location = new System.Drawing.Point (5, 35);
 			this.ResultListView.Name = "ResultListView";
 			this.ResultListView.OwnerDraw = true;
@@ -155,7 +155,7 @@ namespace WorldOfTanks {
 			this.AveragePenetrationRateIncludeNoHitColumnHeader});
 			this.TankResultListView.Font = new System.Drawing.Font ("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TankResultListView.FullRowSelect = true;
-			this.TankResultListView.HideSelection = false;
+			this.TankResultListView.HideSelection = true;
 			this.TankResultListView.Location = new System.Drawing.Point (335, 35);
 			this.TankResultListView.Name = "TankResultListView";
 			this.TankResultListView.OwnerDraw = true;

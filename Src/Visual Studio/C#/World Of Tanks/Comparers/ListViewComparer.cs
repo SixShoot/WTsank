@@ -10,6 +10,8 @@ namespace WorldOfTanks {
 		public ListView ListView;
 		public int SelectedColumnIndex;
 		public Type SelectedColumnType;
+		public Func<int, Type> OnGetColumnType;
+		public Action OnSorted;
 
 		public ListViewComparer (ListView listView) {
 			ListView = listView;
@@ -27,6 +29,10 @@ namespace WorldOfTanks {
 				string valueA = matchA.Success ? matchA.Value : "0";
 				string valueB = matchB.Success ? matchB.Value : "0";
 				value = float.Parse (valueA).CompareTo (float.Parse (valueB));
+			} else if (SelectedColumnType == typeof (ClanMemberPosition)) {
+				ClanMember clanMemberA = (ClanMember)a.Tag;
+				ClanMember clanMemberB = (ClanMember)b.Tag;
+				value = clanMemberA.PositionRank.CompareTo (clanMemberB.PositionRank);
 			} else {
 				value = textA.CompareTo (textB);
 			}
@@ -38,6 +44,23 @@ namespace WorldOfTanks {
 
 		public void ToggleSortOrder () {
 			ListView.Sorting = ListView.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+		}
+
+		public void OnClickColumn (int column) {
+			if (SelectedColumnIndex == column) {
+				ToggleSortOrder ();
+			} else {
+				ListView.Sorting = SortOrder.Descending;
+			}
+			SortColumn (column, ListView.Sorting);
+		}
+
+		public void SortColumn (int column, SortOrder sortOrder) {
+			SelectedColumnIndex = column;
+			ListView.Sorting = sortOrder;
+			SelectedColumnType = OnGetColumnType?.Invoke (column) ?? typeof (string);
+			ListView.Sort ();
+			OnSorted?.Invoke ();
 		}
 
 	}

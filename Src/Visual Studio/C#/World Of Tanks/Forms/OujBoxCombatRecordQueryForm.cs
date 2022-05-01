@@ -16,13 +16,20 @@ namespace WorldOfTanks {
 
 		public OujBoxCombatRecordQueryForm () {
 			InitializeComponent ();
-			TankListViewComparer = new ListViewComparer (TankResultListView);
+			TankListViewComparer = new ListViewComparer (TankResultListView) {
+				OnGetColumnType = column => {
+					if (column == NameColumnHeader.Index) {
+						return typeof (string);
+					}
+					return typeof (float);
+				}
+			};
 			TankResultListView.ListViewItemSorter = TankListViewComparer;
 			NameTextBox.Text = Config.Instance.BoxCombatQueryPlayerName;
-			ResultListView.HideSelection = true;
-			TankResultListView.HideSelection = true;
 			ResultListView.Groups.Add (BoxListViewGroup);
 			ResultListView.Groups.Add (ResultListViewGroup);
+			AutoResizeResultListViewColumns ();
+			API.AutoResizeListViewColumns (TankResultListView);
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
@@ -56,12 +63,7 @@ namespace WorldOfTanks {
 		}
 
 		private void TankResultListView_ColumnClick (object sender, ColumnClickEventArgs e) {
-			if (TankListViewComparer.SelectedColumnIndex == e.Column) {
-				TankListViewComparer.ToggleSortOrder ();
-			} else {
-				TankListViewComparer.ListView.Sorting = SortOrder.Descending;
-			}
-			SortTankResultListViewColumn (e.Column, TankListViewComparer.ListView.Sorting);
+			TankListViewComparer.OnClickColumn (e.Column);
 		}
 
 		private void ListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
@@ -77,15 +79,10 @@ namespace WorldOfTanks {
 			}
 		}
 
-		void SortTankResultListViewColumn (int column, SortOrder sortOrder) {
-			TankListViewComparer.SelectedColumnIndex = column;
-			TankListViewComparer.ListView.Sorting = sortOrder;
-			if (column == NameColumnHeader.Index) {
-				TankListViewComparer.SelectedColumnType = typeof (string);
-			} else {
-				TankListViewComparer.SelectedColumnType = typeof (float);
-			}
-			TankListViewComparer.ListView.Sort ();
+		void AutoResizeResultListViewColumns () {
+			API.AutoResizeListViewColumns (ResultListView, true);
+			TankResultListView.Left = ResultListView.Right + 5;
+			TankResultListView.Width = QueryButton.Right - TankResultListView.Left;
 		}
 
 		void Query (string name, bool isSameDay = true) {
@@ -160,8 +157,7 @@ namespace WorldOfTanks {
 							ResultListView.Items.Add (new ListViewItem ("平均击穿率", ResultListViewGroup)).SubItems.Add ($"{combatRecordSummary.AveragePenetrationRate:P2}");
 							ResultListView.Items.Add (new ListViewItem ("平均击穿率(含未命中)", ResultListViewGroup)).SubItems.Add ($"{combatRecordSummary.AveragePenetrationRateIncludeNoHit:P2}");
 						}
-
-						API.AutoResizeListViewColumns (ResultListView);
+						AutoResizeResultListViewColumns ();
 						ResultListView.EndUpdate ();
 						if (combatRecordSummary.CombatNumber == 0) {
 							MessageBox.Show (this, "没有战斗数据");
@@ -190,7 +186,7 @@ namespace WorldOfTanks {
 							TankResultListView.Items.Add (listViewItem);
 						}
 						API.AutoResizeListViewColumns (TankResultListView);
-						SortTankResultListViewColumn (AverageCombatColumnHeader.Index, SortOrder.Descending);
+						TankListViewComparer.SortColumn (AverageCombatColumnHeader.Index, SortOrder.Descending);
 						TankResultListView.EndUpdate ();
 					}));
 				} catch (Exception exception) {

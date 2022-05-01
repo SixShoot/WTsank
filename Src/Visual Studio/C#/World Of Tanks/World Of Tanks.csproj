@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
+    <Compile Include="Enums\ClanMemberPosition.cs" />
     <Compile Include="Forms\BoxCombatAnalysisForm.cs">
       <SubType>Form</SubType>
     </Compile>
