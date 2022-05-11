@@ -42,6 +42,7 @@ namespace WorldOfTanks {
 			this.AverageSurvivalTimeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageXPColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MedianCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageDamageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageAssistColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageArmorResistanceColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -52,7 +53,6 @@ namespace WorldOfTanks {
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.EndDateTimePicker = new System.Windows.Forms.DateTimePicker();
 			this.label2 = new System.Windows.Forms.Label();
-			this.MedianCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.StateLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -112,6 +112,7 @@ namespace WorldOfTanks {
             this.ContentColumnHeader});
 			this.ResultListView.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.ResultListView.FullRowSelect = true;
+			this.ResultListView.HideSelection = false;
 			this.ResultListView.Location = new System.Drawing.Point(5, 35);
 			this.ResultListView.Name = "ResultListView";
 			this.ResultListView.OwnerDraw = true;
@@ -157,6 +158,7 @@ namespace WorldOfTanks {
             this.AveragePenetrationRateIncludeNoHitColumnHeader});
 			this.TankResultListView.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TankResultListView.FullRowSelect = true;
+			this.TankResultListView.HideSelection = false;
 			this.TankResultListView.Location = new System.Drawing.Point(335, 35);
 			this.TankResultListView.Name = "TankResultListView";
 			this.TankResultListView.OwnerDraw = true;
@@ -217,6 +219,11 @@ namespace WorldOfTanks {
 			// 
 			this.AverageCombatColumnHeader.Text = "平均效率";
 			this.AverageCombatColumnHeader.Width = 70;
+			// 
+			// MedianCombatColumnHeader
+			// 
+			this.MedianCombatColumnHeader.Text = "效率中位数";
+			this.MedianCombatColumnHeader.Width = 84;
 			// 
 			// AverageDamageColumnHeader
 			// 
@@ -283,11 +290,6 @@ namespace WorldOfTanks {
 			this.label2.TabIndex = 34;
 			this.label2.Text = "至";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// MedianCombatColumnHeader
-			// 
-			this.MedianCombatColumnHeader.Text = "中位数效率";
-			this.MedianCombatColumnHeader.Width = 84;
 			// 
 			// StateLabel
 			// 

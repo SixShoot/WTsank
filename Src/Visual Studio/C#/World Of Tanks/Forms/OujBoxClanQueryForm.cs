@@ -209,9 +209,13 @@ namespace WorldOfTanks {
 					float averageDamage = API.Divide (totalDamage, combats.Count);
 					combats.Sort ();
 					float medianCombat = API.GetMedian (combats);
+					winRates.Sort ();
 					float medianWinRate = API.GetMedian (winRates);
+					hitRates.Sort ();
 					float medianHitRate = API.GetMedian (hitRates);
+					combatLevels.Sort ();
 					float medianCombatLevel = API.GetMedian (combatLevels);
+					damages.Sort ();
 					float medianDamage = API.GetMedian (damages);
 					Invoke (new Action (() => {
 						ResultListView.BeginUpdate ();

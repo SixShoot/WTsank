@@ -70,6 +70,7 @@ namespace WorldOfTanks {
 			VictoryRate = API.Divide ((float)VictoryNumber, CombatNumber);
 			AverageDuration = API.Divide (TotalDuration, CombatNumber);
 			AverageCombat = API.Divide (TotalCombat, CombatNumber);
+			Combats.Sort ();
 			MedianCombat = API.GetMedian (Combats);
 			AverageDamage = API.Divide (TotalDamage, CombatNumber);
 			AverageAssist = API.Divide (TotalAssist, CombatNumber);

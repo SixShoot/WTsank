@@ -147,7 +147,7 @@ namespace WorldOfTanks {
 								Text = $"{combatRecordSummary.AverageCombat:F2}",
 								Tag = API.GetCombatColor (combatRecordSummary.AverageCombat)
 							});
-							ResultListView.Items.Add (new ListViewItem ("中位数效率", ResultListViewGroup)).SubItems.Add (new ListViewItem.ListViewSubItem () {
+							ResultListView.Items.Add (new ListViewItem ("效率中位数", ResultListViewGroup)).SubItems.Add (new ListViewItem.ListViewSubItem () {
 								Text = $"{combatRecordSummary.MedianCombat:F2}",
 								Tag = API.GetCombatColor (combatRecordSummary.MedianCombat)
 							});
