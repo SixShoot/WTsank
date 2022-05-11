@@ -115,6 +115,9 @@ namespace WorldOfTanks {
 		}
 
 		public static float GetMedian (IList<float> list) {
+			if (list.Count == 0) {
+				return 0;
+			}
 			int half = list.Count / 2;
 			if (list.Count % 2 == 0) {
 				return (list[half - 1] + list[half]) / 2;

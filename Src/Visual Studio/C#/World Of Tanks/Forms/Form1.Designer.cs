@@ -127,9 +127,9 @@ namespace WorldOfTanks {
 			this.label1.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.label1.Location = new System.Drawing.Point(3, 230);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(147, 86);
+			this.label1.Size = new System.Drawing.Size(147, 195);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "作者：Eruru\r\n版本：1.2.1\r\nQQ群：628613664";
+			this.label1.Text = "作者：Eruru\r\n版本：1.2.2\r\nQQ群：628613664\r\n加群获取最新版本";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// Panel

@@ -119,7 +119,9 @@ namespace WorldOfTanks {
 			}
 			return combatRecords;
 		}
-		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, Func<int, bool> pageFilter, Func<CombatRecord, LoopAction> combatRecordFilter) {
+		public List<CombatRecord> GetCombatRecords (
+			CombatRecordPlayer player, Func<int, bool> pageFilter, Func<CombatRecord, LoopAction> combatRecordFilter, Action<int, DateTime> onPage = null
+		) {
 			int page = 1;
 			DateTime dateTime = DateTime.Now.Date;
 			List<CombatRecord> combatRecords = new List<CombatRecord> ();
@@ -128,8 +130,10 @@ namespace WorldOfTanks {
 					break;
 				}
 				List<CombatRecord> pageCombatRecords = GetCombatRecords (player, page, ref dateTime, out bool _, out bool hasNextPage);
+				onPage?.Invoke (page, dateTime);
 				bool needBreak = false;
 				foreach (CombatRecord combatRecord in pageCombatRecords) {
+
 					LoopAction loopAction = combatRecordFilter?.Invoke (combatRecord) ?? LoopAction.Execute;
 					switch (loopAction) {
 						case LoopAction.Execute:
@@ -157,7 +161,9 @@ namespace WorldOfTanks {
 			}
 			return combatRecords;
 		}
-		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, DateTime startDateTime, DateTime endDateTime, bool isSameDay = true) {
+		public List<CombatRecord> GetCombatRecords (
+			CombatRecordPlayer player, DateTime startDateTime, DateTime endDateTime, bool isSameDay = true, Action<int, DateTime> onPage = null
+		) {
 			startDateTime = startDateTime.Date;
 			endDateTime = endDateTime.Date;
 			return GetCombatRecords (player, null, battleRecord => {
@@ -168,10 +174,10 @@ namespace WorldOfTanks {
 					return LoopAction.Break;
 				}
 				return LoopAction.Execute;
-			});
+			}, onPage);
 		}
-		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, DateTime dateTime, bool isSameDay = true) {
-			return GetCombatRecords (player, dateTime, DateTime.Now, isSameDay);
+		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, DateTime dateTime, bool isSameDay = true, Action<int, DateTime> onPage = null) {
+			return GetCombatRecords (player, dateTime, DateTime.Now, isSameDay, onPage);
 		}
 
 		public void FillCombatRecord (CombatRecord combatRecord) {
@@ -227,6 +233,7 @@ namespace WorldOfTanks {
 		public void FillCombatRecordTeamPlayer (CombatRecordTeamPlayer player, JsonObject jsonObject) {
 			JsonObject vehicleJsonObject = jsonObject["vehicle"];
 			player.Name = jsonObject["realName"];
+			player.ClanAbbrev = jsonObject["clanAbbrev"];
 			player.Combat = jsonObject["combat"];
 			player.Damage = vehicleJsonObject["damageDealt"];
 			player.Assist += vehicleJsonObject["damageAssistedInspire"];

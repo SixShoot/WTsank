@@ -24,11 +24,13 @@ namespace WorldOfTanks {
 			string textB = b.SubItems[SelectedColumnIndex].Text;
 			int value;
 			if (SelectedColumnType == typeof (float)) {
-				Match matchA = Regex.Match (textA, @"[0-9]+");
-				Match matchB = Regex.Match (textB, @"[0-9]+");
-				string valueA = matchA.Success ? matchA.Value : "0";
-				string valueB = matchB.Success ? matchB.Value : "0";
-				value = float.Parse (valueA).CompareTo (float.Parse (valueB));
+				if (!float.TryParse (textA, out float floatA)) {
+					floatA = -1;
+				}
+				if (!float.TryParse (textB, out float floatB)) {
+					floatB = -1;
+				}
+				value = floatA.CompareTo (floatB);
 			} else if (SelectedColumnType == typeof (ClanMemberPosition)) {
 				ClanMember clanMemberA = (ClanMember)a.Tag;
 				ClanMember clanMemberB = (ClanMember)b.Tag;

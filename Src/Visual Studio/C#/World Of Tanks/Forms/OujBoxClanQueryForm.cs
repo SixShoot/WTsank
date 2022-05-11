@@ -139,7 +139,15 @@ namespace WorldOfTanks {
 				try {
 					int clanID = WarGamingNetService.Instance.QueryClanID (name);
 					List<float> combats = new List<float> ();
+					List<float> winRates = new List<float> ();
+					List<float> hitRates = new List<float> ();
+					List<float> combatLevels = new List<float> ();
+					List<float> damages = new List<float> ();
 					float totalCombat = 0;
+					float totalWinRate = 0;
+					float totalHitRate = 0;
+					float totalCombatLevel = 0;
+					float totalDamage = 0;
 					List<ClanMember> clanMembers = WarGamingNetService.Instance.GetClanMembers (clanID);
 					count = clanMembers.Count;
 					SetState ($"进度：0/{clanMembers.Count}");
@@ -157,7 +165,15 @@ namespace WorldOfTanks {
 									throw;
 								}
 								combats.Add (innerClanMember.Player.Combat);
+								winRates.Add (innerClanMember.Player.WinRate);
+								hitRates.Add (innerClanMember.Player.HitRate);
+								combatLevels.Add (innerClanMember.Player.AverageCombatLevel);
+								damages.Add (innerClanMember.Player.AverageDamage);
 								totalCombat += innerClanMember.Player.Combat;
+								totalWinRate += innerClanMember.Player.WinRate;
+								totalHitRate += innerClanMember.Player.HitRate;
+								totalCombatLevel += innerClanMember.Player.AverageCombatLevel;
+								totalDamage += innerClanMember.Player.AverageDamage;
 								if (isAttendance) {
 									try {
 										innerClanMember.AttendanceDays = QueryAttendance (innerClanMember, out int attendanceCount);
@@ -166,6 +182,7 @@ namespace WorldOfTanks {
 										innerClanMember.AttendanceCountText = innerClanMember.AttendanceCount.ToString ();
 									} catch (Exception e) {
 										innerClanMember.AttendanceDaysText = e.ToString ();
+										innerClanMember.AttendanceDaysText = "0";
 									}
 								}
 							} catch (Exception combatException) {
@@ -186,16 +203,24 @@ namespace WorldOfTanks {
 					}
 					autoResetEvent.WaitOne ();
 					float averageCombat = API.Divide (totalCombat, combats.Count);
+					float averageWinRate = API.Divide (totalWinRate, combats.Count);
+					float averageHitRate = API.Divide (totalHitRate, combats.Count);
+					float averageCombatLevel = API.Divide (totalCombatLevel, combats.Count);
+					float averageDamage = API.Divide (totalDamage, combats.Count);
 					combats.Sort ();
 					float medianCombat = API.GetMedian (combats);
+					float medianWinRate = API.GetMedian (winRates);
+					float medianHitRate = API.GetMedian (hitRates);
+					float medianCombatLevel = API.GetMedian (combatLevels);
+					float medianDamage = API.GetMedian (damages);
 					Invoke (new Action (() => {
 						ResultListView.BeginUpdate ();
 						ResultListView.Items.Add ("军团").SubItems.Add ($"{name}");
-						if (isAttendance) {
+						if (!isAttendance || StartDateTimePicker.Value.Date == EndDateTimePicker.Value.Date) {
+							ResultListView.Items.Add ($"查询日期").SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
+						} else {
 							ResultListView.Items.Add ($"查询范围：从").SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
 							ResultListView.Items.Add ($"至").SubItems.Add ($"{EndDateTimePicker.Value:yyyy年MM月dd日}");
-						} else {
-							ResultListView.Items.Add ($"查询日期").SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
 						}
 						ResultListView.Items.Add ("成员数").SubItems.Add ($"{clanMembers.Count}");
 						ResultListView.Items.Add ("平均效率").SubItems.Add (new ListViewItem.ListViewSubItem () {
@@ -206,14 +231,23 @@ namespace WorldOfTanks {
 							Text = $"{medianCombat:F2}",
 							Tag = API.GetCombatColor (medianCombat)
 						});
+						ResultListView.Items.Add ("平均胜率").SubItems.Add (new ListViewItem.ListViewSubItem () { Text = $"{averageWinRate:P2}" });
+						ResultListView.Items.Add ("胜率中位数").SubItems.Add (new ListViewItem.ListViewSubItem () { Text = $"{medianWinRate:P2}" });
+						ResultListView.Items.Add ("平均命中率").SubItems.Add (new ListViewItem.ListViewSubItem () { Text = $"{averageHitRate:P2}" });
+						ResultListView.Items.Add ("命中率中位数").SubItems.Add (new ListViewItem.ListViewSubItem () { Text = $"{medianHitRate:P2}" });
+						ResultListView.Items.Add ("平均出战等级").SubItems.Add (new ListViewItem.ListViewSubItem () { Text = $"{averageCombatLevel:F2}" });
+						ResultListView.Items.Add ("出战等级中位数").SubItems.Add (new ListViewItem.ListViewSubItem () { Text = $"{medianCombatLevel:F2}" });
+						ResultListView.Items.Add ("平均均伤").SubItems.Add (new ListViewItem.ListViewSubItem () { Text = $"{averageDamage:F2}" });
+						ResultListView.Items.Add ("均伤中位数").SubItems.Add (new ListViewItem.ListViewSubItem () { Text = $"{medianDamage:F2}" });
 						AutoResizeResultListViewColumns ();
 						ResultListView.EndUpdate ();
 						MemberResultListView.BeginUpdate ();
 						int serialNumber = 0;
 						foreach (ClanMember clanMember in clanMembers) {
 							serialNumber++;
-							ListViewItem listViewItem = new ListViewItem (serialNumber.ToString ());
-							listViewItem.Tag = clanMember;
+							ListViewItem listViewItem = new ListViewItem (serialNumber.ToString ()) {
+								Tag = clanMember
+							};
 							listViewItem.SubItems.Insert (NameColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.Name });
 							listViewItem.SubItems.Insert (PositionColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.Position });
 							listViewItem.SubItems.Insert (CombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
@@ -258,7 +292,6 @@ namespace WorldOfTanks {
 			DateTime dateTime = DateTime.MinValue;
 			List<int> days = new List<int> ();
 			int dayIndex = 0;
-			Console.WriteLine ($"考情{clanMember.Name} 战斗日志数量{combatRecords.Count}");
 			foreach (CombatRecord combatRecord in combatRecords) {
 				if (!Modes.Contains (combatRecord.Mode)) {
 					continue;
@@ -274,7 +307,6 @@ namespace WorldOfTanks {
 				}
 				BoxService.Instance.FillCombatRecord (combatRecord);
 				int clanMemberNumber = 0;
-				Console.WriteLine ($"{clanMember.Name} 当前战斗日志{combatRecord.ArenaID} 玩家列表{combatRecord.PlayerTeamPlayers.Serialize (true)}");
 				foreach (JsonValue playerJsonObject in combatRecord.PlayerTeamPlayers) {
 					if (playerJsonObject["clanDBID"] == clanMember.ClanID) {
 						clanMemberNumber++;

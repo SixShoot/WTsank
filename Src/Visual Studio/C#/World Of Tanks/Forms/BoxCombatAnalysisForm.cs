@@ -16,6 +16,7 @@ namespace WorldOfTanks {
 		readonly Dictionary<JsonValue, CachedPlayer> CachedPlayers = new Dictionary<JsonValue, CachedPlayer> ();
 
 		ListViewItem.ListViewSubItem CurrentSubItem;
+		CombatRecord CurrentCombatRecord;
 
 		public BoxCombatAnalysisForm () {
 			InitializeComponent ();
@@ -106,12 +107,13 @@ namespace WorldOfTanks {
 		}
 
 		private void BoxCombatAnalysisForm_Resize (object sender, EventArgs e) {
-			int height = (int)(CombatListView.Height / 2F - 8 - TeamAInformationLabel.Height);
+			int height = (int)((CombatListView.Height - TeamAInformationLabel.Height) / 2F - 5);
 			TeamAListView.Height = height;
 			TeamBListView.Height = height;
 			TeamAInformationLabel.Top = TeamAListView.Bottom + 5;
 			TeamBListView.Top = TeamAInformationLabel.Bottom + 5;
 			TeamBInformationLabel.Top = TeamBListView.Bottom + 5;
+			StateLabel.Top = TeamBInformationLabel.Top;
 		}
 
 		void AutoResizeResultListViewColumns () {
@@ -124,6 +126,10 @@ namespace WorldOfTanks {
 			TeamBListView.Width = TeamAListView.Width;
 			TeamBInformationLabel.Left = TeamAListView.Left;
 			TeamBInformationLabel.Width = TeamAListView.Width;
+		}
+
+		void SetState (string text) {
+			Invoke (new Action (() => StateLabel.Text = text));
 		}
 
 		void Query (string name, bool isSameDay = true) {
@@ -144,8 +150,15 @@ namespace WorldOfTanks {
 			new Thread (() => {
 				try {
 					CombatRecordPlayer player = BoxService.Instance.CreatePlayer (name);
-					List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (player, StartDateTimePicker.Value, EndDateTimePicker.Value, isSameDay);
+					List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (
+						player,
+						StartDateTimePicker.Value,
+						EndDateTimePicker.Value,
+						isSameDay,
+						(page, dateTime) => SetState ($"页：{page} 时间：{dateTime:yyyy年MM月dd日}")
+					);
 					count = combatRecords.Count;
+					SetState ($"进度：0/{combatRecords.Count}");
 					for (int i = 0; i < combatRecords.Count; i++) {
 						ThreadPool.QueueUserWorkItem (state => {
 							CombatRecord innerCombatRecord = (CombatRecord)state;
@@ -153,6 +166,7 @@ namespace WorldOfTanks {
 							innerCombatRecord.Tag = innerCombatRecord;
 							lock (summaryLock) {
 								count--;
+								SetState ($"进度：{combatRecords.Count - count}/{combatRecords.Count}");
 								if (count <= 0) {
 									autoResetEvent.Set ();
 								}
@@ -163,6 +177,7 @@ namespace WorldOfTanks {
 						autoResetEvent.Set ();
 					}
 					autoResetEvent.WaitOne ();
+					SetState ("显示结果中");
 					Invoke (new Action (() => {
 						if (combatRecords.Count == 0) {
 							MessageBox.Show (this, "没有战斗数据");
@@ -197,6 +212,7 @@ namespace WorldOfTanks {
 						StartDateTimePicker.Enabled = true;
 						EndDateTimePicker.Enabled = true;
 						QueryButton.Enabled = true;
+						StateLabel.Text = string.Empty;
 					}));
 				}
 			}) {
@@ -205,6 +221,10 @@ namespace WorldOfTanks {
 		}
 
 		void OnSelectedCombatRecord (CombatRecord combatRecord) {
+			if (combatRecord == CurrentCombatRecord) {
+				return;
+			}
+			CurrentCombatRecord = combatRecord;
 			TeamAInformationLabel.Text = string.Empty;
 			TeamBInformationLabel.Text = string.Empty;
 			if (combatRecord == null) {
@@ -276,6 +296,7 @@ namespace WorldOfTanks {
 								cachedPlayer.Player = BoxService.Instance.CreatePlayer (cachedPlayer.TeamPlayer.Name);
 								cachedPlayer.Player.CombatText = cachedPlayer.Player.Combat.ToString ();
 								Append ();
+								CachedPlayers[playerJsonValue] = cachedPlayer;
 							} catch (Exception exception) {
 								cachedPlayer.Player = new CombatRecordPlayer () {
 									Name = cachedPlayer.TeamPlayer.Name,
@@ -283,7 +304,6 @@ namespace WorldOfTanks {
 								};
 								cachedPlayer.Player.Exception = exception;
 							}
-							CachedPlayers[playerJsonValue] = cachedPlayer;
 						} finally {
 							lock (summaryLock) {
 								count--;
@@ -314,6 +334,7 @@ namespace WorldOfTanks {
 					float penetrationRate = API.Divide (cachedPlayer.TeamPlayer.PenetrationCount, cachedPlayer.TeamPlayer.HitCount);
 					float penetrationRateIncludeNoHit = API.Divide (cachedPlayer.TeamPlayer.PenetrationCount, cachedPlayer.TeamPlayer.ShootCount);
 					ListViewItem listViewItem = new ListViewItem (cachedPlayer.TeamPlayer.Name);
+					listViewItem.SubItems.Insert (ClanColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = cachedPlayer.TeamPlayer.ClanAbbrev });
 					listViewItem.SubItems.Insert (BoxCombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
 						Text = $"{cachedPlayer.Player.CombatText}",
 						Tag = API.GetCombatColor (cachedPlayer.Player.Combat)

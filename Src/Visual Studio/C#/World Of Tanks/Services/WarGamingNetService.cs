@@ -17,12 +17,12 @@ namespace WorldOfTanks {
 			}
 		};
 
-		public int QueryClanID (string name) {
+		public int QueryClanID (string clanName) {
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = "https://wgn.wggames.cn/clans/wot/search/api/autocomplete/",
 				QueryStringParameters = {
-					{ "search", HttpAPI.UrlEncode (name) },
+					{ "search", HttpAPI.UrlEncode (clanName) },
 					{ "type", "clans" }
 				},
 				OnResponseError = (httpWebResponse, webException) => {
@@ -64,6 +64,26 @@ namespace WorldOfTanks {
 				});
 			}
 			return clanMembers;
+		}
+
+		public string QueryPlayerClanName (string playerName) {
+			string response = Http.Request (new HttpRequestInformation () {
+				Type = HttpRequestType.Get,
+				Url = "https://wgn.wggames.cn/clans/wot/search/api/autocomplete/",
+				QueryStringParameters = {
+					{ "search", HttpAPI.UrlEncode (playerName) },
+					{ "type", "accounts" }
+				}
+			});
+			JsonObject jsonObject = JsonObject.Parse (response);
+			if (jsonObject.ContainsKey ("error")) {
+				throw new Exception (jsonObject["error"]);
+			}
+			JsonArray resultsJsonArray = jsonObject["search_autocomplete_result"];
+			if (resultsJsonArray.Count == 0) {
+				throw new Exception ("没有找到使用该名字的玩家");
+			}
+			return resultsJsonArray[0]["clan"]["tag"];
 		}
 
 	}

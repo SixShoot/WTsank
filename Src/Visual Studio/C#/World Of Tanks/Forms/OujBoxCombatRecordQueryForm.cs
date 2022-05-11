@@ -11,8 +11,9 @@ namespace WorldOfTanks {
 
 		readonly string[] Modes = { "标准赛" };
 		readonly ListViewComparer TankListViewComparer;
+		readonly ListViewGroup QueryListViewGroup = new ListViewGroup ("查询");
 		readonly ListViewGroup BoxListViewGroup = new ListViewGroup ("偶游盒子");
-		readonly ListViewGroup ResultListViewGroup = new ListViewGroup ("查询结果");
+		readonly ListViewGroup ResultListViewGroup = new ListViewGroup ("结果");
 
 		public OujBoxCombatRecordQueryForm () {
 			InitializeComponent ();
@@ -26,6 +27,7 @@ namespace WorldOfTanks {
 			};
 			TankResultListView.ListViewItemSorter = TankListViewComparer;
 			NameTextBox.Text = Config.Instance.BoxCombatQueryPlayerName;
+			ResultListView.Groups.Add (QueryListViewGroup);
 			ResultListView.Groups.Add (BoxListViewGroup);
 			ResultListView.Groups.Add (ResultListViewGroup);
 			AutoResizeResultListViewColumns ();
@@ -85,6 +87,10 @@ namespace WorldOfTanks {
 			TankResultListView.Width = QueryButton.Right - TankResultListView.Left;
 		}
 
+		void SetState (string text) {
+			Invoke (new Action (() => StateLabel.Text = text));
+		}
+
 		void Query (string name, bool isSameDay = true) {
 			NameTextBox.Enabled = false;
 			StartDateTimePicker.Enabled = false;
@@ -98,31 +104,22 @@ namespace WorldOfTanks {
 			new Thread (() => {
 				try {
 					CombatRecordPlayer player = BoxService.Instance.CreatePlayer (name);
-					List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (player, StartDateTimePicker.Value, EndDateTimePicker.Value, isSameDay);
+					List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (
+						player,
+						StartDateTimePicker.Value,
+						EndDateTimePicker.Value,
+						isSameDay,
+						(page, dateTime) => SetState ($"页：{page} 时间：{dateTime:yyyy年MM月dd日}")
+					);
+					SetState ("统计结果中");
 					CombatRecordSummary combatRecordSummary = BoxService.Instance.Summary (combatRecords, combatRecord => {
 						return Modes.Contains (combatRecord.Mode) ? LoopAction.Execute : LoopAction.Continue;
 					});
-					float maxTankAverageCombat = 0, minTankAverageCombat = 0;
-					int i = -1;
-					foreach (var tank in combatRecordSummary.Tanks.Values) {
-						i++;
-						if (i == 0) {
-							maxTankAverageCombat = tank.AverageCombat;
-							minTankAverageCombat = tank.AverageCombat;
-							continue;
-						}
-						if (maxTankAverageCombat < tank.AverageCombat) {
-							maxTankAverageCombat = tank.AverageCombat;
-						}
-						if (minTankAverageCombat > tank.AverageCombat) {
-							minTankAverageCombat = tank.AverageCombat;
-						}
-					}
-					float tankAverageCombatDifference = maxTankAverageCombat - minTankAverageCombat;
 					Invoke (new Action (() => {
 						ResultListView.BeginUpdate ();
+						ResultListView.Items.Add (new ListViewItem ("昵称", QueryListViewGroup)).SubItems.Add (player.Name);
+						ResultListView.Items.Add (new ListViewItem ("军团", QueryListViewGroup)).SubItems.Add (WarGamingNetService.Instance.QueryPlayerClanName (player.Name));
 						ResultListView.Items.Add (new ListViewItem ("更新时间", BoxListViewGroup)).SubItems.Add ($"{player.UpdateTime:yyyy年MM月dd日 HH时mm分}");
-						ResultListView.Items.Add (new ListViewItem ("昵称", BoxListViewGroup)).SubItems.Add (player.Name);
 						ResultListView.Items.Add (new ListViewItem ("千场效率", BoxListViewGroup)).SubItems.Add (new ListViewItem.ListViewSubItem () {
 							Text = $"{player.Combat}",
 							Tag = API.GetCombatColor (player.Combat)
@@ -149,6 +146,10 @@ namespace WorldOfTanks {
 							ResultListView.Items.Add (new ListViewItem ("平均效率", ResultListViewGroup)).SubItems.Add (new ListViewItem.ListViewSubItem () {
 								Text = $"{combatRecordSummary.AverageCombat:F2}",
 								Tag = API.GetCombatColor (combatRecordSummary.AverageCombat)
+							});
+							ResultListView.Items.Add (new ListViewItem ("中位数效率", ResultListViewGroup)).SubItems.Add (new ListViewItem.ListViewSubItem () {
+								Text = $"{combatRecordSummary.MedianCombat:F2}",
+								Tag = API.GetCombatColor (combatRecordSummary.MedianCombat)
 							});
 							ResultListView.Items.Add (new ListViewItem ("平均伤害", ResultListViewGroup)).SubItems.Add ($"{combatRecordSummary.AverageDamage:F2}");
 							ResultListView.Items.Add (new ListViewItem ("平均协助", ResultListViewGroup)).SubItems.Add ($"{combatRecordSummary.AverageAssist:F2}");
@@ -177,6 +178,9 @@ namespace WorldOfTanks {
 							listViewItem.SubItems.Insert (AverageCombatColumnHeader.Index, new ListViewItem.ListViewSubItem (listViewItem, $"{tank.Value.AverageCombat:F2}") {
 								Tag = API.GetCombatColor (tank.Value.AverageCombat)
 							});
+							listViewItem.SubItems.Insert (MedianCombatColumnHeader.Index, new ListViewItem.ListViewSubItem (listViewItem, $"{tank.Value.MedianCombat:F2}") {
+								Tag = API.GetCombatColor (tank.Value.MedianCombat)
+							});
 							listViewItem.SubItems.Insert (AverageDamageColumnHeader.Index, new ListViewItem.ListViewSubItem (listViewItem, $"{tank.Value.AverageDamage:F2}"));
 							listViewItem.SubItems.Insert (AverageAssistColumnHeader.Index, new ListViewItem.ListViewSubItem (listViewItem, $"{tank.Value.AverageAssist:F2}"));
 							listViewItem.SubItems.Insert (AverageArmorResistanceColumnHeader.Index, new ListViewItem.ListViewSubItem (listViewItem, $"{tank.Value.AverageArmorResistence:F2}"));
@@ -200,6 +204,7 @@ namespace WorldOfTanks {
 						EndDateTimePicker.Enabled = true;
 						QueryButton.Enabled = true;
 						ExportButton.Enabled = true;
+						StateLabel.Text = string.Empty;
 					}));
 				}
 			}) {

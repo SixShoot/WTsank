@@ -12,6 +12,7 @@ namespace WorldOfTanks {
 		public float VictoryRate { get; set; }
 		public float TotalDuration { get; set; }
 		public float TotalCombat { get; set; }
+		public List<float> Combats { get; set; } = new List<float> ();
 		public float TotalDamage { get; set; }
 		public float TotalAssist { get; set; }
 		public float TotalShootCount { get; set; }
@@ -22,6 +23,7 @@ namespace WorldOfTanks {
 		public float TotalXP { get; set; }
 		public float AverageDuration { get; set; }
 		public float AverageCombat { get; set; }
+		public float MedianCombat { get; set; }
 		public float AverageDamage { get; set; }
 		public float AverageAssist { get; set; }
 		public float AverageHitRate { get; set; }
@@ -37,6 +39,7 @@ namespace WorldOfTanks {
 			AddCombatResult (combatRecord.Result);
 			TotalDuration += combatRecord.Duration;
 			TotalCombat += combatRecord.TeamPlayer.Combat;
+			Combats.Add (combatRecord.TeamPlayer.Combat);
 			TotalDamage += combatRecord.TeamPlayer.Damage;
 			TotalAssist += combatRecord.TeamPlayer.Assist;
 			TotalShootCount += combatRecord.TeamPlayer.ShootCount;
@@ -67,6 +70,7 @@ namespace WorldOfTanks {
 			VictoryRate = API.Divide ((float)VictoryNumber, CombatNumber);
 			AverageDuration = API.Divide (TotalDuration, CombatNumber);
 			AverageCombat = API.Divide (TotalCombat, CombatNumber);
+			MedianCombat = API.GetMedian (Combats);
 			AverageDamage = API.Divide (TotalDamage, CombatNumber);
 			AverageAssist = API.Divide (TotalAssist, CombatNumber);
 			AverageHitRate = API.Divide (TotalHitCount, TotalShootCount);

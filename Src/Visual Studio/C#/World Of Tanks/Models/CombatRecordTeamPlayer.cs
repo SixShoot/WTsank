@@ -8,6 +8,7 @@ namespace WorldOfTanks {
 	class CombatRecordTeamPlayer {
 
 		public string Name { get; set; }
+		public string ClanAbbrev { get; set; }
 		public float Combat { get; set; }
 		public float Damage { get; set; }
 		public float Assist { get; set; }

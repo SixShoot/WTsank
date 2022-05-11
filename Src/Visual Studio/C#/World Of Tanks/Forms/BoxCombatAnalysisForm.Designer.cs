@@ -38,8 +38,11 @@ namespace WorldOfTanks {
 			this.label1 = new System.Windows.Forms.Label();
 			this.TeamAListView = new System.Windows.Forms.ListView();
 			this.NameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.ClanColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.BoxCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.BoxWinRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.BoxHitRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.BoxCombatLevelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.BoxDamageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.TankColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.CombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -69,8 +72,7 @@ namespace WorldOfTanks {
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.TeamAInformationLabel = new System.Windows.Forms.Label();
 			this.TeamBInformationLabel = new System.Windows.Forms.Label();
-			this.BoxHitRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.BoxCombatLevelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.StateLabel = new System.Windows.Forms.Label();
 			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -89,7 +91,7 @@ namespace WorldOfTanks {
 			this.CombatListView.Location = new System.Drawing.Point(5, 35);
 			this.CombatListView.Name = "CombatListView";
 			this.CombatListView.OwnerDraw = true;
-			this.CombatListView.Size = new System.Drawing.Size(225, 500);
+			this.CombatListView.Size = new System.Drawing.Size(225, 470);
 			this.CombatListView.TabIndex = 27;
 			this.CombatListView.UseCompatibleStateImageBehavior = false;
 			this.CombatListView.View = System.Windows.Forms.View.Details;
@@ -192,6 +194,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TeamAListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.NameColumnHeader,
+            this.ClanColumnHeader,
             this.BoxCombatColumnHeader,
             this.BoxWinRateColumnHeader,
             this.BoxHitRateColumnHeader,
@@ -228,6 +231,11 @@ namespace WorldOfTanks {
 			this.NameColumnHeader.Text = "昵称";
 			this.NameColumnHeader.Width = 40;
 			// 
+			// ClanColumnHeader
+			// 
+			this.ClanColumnHeader.Text = "军团";
+			this.ClanColumnHeader.Width = 45;
+			// 
 			// BoxCombatColumnHeader
 			// 
 			this.BoxCombatColumnHeader.Text = "千场效率";
@@ -237,6 +245,16 @@ namespace WorldOfTanks {
 			// 
 			this.BoxWinRateColumnHeader.Text = "千场胜率";
 			this.BoxWinRateColumnHeader.Width = 75;
+			// 
+			// BoxHitRateColumnHeader
+			// 
+			this.BoxHitRateColumnHeader.Text = "千场命中率";
+			this.BoxHitRateColumnHeader.Width = 88;
+			// 
+			// BoxCombatLevelColumnHeader
+			// 
+			this.BoxCombatLevelColumnHeader.Text = "千场出战等级";
+			this.BoxCombatLevelColumnHeader.Width = 98;
 			// 
 			// BoxDamageColumnHeader
 			// 
@@ -297,8 +315,7 @@ namespace WorldOfTanks {
 			// 
 			// TeamBListView
 			// 
-			this.TeamBListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			this.TeamBListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TeamBListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
@@ -406,7 +423,7 @@ namespace WorldOfTanks {
 			this.TeamAInformationLabel.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TeamAInformationLabel.Location = new System.Drawing.Point(235, 250);
 			this.TeamAInformationLabel.Name = "TeamAInformationLabel";
-			this.TeamAInformationLabel.Size = new System.Drawing.Size(965, 23);
+			this.TeamAInformationLabel.Size = new System.Drawing.Size(965, 25);
 			this.TeamAInformationLabel.TabIndex = 43;
 			this.TeamAInformationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -417,24 +434,25 @@ namespace WorldOfTanks {
 			this.TeamBInformationLabel.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.TeamBInformationLabel.Location = new System.Drawing.Point(235, 510);
 			this.TeamBInformationLabel.Name = "TeamBInformationLabel";
-			this.TeamBInformationLabel.Size = new System.Drawing.Size(965, 23);
+			this.TeamBInformationLabel.Size = new System.Drawing.Size(965, 25);
 			this.TeamBInformationLabel.TabIndex = 44;
 			this.TeamBInformationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// BoxHitRateColumnHeader
+			// StateLabel
 			// 
-			this.BoxHitRateColumnHeader.Text = "千场命中率";
-			this.BoxHitRateColumnHeader.Width = 88;
-			// 
-			// BoxCombatLevelColumnHeader
-			// 
-			this.BoxCombatLevelColumnHeader.Text = "千场出战等级";
-			this.BoxCombatLevelColumnHeader.Width = 98;
+			this.StateLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.StateLabel.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.StateLabel.Location = new System.Drawing.Point(5, 510);
+			this.StateLabel.Name = "StateLabel";
+			this.StateLabel.Size = new System.Drawing.Size(225, 25);
+			this.StateLabel.TabIndex = 45;
+			this.StateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// BoxCombatAnalysisForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1205, 541);
+			this.Controls.Add(this.StateLabel);
 			this.Controls.Add(this.TeamBInformationLabel);
 			this.Controls.Add(this.TeamAInformationLabel);
 			this.Controls.Add(this.TeamBListView);
@@ -503,5 +521,7 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.ColumnHeader CombatListCombatColumnHeader;
 		private System.Windows.Forms.ColumnHeader BoxHitRateColumnHeader;
 		private System.Windows.Forms.ColumnHeader BoxCombatLevelColumnHeader;
+		private System.Windows.Forms.ColumnHeader ClanColumnHeader;
+		private System.Windows.Forms.Label StateLabel;
 	}
 }
