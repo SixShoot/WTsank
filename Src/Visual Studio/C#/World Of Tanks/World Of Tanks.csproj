@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="API.cs" />
     <Compile Include="Enums\ClanMemberPosition.cs" />
+    <Compile Include="Enums\TankType.cs" />
     <Compile Include="Forms\BoxCombatAnalysisForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,8 +100,8 @@
       <DependentUpon>AimTimeCalculatorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\AimTimeCalculatorTank.cs" />
-    <Compile Include="Models\CombatRecord.cs" />
-    <Compile Include="CombatRecordSummary.cs" />
+    <Compile Include="Models\BoxCombatRecord.cs" />
+    <Compile Include="Models\BoxCombatRecordSummary.cs" />
     <Compile Include="Enums\CombatResult.cs" />
     <Compile Include="Enums\CommanderVisionSystemType.cs" />
     <Compile Include="Enums\LoopAction.cs" />
@@ -124,7 +125,8 @@
     </Compile>
     <Compile Include="Models\ClanMember.cs" />
     <Compile Include="Models\CombatRecordTeamPlayer.cs" />
-    <Compile Include="Models\CombatRecordPlayer.cs" />
+    <Compile Include="Models\BoxPersonalCombatRecord.cs" />
+    <Compile Include="Models\Tank.cs" />
     <Compile Include="PageChanger.cs" />
     <Compile Include="Services\BoxService.cs" />
     <Compile Include="Enums\Page.cs" />
@@ -138,8 +140,14 @@
       <DependentUpon>SpottingDistanceCalculatorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\WarGamingNetService.cs" />
-    <Compile Include="Models\Tank.cs" />
+    <Compile Include="Models\TanksGGTank.cs" />
     <Compile Include="Enums\TerrainType.cs" />
+    <Compile Include="Forms\SetColumnForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SetColumnForm.Designer.cs">
+      <DependentUpon>SetColumnForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Forms\AimTimeCalculatorForm.resx">
       <DependentUpon>AimTimeCalculatorForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -154,6 +162,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\OujBoxCombatRecordQueryForm.resx">
       <DependentUpon>OujBoxCombatRecordQueryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SetColumnForm.resx">
+      <DependentUpon>SetColumnForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

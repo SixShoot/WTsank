@@ -16,7 +16,7 @@ namespace WorldOfTanks {
 		readonly Dictionary<JsonValue, CachedPlayer> CachedPlayers = new Dictionary<JsonValue, CachedPlayer> ();
 
 		ListViewItem.ListViewSubItem CurrentSubItem;
-		CombatRecord CurrentCombatRecord;
+		BoxCombatRecord CurrentCombatRecord;
 
 		public BoxCombatAnalysisForm () {
 			InitializeComponent ();
@@ -84,7 +84,7 @@ namespace WorldOfTanks {
 			if (CombatListView.SelectedItems.Count == 0) {
 				return;
 			}
-			OnSelectedCombatRecord ((CombatRecord)CombatListView.SelectedItems[0].Tag);
+			OnSelectedCombatRecord ((BoxCombatRecord)CombatListView.SelectedItems[0].Tag);
 		}
 
 		private void ListView_DrawColumnHeader (object sender, DrawListViewColumnHeaderEventArgs e) {
@@ -149,24 +149,27 @@ namespace WorldOfTanks {
 			object summaryLock = new object ();
 			new Thread (() => {
 				try {
-					CombatRecordPlayer player = BoxService.Instance.CreatePlayer (name);
-					List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (
+					BoxPersonalCombatRecord player = BoxService.Instance.GetPersonalCombatRecord (name);
+					double dayDifference = (DateTime.Now - StartDateTimePicker.Value).TotalDays;
+					List<BoxCombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (
 						player,
 						StartDateTimePicker.Value,
 						EndDateTimePicker.Value,
 						isSameDay,
-						(page, dateTime) => SetState ($"页：{page} 时间：{dateTime:yyyy年MM月dd日}")
+						(page, dateTime) => {
+							SetState ($"{API.Divide ((DateTime.Now.Date - dateTime).TotalDays, dayDifference):P0} 页：{page} 时间：{dateTime:yyyy年MM月dd日}");
+						}
 					);
 					count = combatRecords.Count;
-					SetState ($"进度：0/{combatRecords.Count}");
+					SetState ($"进度：0% 0/{combatRecords.Count}");
 					for (int i = 0; i < combatRecords.Count; i++) {
 						ThreadPool.QueueUserWorkItem (state => {
-							CombatRecord innerCombatRecord = (CombatRecord)state;
+							BoxCombatRecord innerCombatRecord = (BoxCombatRecord)state;
 							BoxService.Instance.FillCombatRecord (innerCombatRecord);
 							innerCombatRecord.Tag = innerCombatRecord;
 							lock (summaryLock) {
 								count--;
-								SetState ($"进度：{combatRecords.Count - count}/{combatRecords.Count}");
+								SetState ($"进度：{API.Divide (combatRecords.Count - count, combatRecords.Count):P0} {combatRecords.Count - count}/{combatRecords.Count}");
 								if (count <= 0) {
 									autoResetEvent.Set ();
 								}
@@ -184,7 +187,7 @@ namespace WorldOfTanks {
 							return;
 						}
 						CombatListView.BeginUpdate ();
-						foreach (CombatRecord combatRecord in combatRecords) {
+						foreach (BoxCombatRecord combatRecord in combatRecords) {
 							ListViewItem listViewItem = new ListViewItem (API.CombatResultToString (combatRecord.Result)) {
 								Tag = combatRecord
 							};
@@ -220,7 +223,7 @@ namespace WorldOfTanks {
 			}.Start ();
 		}
 
-		void OnSelectedCombatRecord (CombatRecord combatRecord) {
+		void OnSelectedCombatRecord (BoxCombatRecord combatRecord) {
 			if (combatRecord == CurrentCombatRecord) {
 				return;
 			}
@@ -280,7 +283,7 @@ namespace WorldOfTanks {
 			float totalBoxWinRate = 0;
 			float totalBoxDamage = 0;
 			foreach (JsonValue playerJsonValue in players) {
-				if (CachedPlayers.TryGetValue (playerJsonValue, out CachedPlayer cachedPlayer)) {
+				if (CachedPlayers.TryGetValue (playerJsonValue, out CachedPlayer cachedPlayer) && cachedPlayer.BoxPersonalCombatRecord.Exception == null) {
 					Append ();
 				} else {
 					lock (summaryLock) {
@@ -291,18 +294,18 @@ namespace WorldOfTanks {
 							cachedPlayer = new CachedPlayer {
 								TeamPlayer = new CombatRecordTeamPlayer ()
 							};
+							CachedPlayers[playerJsonValue] = cachedPlayer;
 							BoxService.Instance.FillCombatRecordTeamPlayer (cachedPlayer.TeamPlayer, playerJsonValue);
 							try {
-								cachedPlayer.Player = BoxService.Instance.CreatePlayer (cachedPlayer.TeamPlayer.Name);
-								cachedPlayer.Player.CombatText = cachedPlayer.Player.Combat.ToString ();
+								cachedPlayer.BoxPersonalCombatRecord = BoxService.Instance.GetPersonalCombatRecord (cachedPlayer.TeamPlayer.Name);
 								Append ();
-								CachedPlayers[playerJsonValue] = cachedPlayer;
+								cachedPlayer.BoxPersonalCombatRecord.Exception = null;
 							} catch (Exception exception) {
-								cachedPlayer.Player = new CombatRecordPlayer () {
+								cachedPlayer.BoxPersonalCombatRecord = new BoxPersonalCombatRecord () {
 									Name = cachedPlayer.TeamPlayer.Name,
 									CombatText = exception.Message
 								};
-								cachedPlayer.Player.Exception = exception;
+								cachedPlayer.BoxPersonalCombatRecord.Exception = exception;
 							}
 						} finally {
 							lock (summaryLock) {
@@ -315,11 +318,11 @@ namespace WorldOfTanks {
 					});
 				}
 				void Append () {
-					if (cachedPlayer.Player.Combat > 0) {
+					if (cachedPlayer.BoxPersonalCombatRecord.Combat > 0) {
 						effectiveCount++;
-						totalBoxCombat += cachedPlayer.Player.Combat;
-						totalBoxWinRate += cachedPlayer.Player.WinRate;
-						totalBoxDamage += cachedPlayer.Player.AverageDamage;
+						totalBoxCombat += cachedPlayer.BoxPersonalCombatRecord.Combat;
+						totalBoxWinRate += cachedPlayer.BoxPersonalCombatRecord.WinRate;
+						totalBoxDamage += cachedPlayer.BoxPersonalCombatRecord.Damage;
 					}
 				}
 			}
@@ -336,13 +339,13 @@ namespace WorldOfTanks {
 					ListViewItem listViewItem = new ListViewItem (cachedPlayer.TeamPlayer.Name);
 					listViewItem.SubItems.Insert (ClanColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = cachedPlayer.TeamPlayer.ClanAbbrev });
 					listViewItem.SubItems.Insert (BoxCombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
-						Text = $"{cachedPlayer.Player.CombatText}",
-						Tag = API.GetCombatColor (cachedPlayer.Player.Combat)
+						Text = $"{cachedPlayer.BoxPersonalCombatRecord.CombatText}",
+						Tag = API.GetCombatColor (cachedPlayer.BoxPersonalCombatRecord.Combat)
 					});
-					listViewItem.SubItems.Insert (BoxWinRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.Player.WinRate:P0}" });
-					listViewItem.SubItems.Insert (BoxHitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.Player.HitRate:P0}" });
-					listViewItem.SubItems.Insert (BoxCombatLevelColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.Player.AverageCombatLevel}" });
-					listViewItem.SubItems.Insert (BoxDamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.Player.AverageDamage}" });
+					listViewItem.SubItems.Insert (BoxWinRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.WinRate:P0}" });
+					listViewItem.SubItems.Insert (BoxHitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.HitRate:P0}" });
+					listViewItem.SubItems.Insert (BoxCombatLevelColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.CombatLevel}" });
+					listViewItem.SubItems.Insert (BoxDamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.Damage}" });
 					listViewItem.SubItems.Insert (TankColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = cachedPlayer.TeamPlayer.TankName });
 					listViewItem.SubItems.Insert (CombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
 						Text = $"{cachedPlayer.TeamPlayer.Combat:F2}",
@@ -372,7 +375,7 @@ namespace WorldOfTanks {
 
 		class CachedPlayer {
 
-			public CombatRecordPlayer Player;
+			public BoxPersonalCombatRecord BoxPersonalCombatRecord;
 			public CombatRecordTeamPlayer TeamPlayer;
 
 		}

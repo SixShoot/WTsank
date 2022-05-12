@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace WorldOfTanks {
 
-	class AimTimeCalculatorTank : Tank {
+	class AimTimeCalculatorTank : TanksGGTank {
 
 		public TextBox NameTextBox { get; set; }
 		public TextBox AimTimeTextBox { get; set; }

@@ -2,7 +2,10 @@
 using Eruru.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace WorldOfTanks {
 
@@ -16,13 +19,25 @@ namespace WorldOfTanks {
 				return true;
 			}
 		};
+		readonly object RequestLock = new object ();
+		readonly int RequestInterval = 50;
+		readonly Stopwatch Stopwatch = new Stopwatch ();
 
-		public int QueryClanID (string clanName) {
+		long RequestTime = 0;
+
+		Dictionary<string, Tank> Tanks = null;
+
+		public WarGamingNetService () {
+			Stopwatch.Start ();
+		}
+
+		public int GetClanIdByName (string name) {
+			BeginHttpRequest ();
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = "https://wgn.wggames.cn/clans/wot/search/api/autocomplete/",
 				QueryStringParameters = {
-					{ "search", HttpAPI.UrlEncode (clanName) },
+					{ "search", HttpAPI.UrlEncode (name) },
 					{ "type", "clans" }
 				},
 				OnResponseError = (httpWebResponse, webException) => {
@@ -44,7 +59,8 @@ namespace WorldOfTanks {
 			return id;
 		}
 
-		public List<ClanMember> GetClanMembers (int id) {
+		public List<ClanMember> GetPlayersByClanId (int id) {
+			BeginHttpRequest ();
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = $"https://wgn.wggames.cn/clans/wot/{id}/api/players/",
@@ -66,12 +82,13 @@ namespace WorldOfTanks {
 			return clanMembers;
 		}
 
-		public string QueryPlayerClanName (string playerName) {
+		public string GetClanNameByPlayerName (string name) {
+			BeginHttpRequest ();
 			string response = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = "https://wgn.wggames.cn/clans/wot/search/api/autocomplete/",
 				QueryStringParameters = {
-					{ "search", HttpAPI.UrlEncode (playerName) },
+					{ "search", HttpAPI.UrlEncode (name) },
 					{ "type", "accounts" }
 				}
 			});
@@ -84,6 +101,67 @@ namespace WorldOfTanks {
 				throw new Exception ("没有找到使用该名字的玩家");
 			}
 			return resultsJsonArray[0]["clan"]["tag"];
+		}
+
+		public Dictionary<string, Tank> GetTanks () {
+			BeginHttpRequest ();
+			string json = Http.Request (new HttpRequestInformation () {
+				Url = "https://wotgame.cn/wotpbe/tankopedia/api/vehicles/by_filters/",
+				Type = HttpRequestType.Get,
+				QueryStringParameters = {
+					{ "filter[nation]", null },
+					{ "filter[type]", null },
+					{ "filter[role]", null },
+					{ "filter[tier]", "1,2,3,4,5,6,7,8,9,10" },
+					{ "filter[language]", "zh-cn" },
+					{ "filter[premium]", "0,1" }
+				}
+			});
+			JsonObject jsonObject = JsonObject.Parse (json)["data"];
+			JsonArray parametersJsonArray = jsonObject["parameters"];
+			JsonArray tanksJsonArray = jsonObject["data"];
+			int nameIndex = parametersJsonArray.FindIndex (item => item == "name");
+			int tierIndex = parametersJsonArray.FindIndex (item => item == "tier");
+			int typeIndex = parametersJsonArray.FindIndex (item => item == "type");
+			Dictionary<string, Tank> tanks = new Dictionary<string, Tank> ();
+			for (int i = 0; i < tanksJsonArray.Count; i++) {
+				JsonArray tankJsonArray = tanksJsonArray[i];
+				string name = Regex.Unescape (tankJsonArray[nameIndex]);
+				tanks[name] = new Tank () {
+					Name = name,
+					Tier = int.Parse (tankJsonArray[tierIndex]),
+					Type = API.ParseTankType (tankJsonArray[typeIndex])
+				};
+			}
+			return tanks;
+		}
+
+		public Tank GetTankByName (string name, bool allowNotFound = true) {
+			if (Tanks == null) {
+				Tanks = GetTanks ();
+			}
+			Tanks.TryGetValue (name, out Tank tank);
+			if (tank == null) {
+				string message = $"未找到名为：{name} 的坦克";
+				Console.WriteLine (message);
+				if (!allowNotFound) {
+					throw new Exception (message);
+				}
+			}
+			return tank;
+		}
+
+		void BeginHttpRequest () {
+			if (RequestInterval <= 0) {
+				return;
+			}
+			lock (RequestLock) {
+				int elapsed = (int)(Stopwatch.ElapsedMilliseconds - RequestTime);
+				if (elapsed < RequestInterval) {
+					Thread.Sleep (RequestInterval - elapsed);
+				}
+				RequestTime = Stopwatch.ElapsedMilliseconds;
+			}
 		}
 
 	}

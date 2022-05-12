@@ -235,6 +235,50 @@ namespace WorldOfTanks {
 			return b == 0 ? 0 : a / b;
 		}
 
+		public static TankType ParseTankType (string type) {
+			switch (type) {
+				default:
+					throw new NotImplementedException (type);
+				case "lightTank":
+				case "轻坦":
+				case "轻型坦克":
+					return TankType.LightTank;
+				case "mediumTank":
+				case "中坦":
+				case "中型坦克":
+					return TankType.MediumTank;
+				case "heavyTank":
+				case "重坦":
+				case "重型坦克":
+					return TankType.HeavyTank;
+				case "AT-SPG":
+				case "反坦":
+				case "自行反坦克炮":
+					return TankType.TankDestroyer;
+				case "SPG":
+				case "火炮":
+				case "自行火炮":
+					return TankType.SPG;
+			}
+		}
+
+		public static string TankTypeLocalization (TankType type, bool shortName = false) {
+			switch (type) {
+				default:
+					throw new NotImplementedException (type.ToString ());
+				case TankType.LightTank:
+					return shortName ? "轻坦" : "轻型坦克";
+				case TankType.MediumTank:
+					return shortName ? "中坦" : "中型坦克";
+				case TankType.HeavyTank:
+					return shortName ? "重坦" : "重型坦克";
+				case TankType.TankDestroyer:
+					return shortName ? "反坦" : "自行反坦克炮";
+				case TankType.SPG:
+					return shortName ? "火炮" : "自行火炮";
+			}
+		}
+
 		class CombatColor {
 
 			public float Max { get; set; }

@@ -24,10 +24,12 @@ namespace WorldOfTanks {
 			string textB = b.SubItems[SelectedColumnIndex].Text;
 			int value;
 			if (SelectedColumnType == typeof (float)) {
-				if (!float.TryParse (textA, out float floatA)) {
+				Match matchA = Regex.Match (textA, @"[0-9+-.eE]+");
+				Match matchB = Regex.Match (textB, @"[0-9+-.eE]+");
+				if (!float.TryParse (matchA.Value, out float floatA)) {
 					floatA = -1;
 				}
-				if (!float.TryParse (textB, out float floatB)) {
+				if (!float.TryParse (matchB.Value, out float floatB)) {
 					floatB = -1;
 				}
 				value = floatA.CompareTo (floatB);

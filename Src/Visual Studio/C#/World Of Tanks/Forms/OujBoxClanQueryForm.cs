@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -137,7 +138,7 @@ namespace WorldOfTanks {
 			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
 			new Thread (() => {
 				try {
-					int clanID = WarGamingNetService.Instance.QueryClanID (name);
+					int clanID = WarGamingNetService.Instance.GetClanIdByName (name);
 					List<float> combats = new List<float> ();
 					List<float> winRates = new List<float> ();
 					List<float> hitRates = new List<float> ();
@@ -148,49 +149,52 @@ namespace WorldOfTanks {
 					float totalHitRate = 0;
 					float totalCombatLevel = 0;
 					float totalDamage = 0;
-					List<ClanMember> clanMembers = WarGamingNetService.Instance.GetClanMembers (clanID);
+					List<ClanMember> clanMembers = WarGamingNetService.Instance.GetPlayersByClanId (clanID);
+					List<ClanMember> pageOutClanMembers = new List<ClanMember> ();
 					count = clanMembers.Count;
-					SetState ($"进度：0/{clanMembers.Count}");
+					SetState ($"进度：0% 0/{clanMembers.Count}");
 					foreach (ClanMember clanMember in clanMembers) {
 						ThreadPool.QueueUserWorkItem (state => {
 							ClanMember innerClanMember = (ClanMember)state;
 							try {
 								try {
-									innerClanMember.Player = BoxService.Instance.CreatePlayer (innerClanMember.Name);
-									innerClanMember.Player.CombatText = innerClanMember.Player.Combat.ToString ();
+									innerClanMember.BoxPersonalCombatRecord = BoxService.Instance.GetPersonalCombatRecord (innerClanMember.Name);
 								} catch {
-									innerClanMember.Player = new CombatRecordPlayer () {
+									innerClanMember.BoxPersonalCombatRecord = new BoxPersonalCombatRecord () {
 										Name = innerClanMember.Name
 									};
 									throw;
 								}
-								combats.Add (innerClanMember.Player.Combat);
-								winRates.Add (innerClanMember.Player.WinRate);
-								hitRates.Add (innerClanMember.Player.HitRate);
-								combatLevels.Add (innerClanMember.Player.AverageCombatLevel);
-								damages.Add (innerClanMember.Player.AverageDamage);
-								totalCombat += innerClanMember.Player.Combat;
-								totalWinRate += innerClanMember.Player.WinRate;
-								totalHitRate += innerClanMember.Player.HitRate;
-								totalCombatLevel += innerClanMember.Player.AverageCombatLevel;
-								totalDamage += innerClanMember.Player.AverageDamage;
+								innerClanMember.AttendanceDaysText = "0";
+								innerClanMember.AttendanceCountText = "0";
+								combats.Add (innerClanMember.BoxPersonalCombatRecord.Combat);
+								winRates.Add (innerClanMember.BoxPersonalCombatRecord.WinRate);
+								hitRates.Add (innerClanMember.BoxPersonalCombatRecord.HitRate);
+								combatLevels.Add (innerClanMember.BoxPersonalCombatRecord.CombatLevel);
+								damages.Add (innerClanMember.BoxPersonalCombatRecord.Damage);
+								totalCombat += innerClanMember.BoxPersonalCombatRecord.Combat;
+								totalWinRate += innerClanMember.BoxPersonalCombatRecord.WinRate;
+								totalHitRate += innerClanMember.BoxPersonalCombatRecord.HitRate;
+								totalCombatLevel += innerClanMember.BoxPersonalCombatRecord.CombatLevel;
+								totalDamage += innerClanMember.BoxPersonalCombatRecord.Damage;
 								if (isAttendance) {
 									try {
-										innerClanMember.AttendanceDays = QueryAttendance (innerClanMember, out int attendanceCount);
+										innerClanMember.AttendanceDays = QueryAttendance (innerClanMember, out int attendanceCount, pageOutClanMember => {
+											pageOutClanMembers.Add (pageOutClanMember);
+										});
 										innerClanMember.AttendanceDaysText = innerClanMember.AttendanceDays.ToString ();
 										innerClanMember.AttendanceCount = attendanceCount;
 										innerClanMember.AttendanceCountText = innerClanMember.AttendanceCount.ToString ();
 									} catch (Exception e) {
 										innerClanMember.AttendanceDaysText = e.ToString ();
-										innerClanMember.AttendanceDaysText = "0";
 									}
 								}
-							} catch (Exception combatException) {
-								innerClanMember.Player.CombatText = combatException.Message;
+							} catch (Exception exception) {
+								innerClanMember.BoxPersonalCombatRecord.CombatText = exception.Message;
 							} finally {
 								lock (summaryLock) {
 									count--;
-									SetState ($"进度：{clanMembers.Count - count}/{clanMembers.Count}");
+									SetState ($"进度：{API.Divide (clanMembers.Count - count, clanMembers.Count):P0} {clanMembers.Count - count}/{clanMembers.Count}");
 									if (count <= 0) {
 										autoResetEvent.Set ();
 									}
@@ -255,13 +259,13 @@ namespace WorldOfTanks {
 							listViewItem.SubItems.Insert (NameColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.Name });
 							listViewItem.SubItems.Insert (PositionColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.Position });
 							listViewItem.SubItems.Insert (CombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
-								Text = clanMember.Player.CombatText,
-								Tag = API.GetCombatColor (clanMember.Player.Combat)
+								Text = clanMember.BoxPersonalCombatRecord.CombatText,
+								Tag = API.GetCombatColor (clanMember.BoxPersonalCombatRecord.Combat)
 							});
-							listViewItem.SubItems.Insert (WinRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.Player.WinRate:P0}" });
-							listViewItem.SubItems.Insert (HitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.Player.HitRate:P0}" });
-							listViewItem.SubItems.Insert (AverageCombatLevelColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.Player.AverageCombatLevel}" });
-							listViewItem.SubItems.Insert (AverageDamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.Player.AverageDamage}" });
+							listViewItem.SubItems.Insert (WinRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.BoxPersonalCombatRecord.WinRate:P0}" });
+							listViewItem.SubItems.Insert (HitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.BoxPersonalCombatRecord.HitRate:P0}" });
+							listViewItem.SubItems.Insert (AverageCombatLevelColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.BoxPersonalCombatRecord.CombatLevel}" });
+							listViewItem.SubItems.Insert (AverageDamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{clanMember.BoxPersonalCombatRecord.Damage}" });
 							listViewItem.SubItems.Insert (AttendanceDaysColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.AttendanceDaysText });
 							listViewItem.SubItems.Insert (AttendanceCountColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = clanMember.AttendanceCountText });
 							MemberResultListView.Items.Add (listViewItem);
@@ -269,6 +273,14 @@ namespace WorldOfTanks {
 						API.AutoResizeListViewColumns (MemberResultListView);
 						MemberListViewComparer.SortColumn (CombatColumnHeader.Index, SortOrder.Descending);
 						MemberResultListView.EndUpdate ();
+						if (pageOutClanMembers.Count > 0) {
+							StringBuilder stringBuilder = new StringBuilder ("以下成员由于偶游盒子战斗日志只显示7条*215页战斗日志，可能已丢失战斗日志，需要手动补充出勤次数：");
+							for (int i = 0; i < pageOutClanMembers.Count; i++) {
+								stringBuilder.AppendLine ();
+								stringBuilder.Append (pageOutClanMembers[i].Name);
+							}
+							MessageBox.Show (stringBuilder.ToString ());
+						}
 					}));
 				} catch (Exception e) {
 					Invoke (new Action (() => {
@@ -291,12 +303,18 @@ namespace WorldOfTanks {
 			}.Start ();
 		}
 
-		int QueryAttendance (ClanMember clanMember, out int count) {
-			List<CombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (clanMember.Player, StartDateTimePicker.Value, EndDateTimePicker.Value, false);
+		int QueryAttendance (ClanMember clanMember, out int count, Action<ClanMember> onPageOut = null) {
+			List<BoxCombatRecord> combatRecords = BoxService.Instance.GetCombatRecords (
+				clanMember.BoxPersonalCombatRecord,
+				StartDateTimePicker.Value,
+				EndDateTimePicker.Value,
+				false,
+				OnPageOut: () => onPageOut?.Invoke (clanMember)
+			);
 			DateTime dateTime = DateTime.MinValue;
 			List<int> days = new List<int> ();
 			int dayIndex = 0;
-			foreach (CombatRecord combatRecord in combatRecords) {
+			foreach (BoxCombatRecord combatRecord in combatRecords) {
 				if (!Modes.Contains (combatRecord.Mode)) {
 					continue;
 				}

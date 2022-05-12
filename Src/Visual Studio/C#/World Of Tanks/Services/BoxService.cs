@@ -28,55 +28,56 @@ namespace WorldOfTanks {
 			Stopwatch.Start ();
 		}
 
-		public CombatRecordPlayer CreatePlayer (string name) {
-			Request ();
-			string response = Http.Request (new HttpRequestInformation () {
+		public BoxPersonalCombatRecord GetPersonalCombatRecord (string name) {
+			BeginHttpRequest ();
+			string html = Http.Request (new HttpRequestInformation () {
 				Url = "https://wotbox.ouj.com/wotbox/index.php",
 				QueryStringParameters = {
-					{ "r", "default/index" },
+					{ "r", HttpAPI.UrlEncode ("default/index") },
 					{ "pn", HttpAPI.UrlEncode (name) }
 				},
 				OnResponseError = (httpWebResponse, webException) => {
 					throw webException;
 				}
 			});
-			CheckSearch (response);
-			HtmlDocument htmlDocument = HtmlDocument.Parse (response);
-			CombatRecordPlayer player = new CombatRecordPlayer ();
+			CheckCombatRecordHtml (html);
+			HtmlDocument htmlDocument = HtmlDocument.Parse (html);
+			string id = htmlDocument.GetElementById ("p_id").GetAttribute ("value");
 			int.TryParse (htmlDocument.QuerySelector (".power .num").TextContent, out int combat);
 			DateTime.TryParse (htmlDocument.QuerySelector (".userRecord-history__title p").ChildNodes[0].NodeValue.Substring ("更新时间：".Length), out DateTime updateTime);
 			float.TryParse (htmlDocument.GetElementByClassName ("win-rate-1k").GetAttribute ("win-rate"), out float winRate);
 			float.TryParse (htmlDocument.GetElementByClassName ("hit-rate-1k").GetAttribute ("hit-rate"), out float hitRate);
-			float.TryParse (htmlDocument.GetElementByClassName ("avg-lv-1k").NextElementSibling.TextContent.TrimEnd ('级'), out float averageCombatLevel);
-			float.TryParse (htmlDocument.QuerySelector (".userRecord-data li .num").TextContent, out float averageDamage);
-			return new CombatRecordPlayer () {
+			float.TryParse (htmlDocument.GetElementByClassName ("avg-lv-1k").NextElementSibling.TextContent.TrimEnd ('级'), out float combatLevel);
+			float.TryParse (htmlDocument.QuerySelector (".userRecord-data li .num").TextContent, out float damage);
+			return new BoxPersonalCombatRecord () {
+				ID = id,
 				Name = name,
-				ID = htmlDocument.GetElementById ("p_id").GetAttribute ("value"),
 				Combat = combat,
 				UpdateTime = updateTime,
 				WinRate = winRate / 100,
 				HitRate = hitRate / 100,
-				AverageCombatLevel = averageCombatLevel,
-				AverageDamage = averageDamage
+				CombatLevel = combatLevel,
+				Damage = damage,
+				CombatText = combat.ToString ()
 			};
 		}
 
-		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, int page, ref DateTime dateTime, out bool hasPreviousPage, out bool hasNextPage) {
-			Request ();
-			string response = Http.Request (new HttpRequestInformation () {
+		public List<BoxCombatRecord> GetCombatRecords (BoxPersonalCombatRecord boxPersonalCombatRecord, int page, ref DateTime dateTime, out bool hasPreviousPage, out bool hasNextPage) {
+			BeginHttpRequest ();
+			string html = Http.Request (new HttpRequestInformation () {
 				Type = HttpRequestType.Get,
 				Url = "http://wotbox.ouj.com/wotbox/index.php",
 				QueryStringParameters = {
-					{ "r", "default/battleLog" },
-					{ "pn", HttpAPI.UrlEncode (player.Name) },
+					{ "r", HttpAPI.UrlEncode ("default/battleLog") },
+					{ "pn", HttpAPI.UrlEncode (boxPersonalCombatRecord.Name) },
 					{ "p", page }
 				},
 				OnResponseError = (httpWebResponse, webException) => {
 					throw webException;
 				}
 			});
-			CheckSearch (response);
-			HtmlDocument htmlDocument = HtmlDocument.Parse (response);
+			CheckCombatRecordHtml (html);
+			HtmlDocument htmlDocument = HtmlDocument.Parse (html);
 			HtmlElement battleLogHtmlElement = htmlDocument.GetElementById ("battle-log");
 			HtmlElement jNavHtmlElement = battleLogHtmlElement?.GetElementByClassName ("J_nav");
 			List<HtmlElement> htmlElements = jNavHtmlElement?.GetElementsByTagName ("li");
@@ -88,7 +89,7 @@ namespace WorldOfTanks {
 			HtmlElement nextPageHtmlElement = modPageHtmlElement?.GetElementByClassName ("next");
 			hasPreviousPage = previousPageHtmlElement != null;
 			hasNextPage = page < 215 && nextPageHtmlElement != null;
-			List<CombatRecord> combatRecords = new List<CombatRecord> ();
+			List<BoxCombatRecord> combatRecords = new List<BoxCombatRecord> ();
 			int i = -1;
 			foreach (HtmlElement htmlElement in htmlElements) {
 				i++;
@@ -102,8 +103,8 @@ namespace WorldOfTanks {
 				int month = int.Parse (dates[0]);
 				int day = int.Parse (dates[1]);
 				string mode = datas[0];
-				CombatRecord combatRecord = new CombatRecord () {
-					Player = player,
+				BoxCombatRecord combatRecord = new BoxCombatRecord () {
+					BoxPersonalCombatRecord = boxPersonalCombatRecord,
 					Page = page,
 					IndexInPage = i,
 					ArenaID = arenaID,
@@ -119,21 +120,24 @@ namespace WorldOfTanks {
 			}
 			return combatRecords;
 		}
-		public List<CombatRecord> GetCombatRecords (
-			CombatRecordPlayer player, Func<int, bool> pageFilter, Func<CombatRecord, LoopAction> combatRecordFilter, Action<int, DateTime> onPage = null
+		public List<BoxCombatRecord> GetCombatRecords (
+			BoxPersonalCombatRecord player, Func<int, bool> pageFilter, Func<BoxCombatRecord, LoopAction> combatRecordFilter, Action<int, DateTime> onPage = null, Action OnPageOut = null
 		) {
 			int page = 1;
 			DateTime dateTime = DateTime.Now.Date;
-			List<CombatRecord> combatRecords = new List<CombatRecord> ();
+			List<BoxCombatRecord> combatRecords = new List<BoxCombatRecord> ();
 			while (true) {
+				if (page > 215) {
+					OnPageOut?.Invoke ();
+					break;
+				}
 				if (!pageFilter?.Invoke (page) ?? false) {
 					break;
 				}
-				List<CombatRecord> pageCombatRecords = GetCombatRecords (player, page, ref dateTime, out bool _, out bool hasNextPage);
+				List<BoxCombatRecord> pageCombatRecords = GetCombatRecords (player, page, ref dateTime, out bool _, out bool hasNextPage);
 				onPage?.Invoke (page, dateTime);
 				bool needBreak = false;
-				foreach (CombatRecord combatRecord in pageCombatRecords) {
-
+				foreach (BoxCombatRecord combatRecord in pageCombatRecords) {
 					LoopAction loopAction = combatRecordFilter?.Invoke (combatRecord) ?? LoopAction.Execute;
 					switch (loopAction) {
 						case LoopAction.Execute:
@@ -161,8 +165,8 @@ namespace WorldOfTanks {
 			}
 			return combatRecords;
 		}
-		public List<CombatRecord> GetCombatRecords (
-			CombatRecordPlayer player, DateTime startDateTime, DateTime endDateTime, bool isSameDay = true, Action<int, DateTime> onPage = null
+		public List<BoxCombatRecord> GetCombatRecords (
+			BoxPersonalCombatRecord player, DateTime startDateTime, DateTime endDateTime, bool isSameDay = true, Action<int, DateTime> onPage = null, Action OnPageOut = null
 		) {
 			startDateTime = startDateTime.Date;
 			endDateTime = endDateTime.Date;
@@ -174,23 +178,25 @@ namespace WorldOfTanks {
 					return LoopAction.Break;
 				}
 				return LoopAction.Execute;
-			}, onPage);
+			}, onPage, OnPageOut);
 		}
-		public List<CombatRecord> GetCombatRecords (CombatRecordPlayer player, DateTime dateTime, bool isSameDay = true, Action<int, DateTime> onPage = null) {
-			return GetCombatRecords (player, dateTime, DateTime.Now, isSameDay, onPage);
+		public List<BoxCombatRecord> GetCombatRecords (
+			BoxPersonalCombatRecord player, DateTime dateTime, bool isSameDay = true, Action<int, DateTime> onPage = null, Action OnPageOut = null
+		) {
+			return GetCombatRecords (player, dateTime, DateTime.Now, isSameDay, onPage, OnPageOut);
 		}
 
-		public void FillCombatRecord (CombatRecord combatRecord) {
+		public void FillCombatRecord (BoxCombatRecord combatRecord) {
 			if (BoxDao.Instance.TryGetArenaJson (combatRecord.ArenaID, out string response)) {
 
 			} else {
-				Request ();
+				BeginHttpRequest ();
 				response = Http.Request (new HttpRequestInformation () {
 					Type = HttpRequestType.Get,
 					Url = "http://wotapp.ouj.com/",
 					QueryStringParameters = {
 						{ "r", "wotboxapi/battledetail" },
-						{ "pn", HttpAPI.UrlEncode (combatRecord.Player.Name) },
+						{ "pn", HttpAPI.UrlEncode (combatRecord.BoxPersonalCombatRecord.Name) },
 						{ "arena_id", combatRecord.ArenaID }
 					},
 					OnResponseError = (httpWebResponse, webException) => {
@@ -204,7 +210,10 @@ namespace WorldOfTanks {
 				throw new Exception ("获取战斗记录失败");
 			}
 			JsonObject resultJsonObject = jsonObject["result"];
+			combatRecord.TeamAPlayers = resultJsonObject["team_a"];
+			combatRecord.TeamBPlayers = resultJsonObject["team_b"];
 			combatRecord.WinTeamPlayers = resultJsonObject[resultJsonObject["win_team"]];
+			combatRecord.FailTeamPlayers = resultJsonObject["win_team"] == "team_a" ? combatRecord.TeamBPlayers : combatRecord.TeamAPlayers;
 			float duration = 0;
 			foreach (JsonObject player in combatRecord.WinTeamPlayers) {
 				float lifeTime = player["vehicle"]["lifeTime"];
@@ -216,15 +225,15 @@ namespace WorldOfTanks {
 			combatRecord.DateTime = combatRecord.DateTime.AddHours (dateTime.Hour);
 			combatRecord.DateTime = combatRecord.DateTime.AddMinutes (dateTime.Minute);
 			combatRecord.Duration = duration;
-			combatRecord.TeamAPlayers = resultJsonObject["team_a"];
-			combatRecord.TeamBPlayers = resultJsonObject["team_b"];
-			bool findPlayer (JsonValue item) => combatRecord.Player.ID == item["vehicle"]["accountDBID"];
+			bool findPlayer (JsonValue item) => combatRecord.BoxPersonalCombatRecord.ID == item["vehicle"]["accountDBID"];
 			JsonObject playerJsonObject = combatRecord.TeamAPlayers.Find (findPlayer);
 			if (playerJsonObject == null) {
 				combatRecord.PlayerTeamPlayers = combatRecord.TeamBPlayers;
+				combatRecord.EnemyTeamPlayers = combatRecord.TeamAPlayers;
 				playerJsonObject = combatRecord.TeamBPlayers.Find (findPlayer);
 			} else {
 				combatRecord.PlayerTeamPlayers = combatRecord.TeamAPlayers;
+				combatRecord.EnemyTeamPlayers = combatRecord.TeamBPlayers;
 			}
 			combatRecord.TeamPlayer = new CombatRecordTeamPlayer { };
 			FillCombatRecordTeamPlayer (combatRecord.TeamPlayer, playerJsonObject);
@@ -250,13 +259,13 @@ namespace WorldOfTanks {
 			player.TankName = jsonObject["tank_title"];
 		}
 
-		public CombatRecordSummary Summary (List<CombatRecord> combatRecords, Func<CombatRecord, LoopAction> filter) {
-			CombatRecordSummary combatRecordSummary = new CombatRecordSummary ();
+		public BoxCombatRecordSummary SummaryCombatRecords (List<BoxCombatRecord> combatRecords, Func<BoxCombatRecord, LoopAction> filter, Action onFill = null) {
+			BoxCombatRecordSummary combatRecordSummary = new BoxCombatRecordSummary ();
 			int count = 0;
 			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
 			Exception exception = null;
 			object summaryLock = new object ();
-			foreach (CombatRecord combatRecord in combatRecords) {
+			foreach (BoxCombatRecord combatRecord in combatRecords) {
 				bool needBreak = false;
 				LoopAction loopAction = filter?.Invoke (combatRecord) ?? LoopAction.Execute;
 				switch (loopAction) {
@@ -264,15 +273,16 @@ namespace WorldOfTanks {
 						count++;
 						ThreadPool.QueueUserWorkItem (state => {
 							try {
-								CombatRecord innerCombatRecord = (CombatRecord)state;
+								BoxCombatRecord innerCombatRecord = (BoxCombatRecord)state;
 								FillCombatRecord (innerCombatRecord);
 								lock (summaryLock) {
-									combatRecordSummary.Append (innerCombatRecord);
-									if (!combatRecordSummary.Tanks.TryGetValue (innerCombatRecord.TeamPlayer.TankName, out CombatRecordSummary tank)) {
-										tank = new CombatRecordSummary ();
+									onFill?.Invoke ();
+									combatRecordSummary.AddCombatRecord (innerCombatRecord);
+									if (!combatRecordSummary.Tanks.TryGetValue (innerCombatRecord.TeamPlayer.TankName, out BoxCombatRecordSummary tank)) {
+										tank = new BoxCombatRecordSummary ();
 										combatRecordSummary.Tanks[innerCombatRecord.TeamPlayer.TankName] = tank;
 									}
-									tank.Append (innerCombatRecord);
+									tank.AddCombatRecord (innerCombatRecord);
 								}
 							} catch (Exception e) {
 								exception = e;
@@ -306,17 +316,17 @@ namespace WorldOfTanks {
 				throw exception;
 			}
 			combatRecordSummary.Summary ();
-			foreach (CombatRecordSummary tank in combatRecordSummary.Tanks.Values) {
+			foreach (BoxCombatRecordSummary tank in combatRecordSummary.Tanks.Values) {
 				tank.Summary ();
 			}
 			return combatRecordSummary;
 		}
 
-		void CheckSearch (string response) {
-			if (response == "您的访问过于频繁，请稍后再试") {
+		void CheckCombatRecordHtml (string html) {
+			if (html == "您的访问过于频繁，请稍后再试") {
 				throw new Exception ("您的访问过于频繁，请稍后再试");
 			}
-			if (response == "NOT FOUND USER" || response.Contains ("没有找到您搜索的玩家！")) {
+			if (html == "NOT FOUND USER" || html.Contains ("没有找到您搜索的玩家！")) {
 				throw new Exception ("没有找到您搜索的玩家！");
 			}
 		}
@@ -334,7 +344,7 @@ namespace WorldOfTanks {
 			}
 		}
 
-		void Request () {
+		void BeginHttpRequest () {
 			if (RequestInterval <= 0) {
 				return;
 			}

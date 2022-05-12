@@ -336,7 +336,7 @@ namespace WorldOfTanks {
 			this.TeamBListView.Location = new System.Drawing.Point(235, 275);
 			this.TeamBListView.Name = "TeamBListView";
 			this.TeamBListView.OwnerDraw = true;
-			this.TeamBListView.Size = new System.Drawing.Size(965, 235);
+			this.TeamBListView.Size = new System.Drawing.Size(965, 230);
 			this.TeamBListView.TabIndex = 42;
 			this.TeamBListView.UseCompatibleStateImageBehavior = false;
 			this.TeamBListView.View = System.Windows.Forms.View.Details;

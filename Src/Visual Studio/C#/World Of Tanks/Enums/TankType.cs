@@ -5,11 +5,13 @@ using System.Text;
 
 namespace WorldOfTanks {
 
-	class Tank {
+	enum TankType {
 
-		public string Name { get; set; }
-		public int Tier { get; set; }
-		public TankType Type { get; set; }
+		LightTank,
+		MediumTank,
+		HeavyTank,
+		TankDestroyer,
+		SPG,
 
 	}
 

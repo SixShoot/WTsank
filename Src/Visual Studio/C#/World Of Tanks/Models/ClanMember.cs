@@ -2,7 +2,7 @@
 
 	class ClanMember {
 
-		public CombatRecordPlayer Player;
+		public BoxPersonalCombatRecord BoxPersonalCombatRecord;
 		public string Name;
 		public string Position;
 		public int PositionRank;
