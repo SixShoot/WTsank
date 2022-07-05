@@ -49,33 +49,35 @@ namespace WorldOfTanks {
 			this.AverageHitRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AveragePenetrationRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AveragePenetrationRateIncludeNoHitColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MeetSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MeetSPGRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.OneSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.OneSPGRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.TwoSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.TwoSPGRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.ThreeSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.ThreeSPGRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.AverageSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MinusTwoLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MinusTwoLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MinusOneLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MinusOneLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.SameLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.SameLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MiddleLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.MiddleLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.PlusOneLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.PlusOneLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.PlusTwoLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.PlusTwoLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.ExportButton = new System.Windows.Forms.Button();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.EndDateTimePicker = new System.Windows.Forms.DateTimePicker();
 			this.label2 = new System.Windows.Forms.Label();
 			this.StateLabel = new System.Windows.Forms.Label();
-			this.OneSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.TwoSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.ThreeSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.MeetSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.MiddleLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.PlusOneLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.SameLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.MinusTwoLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.MinusOneLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.PlusTwoLevelNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.SetColumnButton = new System.Windows.Forms.Button();
-			this.MeetSPGRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.OneSPGRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.TwoSPGRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.ThreeSPGRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.MinusTwoLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.MinusOneLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.SameLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.MiddleLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.PlusOneLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.PlusTwoLevelRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.AverageSPGNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.PredictCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.TankLevelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.SuspendLayout();
 			// 
 			// label1
@@ -162,6 +164,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TankResultListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.NameColumnHeader,
+            this.TankLevelColumnHeader,
             this.CombatNumberColumnHeader,
             this.VictoryRateColumnHeader,
             this.VictoryNumberColumnHeader,
@@ -172,6 +175,7 @@ namespace WorldOfTanks {
             this.AverageXPColumnHeader,
             this.AverageCombatColumnHeader,
             this.MedianCombatColumnHeader,
+            this.PredictCombatColumnHeader,
             this.AverageDamageColumnHeader,
             this.AverageAssistColumnHeader,
             this.AverageArmorResistanceColumnHeader,
@@ -295,6 +299,90 @@ namespace WorldOfTanks {
 			// 
 			this.AveragePenetrationRateIncludeNoHitColumnHeader.Text = "平均击穿率(含未命中)";
 			// 
+			// MeetSPGNumberColumnHeader
+			// 
+			this.MeetSPGNumberColumnHeader.Text = "含火炮局数";
+			// 
+			// MeetSPGRateColumnHeader
+			// 
+			this.MeetSPGRateColumnHeader.Text = "含火炮几率";
+			// 
+			// OneSPGNumberColumnHeader
+			// 
+			this.OneSPGNumberColumnHeader.Text = "1火炮局数";
+			// 
+			// OneSPGRateColumnHeader
+			// 
+			this.OneSPGRateColumnHeader.Text = "1火炮几率";
+			// 
+			// TwoSPGNumberColumnHeader
+			// 
+			this.TwoSPGNumberColumnHeader.Text = "2火炮局数";
+			// 
+			// TwoSPGRateColumnHeader
+			// 
+			this.TwoSPGRateColumnHeader.Text = "2火炮几率";
+			// 
+			// ThreeSPGNumberColumnHeader
+			// 
+			this.ThreeSPGNumberColumnHeader.Text = "3火炮局数";
+			// 
+			// ThreeSPGRateColumnHeader
+			// 
+			this.ThreeSPGRateColumnHeader.Text = "3火炮几率";
+			// 
+			// AverageSPGNumberColumnHeader
+			// 
+			this.AverageSPGNumberColumnHeader.Text = "平均火炮数";
+			// 
+			// MinusTwoLevelNumberColumnHeader
+			// 
+			this.MinusTwoLevelNumberColumnHeader.Text = "负2级局数";
+			// 
+			// MinusTwoLevelRateColumnHeader
+			// 
+			this.MinusTwoLevelRateColumnHeader.Text = "负2级几率";
+			// 
+			// MinusOneLevelNumberColumnHeader
+			// 
+			this.MinusOneLevelNumberColumnHeader.Text = "负1级局数";
+			// 
+			// MinusOneLevelRateColumnHeader
+			// 
+			this.MinusOneLevelRateColumnHeader.Text = "负1级几率";
+			// 
+			// SameLevelNumberColumnHeader
+			// 
+			this.SameLevelNumberColumnHeader.Text = "同级局数";
+			// 
+			// SameLevelRateColumnHeader
+			// 
+			this.SameLevelRateColumnHeader.Text = "同级几率";
+			// 
+			// MiddleLevelNumberColumnHeader
+			// 
+			this.MiddleLevelNumberColumnHeader.Text = "中间级局数";
+			// 
+			// MiddleLevelRateColumnHeader
+			// 
+			this.MiddleLevelRateColumnHeader.Text = "中间级几率";
+			// 
+			// PlusOneLevelNumberColumnHeader
+			// 
+			this.PlusOneLevelNumberColumnHeader.Text = "加1级局数";
+			// 
+			// PlusOneLevelRateColumnHeader
+			// 
+			this.PlusOneLevelRateColumnHeader.Text = "加1级几率";
+			// 
+			// PlusTwoLevelNumberColumnHeader
+			// 
+			this.PlusTwoLevelNumberColumnHeader.Text = "加2级局数";
+			// 
+			// PlusTwoLevelRateColumnHeader
+			// 
+			this.PlusTwoLevelRateColumnHeader.Text = "加2级几率";
+			// 
 			// ExportButton
 			// 
 			this.ExportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -345,46 +433,6 @@ namespace WorldOfTanks {
 			this.StateLabel.TabIndex = 35;
 			this.StateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// OneSPGNumberColumnHeader
-			// 
-			this.OneSPGNumberColumnHeader.Text = "1火炮局数";
-			// 
-			// TwoSPGNumberColumnHeader
-			// 
-			this.TwoSPGNumberColumnHeader.Text = "2火炮局数";
-			// 
-			// ThreeSPGNumberColumnHeader
-			// 
-			this.ThreeSPGNumberColumnHeader.Text = "3火炮局数";
-			// 
-			// MeetSPGNumberColumnHeader
-			// 
-			this.MeetSPGNumberColumnHeader.Text = "含火炮局数";
-			// 
-			// MiddleLevelNumberColumnHeader
-			// 
-			this.MiddleLevelNumberColumnHeader.Text = "中间级局数";
-			// 
-			// PlusOneLevelNumberColumnHeader
-			// 
-			this.PlusOneLevelNumberColumnHeader.Text = "加1级局数";
-			// 
-			// SameLevelNumberColumnHeader
-			// 
-			this.SameLevelNumberColumnHeader.Text = "同级局数";
-			// 
-			// MinusTwoLevelNumberColumnHeader
-			// 
-			this.MinusTwoLevelNumberColumnHeader.Text = "负2级局数";
-			// 
-			// MinusOneLevelNumberColumnHeader
-			// 
-			this.MinusOneLevelNumberColumnHeader.Text = "负1级局数";
-			// 
-			// PlusTwoLevelNumberColumnHeader
-			// 
-			this.PlusTwoLevelNumberColumnHeader.Text = "加2级局数";
-			// 
 			// SetColumnButton
 			// 
 			this.SetColumnButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -397,49 +445,13 @@ namespace WorldOfTanks {
 			this.SetColumnButton.UseVisualStyleBackColor = true;
 			this.SetColumnButton.Click += new System.EventHandler(this.SetColumnButton_Click);
 			// 
-			// MeetSPGRateColumnHeader
+			// PredictCombatColumnHeader
 			// 
-			this.MeetSPGRateColumnHeader.Text = "含火炮几率";
+			this.PredictCombatColumnHeader.Text = "预测效率";
 			// 
-			// OneSPGRateColumnHeader
+			// TankLevelColumnHeader
 			// 
-			this.OneSPGRateColumnHeader.Text = "1火炮几率";
-			// 
-			// TwoSPGRateColumnHeader
-			// 
-			this.TwoSPGRateColumnHeader.Text = "2火炮几率";
-			// 
-			// ThreeSPGRateColumnHeader
-			// 
-			this.ThreeSPGRateColumnHeader.Text = "3火炮几率";
-			// 
-			// MinusTwoLevelRateColumnHeader
-			// 
-			this.MinusTwoLevelRateColumnHeader.Text = "负2级几率";
-			// 
-			// MinusOneLevelRateColumnHeader
-			// 
-			this.MinusOneLevelRateColumnHeader.Text = "负1级几率";
-			// 
-			// SameLevelRateColumnHeader
-			// 
-			this.SameLevelRateColumnHeader.Text = "同级几率";
-			// 
-			// MiddleLevelRateColumnHeader
-			// 
-			this.MiddleLevelRateColumnHeader.Text = "中间级几率";
-			// 
-			// PlusOneLevelRateColumnHeader
-			// 
-			this.PlusOneLevelRateColumnHeader.Text = "加1级几率";
-			// 
-			// PlusTwoLevelRateColumnHeader
-			// 
-			this.PlusTwoLevelRateColumnHeader.Text = "加2级几率";
-			// 
-			// AverageSPGNumberColumnHeader
-			// 
-			this.AverageSPGNumberColumnHeader.Text = "平均火炮数";
+			this.TankLevelColumnHeader.Text = "等级";
 			// 
 			// OujBoxCombatRecordQueryForm
 			// 
@@ -517,5 +529,7 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.ColumnHeader PlusOneLevelRateColumnHeader;
 		private System.Windows.Forms.ColumnHeader PlusTwoLevelRateColumnHeader;
 		private System.Windows.Forms.ColumnHeader AverageSPGNumberColumnHeader;
+		private System.Windows.Forms.ColumnHeader PredictCombatColumnHeader;
+		private System.Windows.Forms.ColumnHeader TankLevelColumnHeader;
 	}
 }

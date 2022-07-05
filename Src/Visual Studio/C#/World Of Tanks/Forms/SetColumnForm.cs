@@ -11,7 +11,7 @@ namespace WorldOfTanks {
 
 	public partial class SetColumnForm : Form {
 
-		List<ColumnHeader> Columns;
+		readonly List<ColumnHeader> Columns;
 
 		public SetColumnForm (List<ColumnHeader> columns) {
 			InitializeComponent ();
@@ -22,7 +22,7 @@ namespace WorldOfTanks {
 				ListView.Items.Add (listViewItem);
 				listViewItem.Checked = columns[i].Tag == null;
 			}
-			API.AutoResizeListViewColumns (ListView, true);
+			Api.AutoResizeListViewColumns (ListView, true);
 			Width = ListView.Width + 20;
 		}
 

@@ -281,8 +281,13 @@ namespace WorldOfTanks {
 									if (!combatRecordSummary.Tanks.TryGetValue (innerCombatRecord.TeamPlayer.TankName, out BoxCombatRecordSummary tank)) {
 										tank = new BoxCombatRecordSummary ();
 										combatRecordSummary.Tanks[innerCombatRecord.TeamPlayer.TankName] = tank;
+										tank.TankLevel = WarGamingNetService.Instance.GetTankByName (innerCombatRecord.TeamPlayer.TankName).Tier;
 									}
 									tank.AddCombatRecord (innerCombatRecord);
+									if (tank.TankLevel > 0) {
+										combatRecordSummary.TankLevelCount++;
+										combatRecordSummary.TotalTankLevel += tank.TankLevel;
+									}
 								}
 							} catch (Exception e) {
 								exception = e;
@@ -316,8 +321,8 @@ namespace WorldOfTanks {
 				throw exception;
 			}
 			combatRecordSummary.Summary ();
-			foreach (BoxCombatRecordSummary tank in combatRecordSummary.Tanks.Values) {
-				tank.Summary ();
+			foreach (var nameTank in combatRecordSummary.Tanks) {
+				nameTank.Value.Summary (nameTank.Key);
 			}
 			return combatRecordSummary;
 		}

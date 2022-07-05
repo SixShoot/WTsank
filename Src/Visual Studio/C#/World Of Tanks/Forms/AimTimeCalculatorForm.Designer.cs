@@ -81,9 +81,17 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
 			this.Panel = new System.Windows.Forms.Panel();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.ClearButton = new System.Windows.Forms.Button();
+			this.ShootSceneComboBox = new System.Windows.Forms.ComboBox();
+			this.ShootButton = new System.Windows.Forms.Button();
+			this.ShootNumberTextBox = new System.Windows.Forms.TextBox();
+			this.label57 = new System.Windows.Forms.Label();
+			this.DistanceComboBox = new System.Windows.Forms.ComboBox();
+			this.ScaleComboBox = new System.Windows.Forms.ComboBox();
+			this.CurrentTimeTextBox = new System.Windows.Forms.TextBox();
+			this.label35 = new System.Windows.Forms.Label();
 			this.PlayButton = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
-			this.CurrentTimeTextBox = new System.Windows.Forms.TextBox();
 			this.TimeTrackBar = new System.Windows.Forms.TrackBar();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.TankBHullTraverseSpeedBySoftTextBox = new System.Windows.Forms.TextBox();
@@ -954,7 +962,7 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel1.RowCount = 1;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(1240, 845);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1208, 845);
 			this.tableLayoutPanel1.TabIndex = 23;
 			// 
 			// tableLayoutPanel4
@@ -970,8 +978,8 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
 			this.tableLayoutPanel4.RowCount = 2;
 			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 75F));
-			this.tableLayoutPanel4.Size = new System.Drawing.Size(634, 839);
+			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 135F));
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(602, 839);
 			this.tableLayoutPanel4.TabIndex = 26;
 			// 
 			// Panel
@@ -981,8 +989,9 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.Panel.Location = new System.Drawing.Point(3, 3);
 			this.Panel.Name = "Panel";
-			this.Panel.Size = new System.Drawing.Size(628, 758);
+			this.Panel.Size = new System.Drawing.Size(596, 698);
 			this.Panel.TabIndex = 0;
+			this.Panel.Click += new System.EventHandler(this.Panel_Click);
 			this.Panel.Paint += new System.Windows.Forms.PaintEventHandler(this.Panel_Paint);
 			// 
 			// panel1
@@ -990,19 +999,126 @@ namespace WorldOfTanks {
 			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel1.Controls.Add(this.ClearButton);
+			this.panel1.Controls.Add(this.ShootSceneComboBox);
+			this.panel1.Controls.Add(this.ShootButton);
+			this.panel1.Controls.Add(this.ShootNumberTextBox);
+			this.panel1.Controls.Add(this.label57);
+			this.panel1.Controls.Add(this.DistanceComboBox);
+			this.panel1.Controls.Add(this.ScaleComboBox);
+			this.panel1.Controls.Add(this.CurrentTimeTextBox);
+			this.panel1.Controls.Add(this.label35);
 			this.panel1.Controls.Add(this.PlayButton);
 			this.panel1.Controls.Add(this.label1);
-			this.panel1.Controls.Add(this.CurrentTimeTextBox);
 			this.panel1.Controls.Add(this.TimeTrackBar);
-			this.panel1.Location = new System.Drawing.Point(3, 767);
+			this.panel1.Location = new System.Drawing.Point(3, 707);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(628, 69);
+			this.panel1.Size = new System.Drawing.Size(596, 129);
 			this.panel1.TabIndex = 1;
+			// 
+			// ClearButton
+			// 
+			this.ClearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ClearButton.Location = new System.Drawing.Point(515, 70);
+			this.ClearButton.Name = "ClearButton";
+			this.ClearButton.Size = new System.Drawing.Size(75, 23);
+			this.ClearButton.TabIndex = 60;
+			this.ClearButton.Text = "清空";
+			this.ClearButton.UseVisualStyleBackColor = true;
+			this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
+			// 
+			// ShootSceneComboBox
+			// 
+			this.ShootSceneComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ShootSceneComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ShootSceneComboBox.FormattingEnabled = true;
+			this.ShootSceneComboBox.Location = new System.Drawing.Point(200, 70);
+			this.ShootSceneComboBox.Name = "ShootSceneComboBox";
+			this.ShootSceneComboBox.Size = new System.Drawing.Size(100, 22);
+			this.ShootSceneComboBox.TabIndex = 59;
+			this.ShootSceneComboBox.SelectedIndexChanged += new System.EventHandler(this.ShootSceneComboBox_SelectedIndexChanged);
+			// 
+			// ShootButton
+			// 
+			this.ShootButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ShootButton.Location = new System.Drawing.Point(435, 70);
+			this.ShootButton.Name = "ShootButton";
+			this.ShootButton.Size = new System.Drawing.Size(75, 23);
+			this.ShootButton.TabIndex = 58;
+			this.ShootButton.Text = "射击";
+			this.ShootButton.UseVisualStyleBackColor = true;
+			this.ShootButton.Click += new System.EventHandler(this.ShootButton_Click);
+			// 
+			// ShootNumberTextBox
+			// 
+			this.ShootNumberTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ShootNumberTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.ShootNumberTextBox.Location = new System.Drawing.Point(350, 70);
+			this.ShootNumberTextBox.Name = "ShootNumberTextBox";
+			this.ShootNumberTextBox.Size = new System.Drawing.Size(80, 23);
+			this.ShootNumberTextBox.TabIndex = 57;
+			this.ShootNumberTextBox.Text = " ";
+			this.ShootNumberTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.ShootNumberTextBox.TextChanged += new System.EventHandler(this.ShootNumberTextBox_TextChanged);
+			// 
+			// label57
+			// 
+			this.label57.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label57.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.label57.Location = new System.Drawing.Point(305, 70);
+			this.label57.Name = "label57";
+			this.label57.Size = new System.Drawing.Size(60, 25);
+			this.label57.TabIndex = 56;
+			this.label57.Text = "次数：";
+			this.label57.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// DistanceComboBox
+			// 
+			this.DistanceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.DistanceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DistanceComboBox.FormattingEnabled = true;
+			this.DistanceComboBox.Location = new System.Drawing.Point(355, 40);
+			this.DistanceComboBox.Name = "DistanceComboBox";
+			this.DistanceComboBox.Size = new System.Drawing.Size(75, 22);
+			this.DistanceComboBox.TabIndex = 1;
+			this.DistanceComboBox.SelectedIndexChanged += new System.EventHandler(this.DistanceComboBox_SelectedIndexChanged);
+			// 
+			// ScaleComboBox
+			// 
+			this.ScaleComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ScaleComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ScaleComboBox.FormattingEnabled = true;
+			this.ScaleComboBox.Location = new System.Drawing.Point(435, 40);
+			this.ScaleComboBox.Name = "ScaleComboBox";
+			this.ScaleComboBox.Size = new System.Drawing.Size(75, 22);
+			this.ScaleComboBox.TabIndex = 0;
+			this.ScaleComboBox.SelectedIndexChanged += new System.EventHandler(this.ScaleComboBox_SelectedIndexChanged);
+			// 
+			// CurrentTimeTextBox
+			// 
+			this.CurrentTimeTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.CurrentTimeTextBox.Location = new System.Drawing.Point(90, 40);
+			this.CurrentTimeTextBox.Name = "CurrentTimeTextBox";
+			this.CurrentTimeTextBox.Size = new System.Drawing.Size(80, 23);
+			this.CurrentTimeTextBox.TabIndex = 50;
+			this.CurrentTimeTextBox.Text = " ";
+			this.CurrentTimeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.CurrentTimeTextBox.TextChanged += new System.EventHandler(this.CurrentTimeTextBox_TextChanged);
+			// 
+			// label35
+			// 
+			this.label35.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.label35.Location = new System.Drawing.Point(5, 40);
+			this.label35.Name = "label35";
+			this.label35.Size = new System.Drawing.Size(96, 25);
+			this.label35.TabIndex = 55;
+			this.label35.Text = "已瞄准时间：";
+			this.label35.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// PlayButton
 			// 
 			this.PlayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.PlayButton.Location = new System.Drawing.Point(545, 40);
+			this.PlayButton.Location = new System.Drawing.Point(515, 40);
 			this.PlayButton.Name = "PlayButton";
 			this.PlayButton.Size = new System.Drawing.Size(75, 23);
 			this.PlayButton.TabIndex = 54;
@@ -1012,25 +1128,15 @@ namespace WorldOfTanks {
 			// 
 			// label1
 			// 
-			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.label1.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.label1.Location = new System.Drawing.Point(210, 40);
+			this.label1.Location = new System.Drawing.Point(5, 100);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(330, 25);
+			this.label1.Size = new System.Drawing.Size(585, 25);
 			this.label1.TabIndex = 53;
-			this.label1.Text = "瞄准圈大小仅供参考，并未考虑游戏FOV等因素";
+			this.label1.Text = "瞄准圈大小仅供参考，未考虑FOV等因素，基于1080P、95FOV、100米、25倍编写。射击功能采用3σ正态分布实现，并非游戏算法，仅供娱乐";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// CurrentTimeTextBox
-			// 
-			this.CurrentTimeTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.CurrentTimeTextBox.Location = new System.Drawing.Point(5, 40);
-			this.CurrentTimeTextBox.Name = "CurrentTimeTextBox";
-			this.CurrentTimeTextBox.Size = new System.Drawing.Size(80, 23);
-			this.CurrentTimeTextBox.TabIndex = 50;
-			this.CurrentTimeTextBox.Text = " ";
-			this.CurrentTimeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.CurrentTimeTextBox.TextChanged += new System.EventHandler(this.CurrentTimeTextBox_TextChanged);
 			// 
 			// TimeTrackBar
 			// 
@@ -1038,7 +1144,7 @@ namespace WorldOfTanks {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TimeTrackBar.Location = new System.Drawing.Point(0, 0);
 			this.TimeTrackBar.Name = "TimeTrackBar";
-			this.TimeTrackBar.Size = new System.Drawing.Size(625, 45);
+			this.TimeTrackBar.Size = new System.Drawing.Size(593, 45);
 			this.TimeTrackBar.TabIndex = 1;
 			this.TimeTrackBar.Scroll += new System.EventHandler(this.TimeTrackBar_Scroll);
 			// 
@@ -1103,7 +1209,7 @@ namespace WorldOfTanks {
 			this.tableLayoutPanel3.Controls.Add(this.label56, 0, 26);
 			this.tableLayoutPanel3.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.tableLayoutPanel3.ForeColor = System.Drawing.Color.Red;
-			this.tableLayoutPanel3.Location = new System.Drawing.Point(943, 3);
+			this.tableLayoutPanel3.Location = new System.Drawing.Point(911, 3);
 			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
 			this.tableLayoutPanel3.RowCount = 27;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
@@ -1842,11 +1948,12 @@ namespace WorldOfTanks {
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(1243, 991);
+			this.ClientSize = new System.Drawing.Size(1211, 914);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "AimTimeCalculatorForm";
 			this.Text = "AimTimeCalculatorForm";
 			this.Load += new System.EventHandler(this.AimTimeCalculatorForm_Load);
+			this.Resize += new System.EventHandler(this.AimTimeCalculatorForm_Resize);
 			this.tableLayoutPanel2.ResumeLayout(false);
 			this.tableLayoutPanel2.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
@@ -1974,5 +2081,13 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.Timer Timer;
 		private System.Windows.Forms.Button PlayButton;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.ComboBox ScaleComboBox;
+		private System.Windows.Forms.Label label35;
+		private System.Windows.Forms.ComboBox DistanceComboBox;
+		private System.Windows.Forms.TextBox ShootNumberTextBox;
+		private System.Windows.Forms.Label label57;
+		private System.Windows.Forms.Button ShootButton;
+		private System.Windows.Forms.ComboBox ShootSceneComboBox;
+		private System.Windows.Forms.Button ClearButton;
 	}
 }

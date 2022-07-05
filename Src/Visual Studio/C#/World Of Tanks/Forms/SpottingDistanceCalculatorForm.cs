@@ -293,7 +293,7 @@ namespace WorldOfTanks {
 			double spottingDistanceB = Calculate (PlayerB, PlayerA);
 			PlayerAToBSpottingDistanceTextBox.Text = spottingDistanceA.ToString ("F2");
 			PlayerBToASpottingDistanceTextBox.Text = spottingDistanceB.ToString ("F2");
-			API.SetCompareColor (PlayerAToBSpottingDistanceTextBox, PlayerBToASpottingDistanceTextBox, spottingDistanceA.CompareTo (spottingDistanceB));
+			Api.SetCompareColor (PlayerAToBSpottingDistanceTextBox, PlayerBToASpottingDistanceTextBox, spottingDistanceA.CompareTo (spottingDistanceB));
 		}
 
 		double Calculate (SpottingPlayer a, SpottingPlayer b) {

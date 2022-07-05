@@ -28,7 +28,12 @@ namespace WorldOfTanks {
 			this.MemberResultListView = new System.Windows.Forms.ListView();
 			this.SerialNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.NameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.PositionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.CombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.WinRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.HitRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.AverageCombatLevelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.AverageDamageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AttendanceDaysColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AttendanceCountColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AttendanceButton = new System.Windows.Forms.Button();
@@ -47,11 +52,7 @@ namespace WorldOfTanks {
 			this.label2 = new System.Windows.Forms.Label();
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.CopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.PositionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.WinRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.HitRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.AverageCombatLevelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.AverageDamageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.OnlineDaysColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -69,6 +70,7 @@ namespace WorldOfTanks {
             this.HitRateColumnHeader,
             this.AverageCombatLevelColumnHeader,
             this.AverageDamageColumnHeader,
+            this.OnlineDaysColumnHeader,
             this.AttendanceDaysColumnHeader,
             this.AttendanceCountColumnHeader});
 			this.MemberResultListView.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
@@ -96,10 +98,35 @@ namespace WorldOfTanks {
 			this.NameColumnHeader.Text = "昵称";
 			this.NameColumnHeader.Width = 40;
 			// 
+			// PositionColumnHeader
+			// 
+			this.PositionColumnHeader.Text = "职位";
+			this.PositionColumnHeader.Width = 42;
+			// 
 			// CombatColumnHeader
 			// 
 			this.CombatColumnHeader.Text = "千场效率";
 			this.CombatColumnHeader.Width = 73;
+			// 
+			// WinRateColumnHeader
+			// 
+			this.WinRateColumnHeader.Text = "千场胜率";
+			this.WinRateColumnHeader.Width = 69;
+			// 
+			// HitRateColumnHeader
+			// 
+			this.HitRateColumnHeader.Text = "千场命中率";
+			this.HitRateColumnHeader.Width = 88;
+			// 
+			// AverageCombatLevelColumnHeader
+			// 
+			this.AverageCombatLevelColumnHeader.Text = "千场出战等级";
+			this.AverageCombatLevelColumnHeader.Width = 103;
+			// 
+			// AverageDamageColumnHeader
+			// 
+			this.AverageDamageColumnHeader.Text = "千场均伤";
+			this.AverageDamageColumnHeader.Width = 76;
 			// 
 			// AttendanceDaysColumnHeader
 			// 
@@ -278,30 +305,10 @@ namespace WorldOfTanks {
 			this.CopyToolStripMenuItem.Text = "复制";
 			this.CopyToolStripMenuItem.Click += new System.EventHandler(this.CopyToolStripMenuItem_Click);
 			// 
-			// PositionColumnHeader
+			// OnlineDaysColumnHeader
 			// 
-			this.PositionColumnHeader.Text = "职位";
-			this.PositionColumnHeader.Width = 42;
-			// 
-			// AverageWinRateColumnHeader
-			// 
-			this.WinRateColumnHeader.Text = "千场胜率";
-			this.WinRateColumnHeader.Width = 69;
-			// 
-			// HitRateColumnHeader
-			// 
-			this.HitRateColumnHeader.Text = "千场命中率";
-			this.HitRateColumnHeader.Width = 88;
-			// 
-			// AverageCombatLevelColumnHeader
-			// 
-			this.AverageCombatLevelColumnHeader.Text = "千场出战等级";
-			this.AverageCombatLevelColumnHeader.Width = 103;
-			// 
-			// AverageDamageColumnHeader
-			// 
-			this.AverageDamageColumnHeader.Text = "千场均伤";
-			this.AverageDamageColumnHeader.Width = 76;
+			this.OnlineDaysColumnHeader.Text = "在线天数";
+			this.OnlineDaysColumnHeader.Width = 70;
 			// 
 			// OujBoxClanQueryForm
 			// 
@@ -357,5 +364,6 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.ColumnHeader HitRateColumnHeader;
 		private System.Windows.Forms.ColumnHeader AverageCombatLevelColumnHeader;
 		private System.Windows.Forms.ColumnHeader AverageDamageColumnHeader;
+		private System.Windows.Forms.ColumnHeader OnlineDaysColumnHeader;
 	}
 }

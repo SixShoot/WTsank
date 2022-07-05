@@ -18,7 +18,7 @@ namespace WorldOfTanks {
 			Application.SetUnhandledExceptionMode (UnhandledExceptionMode.CatchException);
 			HttpAPI.SetSecurityProtocol ();
 			ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-			API.Initialize ();
+			Api.Initialize ();
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
 			Application.Run (new Form1 ());

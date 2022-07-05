@@ -79,7 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API.cs" />
+    <Compile Include="Api.cs" />
     <Compile Include="Enums\ClanMemberPosition.cs" />
     <Compile Include="Enums\TankType.cs" />
     <Compile Include="Forms\BoxCombatAnalysisForm.cs">
@@ -190,6 +190,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\100_25_0_E5_CommanderTower.jpg" />
+    <EmbeddedResource Include="Images\100_25_0_279_CommanderTower.jpg" />
+    <EmbeddedResource Include="Images\100_25_0_E5_Center.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

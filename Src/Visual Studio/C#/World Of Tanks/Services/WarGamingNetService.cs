@@ -124,15 +124,79 @@ namespace WorldOfTanks {
 			int tierIndex = parametersJsonArray.FindIndex (item => item == "tier");
 			int typeIndex = parametersJsonArray.FindIndex (item => item == "type");
 			Dictionary<string, Tank> tanks = new Dictionary<string, Tank> ();
+			void AddTankWithName (string name, Tank newTank) {
+				try {
+					tanks.Add (name, newTank);
+				} catch (ArgumentException) {
+					Console.WriteLine ($"坦克名：{name} 重复");
+				}
+			}
+			void AddTank (Tank newTank) {
+				AddTankWithName (newTank.Name, newTank);
+			}
 			for (int i = 0; i < tanksJsonArray.Count; i++) {
 				JsonArray tankJsonArray = tanksJsonArray[i];
 				string name = Regex.Unescape (tankJsonArray[nameIndex]);
-				tanks[name] = new Tank () {
+				AddTankWithName (name, new Tank () {
 					Name = name,
 					Tier = int.Parse (tankJsonArray[tierIndex]),
-					Type = API.ParseTankType (tankJsonArray[typeIndex])
-				};
+					Type = Api.ParseTankType (tankJsonArray[typeIndex])
+				});
 			}
+			Tank tank = new Tank () {
+				Name = "AMX M449L",
+				Tier = 8,
+				Type = TankType.HeavyTank
+			};
+			AddTank (tank);
+			tank = new Tank () {
+				Name = "VK2801 105L/28",
+				Tier = 6,
+				Type = TankType.LightTank
+			};
+			AddTank (tank);
+			tank = new Tank () {
+				Name = "A46",
+				Tier = 6,
+				Type = TankType.LightTank
+			};
+			AddTank (tank);
+			tank = new Tank () {
+				Name = "T3战斗车",
+				Tier = 3,
+				Type = TankType.MediumTank
+			};
+			AddTank (tank);
+			tank = new Tank () {
+				Name = "T26E5 P",
+				Tier = 8,
+				Type = TankType.HeavyTank
+			};
+			AddTank (tank);
+			tank = new Tank () {
+				Name = "T71 CMCD",
+				Tier = 7,
+				Type = TankType.LightTank
+			};
+			AddTank (tank);
+			tank = new Tank () {
+				Name = "\"虎王\"(H)",
+				Tier = 7,
+				Type = TankType.HeavyTank
+			};
+			AddTank (tank);
+			tank = new Tank () {
+				Name = "T-34 1941型",
+				Tier = 4,
+				Type = TankType.MediumTank
+			};
+			AddTank (tank);
+			tank = new Tank () {
+				Name = "酋长 MK.VI",
+				Tier = 10,
+				Type = TankType.HeavyTank
+			};
+			AddTank (tank);
 			return tanks;
 		}
 
@@ -140,8 +204,7 @@ namespace WorldOfTanks {
 			if (Tanks == null) {
 				Tanks = GetTanks ();
 			}
-			Tanks.TryGetValue (name, out Tank tank);
-			if (tank == null) {
+			if (!Tanks.TryGetValue (name, out Tank tank)) {
 				string message = $"未找到名为：{name} 的坦克";
 				Console.WriteLine (message);
 				if (!allowNotFound) {

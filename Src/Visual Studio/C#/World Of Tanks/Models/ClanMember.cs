@@ -11,6 +11,7 @@
 		public string AttendanceDaysText;
 		public int AttendanceCount;
 		public string AttendanceCountText;
+		public int OnlineDays;
 
 		public ClanMember (string name, int clanID) {
 			Name = name;

@@ -37,12 +37,12 @@ namespace WorldOfTanks {
 				TeamBListView.Columns.Add (column.Text, column.Width);
 			}
 			AutoResizeResultListViewColumns ();
-			API.AutoResizeListViewColumns (TeamAListView);
-			API.AutoResizeListViewColumns (TeamBListView);
+			Api.AutoResizeListViewColumns (TeamAListView);
+			Api.AutoResizeListViewColumns (TeamBListView);
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
-			if (API.CheckDateTime (StartDateTimePicker.Value, EndDateTimePicker.Value)) {
+			if (Api.CheckDateTime (StartDateTimePicker.Value, EndDateTimePicker.Value)) {
 				Query (NameTextBox.Text, StartDateTimePicker.Value.Date == EndDateTimePicker.Value.Date);
 			}
 		}
@@ -117,7 +117,7 @@ namespace WorldOfTanks {
 		}
 
 		void AutoResizeResultListViewColumns () {
-			API.AutoResizeListViewColumns (CombatListView, true);
+			Api.AutoResizeListViewColumns (CombatListView, true);
 			TeamAListView.Left = CombatListView.Right + 5;
 			TeamAListView.Width = QueryButton.Right - TeamAListView.Left;
 			TeamAInformationLabel.Left = TeamAListView.Left;
@@ -157,7 +157,7 @@ namespace WorldOfTanks {
 						EndDateTimePicker.Value,
 						isSameDay,
 						(page, dateTime) => {
-							SetState ($"{API.Divide ((DateTime.Now.Date - dateTime).TotalDays, dayDifference):P0} 页：{page} 时间：{dateTime:yyyy年MM月dd日}");
+							SetState ($"{Api.Divide ((DateTime.Now.Date - dateTime).TotalDays, dayDifference):P0} 页：{page} 时间：{dateTime:yyyy年MM月dd日}");
 						}
 					);
 					count = combatRecords.Count;
@@ -169,7 +169,7 @@ namespace WorldOfTanks {
 							innerCombatRecord.Tag = innerCombatRecord;
 							lock (summaryLock) {
 								count--;
-								SetState ($"进度：{API.Divide (combatRecords.Count - count, combatRecords.Count):P0} {combatRecords.Count - count}/{combatRecords.Count}");
+								SetState ($"进度：{Api.Divide (combatRecords.Count - count, combatRecords.Count):P0} {combatRecords.Count - count}/{combatRecords.Count}");
 								if (count <= 0) {
 									autoResetEvent.Set ();
 								}
@@ -188,14 +188,14 @@ namespace WorldOfTanks {
 						}
 						CombatListView.BeginUpdate ();
 						foreach (BoxCombatRecord combatRecord in combatRecords) {
-							ListViewItem listViewItem = new ListViewItem (API.CombatResultToString (combatRecord.Result)) {
+							ListViewItem listViewItem = new ListViewItem (Api.CombatResultToString (combatRecord.Result)) {
 								Tag = combatRecord
 							};
 							listViewItem.SubItems.Insert (ModeColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = combatRecord.Mode });
 							listViewItem.SubItems.Insert (DateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{combatRecord.DateTime:yyyy年MM月dd日 HH时mm分}" });
 							listViewItem.SubItems.Insert (CombatListCombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
 								Text = $"{combatRecord.TeamPlayer.Combat:F2}",
-								Tag = API.GetCombatColor (combatRecord.TeamPlayer.Combat)
+								Tag = Api.GetCombatColor (combatRecord.TeamPlayer.Combat)
 							});
 							CombatListView.Items.Add (listViewItem);
 						}
@@ -331,45 +331,49 @@ namespace WorldOfTanks {
 			}
 			autoResetEvent.WaitOne ();
 			Invoke (new Action (() => {
-				foreach (JsonValue playerJsonValue in players) {
-					CachedPlayer cachedPlayer = CachedPlayers[playerJsonValue];
-					float hitRate = API.Divide (cachedPlayer.TeamPlayer.HitCount, cachedPlayer.TeamPlayer.ShootCount);
-					float penetrationRate = API.Divide (cachedPlayer.TeamPlayer.PenetrationCount, cachedPlayer.TeamPlayer.HitCount);
-					float penetrationRateIncludeNoHit = API.Divide (cachedPlayer.TeamPlayer.PenetrationCount, cachedPlayer.TeamPlayer.ShootCount);
-					ListViewItem listViewItem = new ListViewItem (cachedPlayer.TeamPlayer.Name);
-					listViewItem.SubItems.Insert (ClanColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = cachedPlayer.TeamPlayer.ClanAbbrev });
-					listViewItem.SubItems.Insert (BoxCombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
-						Text = $"{cachedPlayer.BoxPersonalCombatRecord.CombatText}",
-						Tag = API.GetCombatColor (cachedPlayer.BoxPersonalCombatRecord.Combat)
-					});
-					listViewItem.SubItems.Insert (BoxWinRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.WinRate:P0}" });
-					listViewItem.SubItems.Insert (BoxHitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.HitRate:P0}" });
-					listViewItem.SubItems.Insert (BoxCombatLevelColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.CombatLevel}" });
-					listViewItem.SubItems.Insert (BoxDamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.Damage}" });
-					listViewItem.SubItems.Insert (TankColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = cachedPlayer.TeamPlayer.TankName });
-					listViewItem.SubItems.Insert (CombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
-						Text = $"{cachedPlayer.TeamPlayer.Combat:F2}",
-						Tag = API.GetCombatColor (cachedPlayer.TeamPlayer.Combat)
-					});
-					listViewItem.SubItems.Insert (DamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.Damage}" });
-					listViewItem.SubItems.Insert (AssistColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.Assist}" });
-					listViewItem.SubItems.Insert (ArmorResistanceColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.ArmorResistence}" });
-					listViewItem.SubItems.Insert (HitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{hitRate:P2}" });
-					listViewItem.SubItems.Insert (PenetrationRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{penetrationRate:P2}" });
-					listViewItem.SubItems.Insert (PenetrationRateIncludeNoHitColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{penetrationRateIncludeNoHit:P2}" });
-					listViewItem.SubItems.Insert (ShootCountColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.ShootCount}" });
-					listViewItem.SubItems.Insert (HitCountColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.HitCount}" });
-					listViewItem.SubItems.Insert (PenetrationCountColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.PenetrationCount}" });
-					listView.Items.Add (listViewItem);
+				try {
+					foreach (JsonValue playerJsonValue in players) {
+						CachedPlayer cachedPlayer = CachedPlayers[playerJsonValue];
+						float hitRate = Api.Divide (cachedPlayer.TeamPlayer.HitCount, cachedPlayer.TeamPlayer.ShootCount);
+						float penetrationRate = Api.Divide (cachedPlayer.TeamPlayer.PenetrationCount, cachedPlayer.TeamPlayer.HitCount);
+						float penetrationRateIncludeNoHit = Api.Divide (cachedPlayer.TeamPlayer.PenetrationCount, cachedPlayer.TeamPlayer.ShootCount);
+						ListViewItem listViewItem = new ListViewItem (cachedPlayer.TeamPlayer.Name);
+						listViewItem.SubItems.Insert (ClanColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = cachedPlayer.TeamPlayer.ClanAbbrev });
+						listViewItem.SubItems.Insert (BoxCombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
+							Text = $"{cachedPlayer.BoxPersonalCombatRecord.CombatText}",
+							Tag = Api.GetCombatColor (cachedPlayer.BoxPersonalCombatRecord.Combat)
+						});
+						listViewItem.SubItems.Insert (BoxWinRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.WinRate:P0}" });
+						listViewItem.SubItems.Insert (BoxHitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.HitRate:P0}" });
+						listViewItem.SubItems.Insert (BoxCombatLevelColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.CombatLevel}" });
+						listViewItem.SubItems.Insert (BoxDamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.BoxPersonalCombatRecord.Damage}" });
+						listViewItem.SubItems.Insert (TankColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = cachedPlayer.TeamPlayer.TankName });
+						listViewItem.SubItems.Insert (CombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
+							Text = $"{cachedPlayer.TeamPlayer.Combat:F2}",
+							Tag = Api.GetCombatColor (cachedPlayer.TeamPlayer.Combat)
+						});
+						listViewItem.SubItems.Insert (DamageColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.Damage}" });
+						listViewItem.SubItems.Insert (AssistColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.Assist}" });
+						listViewItem.SubItems.Insert (ArmorResistanceColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.ArmorResistence}" });
+						listViewItem.SubItems.Insert (HitRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{hitRate:P2}" });
+						listViewItem.SubItems.Insert (PenetrationRateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{penetrationRate:P2}" });
+						listViewItem.SubItems.Insert (PenetrationRateIncludeNoHitColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{penetrationRateIncludeNoHit:P2}" });
+						listViewItem.SubItems.Insert (ShootCountColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.ShootCount}" });
+						listViewItem.SubItems.Insert (HitCountColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.HitCount}" });
+						listViewItem.SubItems.Insert (PenetrationCountColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{cachedPlayer.TeamPlayer.PenetrationCount}" });
+						listView.Items.Add (listViewItem);
+					}
+					Api.AutoResizeListViewColumns (listView);
+					((ListViewComparer)listView.ListViewItemSorter).SortColumn (CombatColumnHeader.Index, SortOrder.Descending);
+					listView.EndUpdate ();
+					label.Text = string.Format (
+						$"平均千场效率：{Api.Divide (totalBoxCombat, effectiveCount):F2} " +
+						$"平均千场胜率：{Api.Divide (totalBoxWinRate, effectiveCount):P2} " +
+						$"平均千场均伤：{Api.Divide (totalBoxDamage, effectiveCount):F2}"
+					);
+				} catch (Exception e) {
+					MessageBox.Show ($"出现错误，请尝试重新加载{Environment.NewLine}{e}");
 				}
-				API.AutoResizeListViewColumns (listView);
-				((ListViewComparer)listView.ListViewItemSorter).SortColumn (CombatColumnHeader.Index, SortOrder.Descending);
-				listView.EndUpdate ();
-				label.Text = string.Format (
-					$"平均千场效率：{API.Divide (totalBoxCombat, effectiveCount):F2} " +
-					$"平均千场胜率：{API.Divide (totalBoxWinRate, effectiveCount):P2} " +
-					$"平均千场均伤：{API.Divide (totalBoxDamage, effectiveCount):F2}"
-				);
 			}));
 		}
 

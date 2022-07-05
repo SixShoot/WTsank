@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace WorldOfTanks {
@@ -36,6 +37,15 @@ namespace WorldOfTanks {
 		public double CurrentAimTime { get; set; }
 		public double CurrentDispersion { get; set; }
 		public Pen Pen { get; set; }
+		public Brush Brush { get; set; }
+		public List<ImpactPoint> ImpactPoints { get; set; } = new List<ImpactPoint> ();
+
+	}
+
+	struct ImpactPoint {
+
+		public double X { get; set; }
+		public double Y { get; set; }
 
 	}
 

@@ -4,11 +4,12 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace WorldOfTanks {
 
-	class API {
+	class Api {
 
 		static readonly CombatColor[] CombatColors = {
 			new CombatColor (600, "FFFFFF", "BB0022"),//0-600
@@ -20,6 +21,7 @@ namespace WorldOfTanks {
 			new CombatColor (1800, "FFFFFF", "000000", "DDCC00"),//1600-1800
 			new CombatColor (2000, "000000", "FFAA33")//1800-2000
 		};
+		static readonly Random Random = new Random ();
 
 		public static void Initialize () {
 			for (int i = 0; i < CombatColors.Length; i++) {
@@ -54,9 +56,9 @@ namespace WorldOfTanks {
 
 		public static Color GetCombatColor (float combat, float basic, float min, float max) {
 			if (combat <= basic) {
-				return Lerp (Color.LightCoral, Color.LightGreen, Clamp (API.Divide (combat - min, basic - min), 0, 1));
+				return Lerp (Color.LightCoral, Color.LightGreen, Clamp (Api.Divide (combat - min, basic - min), 0, 1));
 			}
-			return Lerp (Color.LightGreen, Color.Gold, Clamp (API.Divide (combat - basic, max - basic), 0, 1));
+			return Lerp (Color.LightGreen, Color.Gold, Clamp (Api.Divide (combat - basic, max - basic), 0, 1));
 		}
 		public static Color GetCombatColor (float combat, float basic) {
 			return GetCombatColor (combat, basic, basic - 500, basic + 500);
@@ -277,6 +279,58 @@ namespace WorldOfTanks {
 				case TankType.SPG:
 					return shortName ? "火炮" : "自行火炮";
 			}
+		}
+
+		public static float TankLevelCombatLimit (int level, float combat) {
+			switch (level) {
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+					return Math.Min (combat, 1000);
+				case 5:
+					return Math.Min (combat, 1350);
+				case 6:
+					return Math.Min (combat, 1500);
+				case 7:
+					return Math.Min (combat, 1650);
+				case 8:
+					return Math.Min (combat, 2000);
+				case 9:
+					return Math.Min (combat, 2300);
+			}
+			return combat;
+		}
+
+		#region 生成高斯分布数
+		// mean：均值，variance：方差
+		// min和max用于去掉不需要的偏差值
+		public static double NextGaussian (double mean, double variance, double min, double max) {
+			double x;
+			do {
+				x = NextGaussian (mean, variance);
+			} while (x < min || x > max);
+			return x;
+		}
+
+		public static double NextGaussian (double mean, double standard_deviation) {
+			return mean + NextGaussian () * standard_deviation;
+		}
+
+		public static double NextGaussian () {
+			double v1, v2, s;
+			do {
+				v1 = 2.0f * Random.NextDouble () - 1.0f;
+				v2 = 2.0f * Random.NextDouble () - 1.0f;
+				s = v1 * v1 + v2 * v2;
+			} while (s >= 1.0f || s == 0f);
+			s = Math.Sqrt ((-2.0f * Math.Log (s)) / s);
+			return v1 * s;
+		}
+		#endregion
+
+		public static bool PointInsideCircle (double x, double y, double radius) {
+			return Math.Sqrt (Math.Pow (x, 2) + Math.Pow (y, 2)) <= radius;
 		}
 
 		class CombatColor {

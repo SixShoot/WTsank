@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Eruru.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,8 @@ namespace WorldOfTanks {
 
 	class BoxCombatRecordSummary {
 
+		public int TankLevelCount { get; set; }
+		public int TankLevel { get; set; }
 		public int CombatNumber { get; set; }
 		public int WinNumber { get; set; }
 		public int FailNumber { get; set; }
@@ -33,6 +36,7 @@ namespace WorldOfTanks {
 		public float TotalArmorResistence { get; set; }
 		public float TotalSurvivalTime { get; set; }
 		public float TotalXP { get; set; }
+		public float TotalTankLevel { get; set; }
 		public float MeetSPGRate { get; set; }
 		public float MeetOneSPGRate { get; set; }
 		public float MeetTwoSPGRate { get; set; }
@@ -47,6 +51,7 @@ namespace WorldOfTanks {
 		public float AverageDuration { get; set; }
 		public float AverageCombat { get; set; }
 		public float MedianCombat { get; set; }
+		public float PredictCombat { get; set; }
 		public float AverageDamage { get; set; }
 		public float AverageAssist { get; set; }
 		public float AverageHitRate { get; set; }
@@ -55,6 +60,7 @@ namespace WorldOfTanks {
 		public float AverageArmorResistence { get; set; }
 		public float AverageSurvivalTime { get; set; }
 		public float AverageXP { get; set; }
+		public float AverageTankLevel { get; set; }
 		public Dictionary<string, BoxCombatRecordSummary> Tanks { get; set; } = new Dictionary<string, BoxCombatRecordSummary> ();
 
 		public void AddCombatRecord (BoxCombatRecord combatRecord) {
@@ -72,12 +78,15 @@ namespace WorldOfTanks {
 				default:
 					throw new NotImplementedException (combatRecord.Result.ToString ());
 			}
-			List<Tank> enemyTanks = new List<Tank> ();
-			for (int i = 0; i < combatRecord.EnemyTeamPlayers.Count; i++) {
-				Tank tank = tank = WarGamingNetService.Instance.GetTankByName (combatRecord.EnemyTeamPlayers[i]["tank_title"]);
-				enemyTanks.Add (tank);
+			List<Tank> enemyTeamTanks = new List<Tank> ();
+			foreach (JsonValue enemyTeamPlayer in combatRecord.EnemyTeamPlayers) {
+				enemyTeamTanks.Add (WarGamingNetService.Instance.GetTankByName (enemyTeamPlayer["tank_title"]));
 			}
-			int spgNumber = enemyTanks.Count (item => item?.Type == TankType.SPG);
+			List<Tank> playerTeamTanks = new List<Tank> ();
+			foreach (JsonValue playerTeamPlayer in combatRecord.PlayerTeamPlayers) {
+				playerTeamTanks.Add (WarGamingNetService.Instance.GetTankByName (playerTeamPlayer["tank_title"]));
+			}
+			int spgNumber = Math.Max (enemyTeamTanks.Count (item => item?.Type == TankType.SPG), playerTeamTanks.Count (item => item?.Type == TankType.SPG));
 			if (spgNumber > 0) {
 				MeetSPGNumber++;
 				switch (spgNumber) {
@@ -92,24 +101,32 @@ namespace WorldOfTanks {
 						break;
 				}
 			}
-			List<Tank> playerTanks = new List<Tank> ();
-			int playerLevel = WarGamingNetService.Instance.GetTankByName (combatRecord.TeamPlayer.TankName)?.Tier ?? -1;
+			Tank playerTank = WarGamingNetService.Instance.GetTankByName (combatRecord.TeamPlayer.TankName);
+			int playerLevel;
+			if (playerTank == null) {
+				Console.WriteLine ($"没有找到名为：{combatRecord.TeamPlayer.TankName} 的玩家坦克，无法推断分房等级");
+				playerLevel = -1;
+			} else {
+				playerLevel = playerTank.Tier;
+			}
 			int minLevel = playerLevel, maxLevel = playerLevel;
-			for (int i = 0; i < combatRecord.PlayerTeamPlayers.Count; i++) {
-				Tank tank = WarGamingNetService.Instance.GetTankByName (combatRecord.PlayerTeamPlayers[i]["tank_title"]);
-				playerTanks.Add (tank);
-				if (tank != null) {
-					if (minLevel == -1) {
-						minLevel = tank.Tier;
-						maxLevel = tank.Tier;
-						continue;
-					}
-					if (tank.Tier < minLevel) {
-						minLevel = tank.Tier;
-					}
-					if (tank.Tier > maxLevel) {
-						maxLevel = tank.Tier;
-					}
+			List<Tank> allTanks = new List<Tank> ();
+			allTanks.AddRange (enemyTeamTanks);
+			allTanks.AddRange (playerTeamTanks);
+			foreach (Tank tank in allTanks) {
+				if (tank == null) {
+					continue;
+				}
+				if (minLevel == -1) {
+					minLevel = tank.Tier;
+					maxLevel = tank.Tier;
+					continue;
+				}
+				if (tank.Tier < minLevel && (tank.Tier >= maxLevel - 2)) {
+					minLevel = tank.Tier;
+				}
+				if (tank.Tier > maxLevel && (tank.Tier <= minLevel + 2)) {
+					maxLevel = tank.Tier;
 				}
 			}
 			if (playerLevel > 0) {
@@ -145,31 +162,36 @@ namespace WorldOfTanks {
 			TotalXP += combatRecord.TeamPlayer.XP;
 		}
 
-		public void Summary () {
-			WinRate = API.Divide (WinNumber, CombatNumber);
-			MeetSPGRate = API.Divide (MeetSPGNumber, CombatNumber);
-			MeetOneSPGRate = API.Divide (MeetOneSPGNumber, CombatNumber);
-			MeetTwoSPGRate = API.Divide (MeetTwoSPGNumber, CombatNumber);
-			MeetThreeSPGRate = API.Divide (MeetThreeSPGNumber, CombatNumber);
-			MinusTwoLevelRate = API.Divide (MinusTwoLevelNumber, CombatNumber);
-			MinusOneLevelRate = API.Divide (MinusOneLevelNumber, CombatNumber);
-			SameLevelRate = API.Divide (SameLevelNumber, CombatNumber);
-			MiddleLevelRate = API.Divide (MiddleLevelNumber, CombatNumber);
-			PlusOneLevelRate = API.Divide (PlusOneLevelNumber, CombatNumber);
-			PlusTwoLevelRate = API.Divide (PlusTwoLevelNumber, CombatNumber);
-			AverageSPGNumber = API.Divide (TotalSPGNumber, CombatNumber);
-			AverageDuration = API.Divide (TotalDuration, CombatNumber);
-			AverageCombat = API.Divide (TotalCombat, CombatNumber);
+		public void Summary (string tankName = null) {
+			WinRate = Api.Divide (WinNumber, CombatNumber);
+			MeetSPGRate = Api.Divide (MeetSPGNumber, CombatNumber);
+			MeetOneSPGRate = Api.Divide (MeetOneSPGNumber, CombatNumber);
+			MeetTwoSPGRate = Api.Divide (MeetTwoSPGNumber, CombatNumber);
+			MeetThreeSPGRate = Api.Divide (MeetThreeSPGNumber, CombatNumber);
+			MinusTwoLevelRate = Api.Divide (MinusTwoLevelNumber, CombatNumber);
+			MinusOneLevelRate = Api.Divide (MinusOneLevelNumber, CombatNumber);
+			SameLevelRate = Api.Divide (SameLevelNumber, CombatNumber);
+			MiddleLevelRate = Api.Divide (MiddleLevelNumber, CombatNumber);
+			PlusOneLevelRate = Api.Divide (PlusOneLevelNumber, CombatNumber);
+			PlusTwoLevelRate = Api.Divide (PlusTwoLevelNumber, CombatNumber);
+			AverageSPGNumber = Api.Divide (TotalSPGNumber, CombatNumber);
+			AverageDuration = Api.Divide (TotalDuration, CombatNumber);
+			AverageCombat = Api.Divide (TotalCombat, CombatNumber);
 			Combats.Sort ();
-			MedianCombat = API.GetMedian (Combats);
-			AverageDamage = API.Divide (TotalDamage, CombatNumber);
-			AverageAssist = API.Divide (TotalAssist, CombatNumber);
-			AverageHitRate = API.Divide (TotalHitCount, TotalShootCount);
-			AveragePenetrationRate = API.Divide (TotalPenetrationCount, TotalHitCount);
-			AveragePenetrationRateIncludeNoHit = API.Divide (TotalPenetrationCount, TotalShootCount);
-			AverageArmorResistence = API.Divide (TotalArmorResistence, CombatNumber);
-			AverageSurvivalTime = API.Divide (TotalSurvivalTime, CombatNumber);
-			AverageXP = API.Divide (TotalXP, CombatNumber);
+			MedianCombat = Api.GetMedian (Combats);
+			PredictCombat = Api.TankLevelCombatLimit (TankLevel, (1 + Api.Divide (WinRate - 0.5F, 0.5F)) * AverageCombat);
+			AverageDamage = Api.Divide (TotalDamage, CombatNumber);
+			AverageAssist = Api.Divide (TotalAssist, CombatNumber);
+			AverageHitRate = Api.Divide (TotalHitCount, TotalShootCount);
+			AveragePenetrationRate = Api.Divide (TotalPenetrationCount, TotalHitCount);
+			AveragePenetrationRateIncludeNoHit = Api.Divide (TotalPenetrationCount, TotalShootCount);
+			AverageArmorResistence = Api.Divide (TotalArmorResistence, CombatNumber);
+			AverageSurvivalTime = Api.Divide (TotalSurvivalTime, CombatNumber);
+			AverageXP = Api.Divide (TotalXP, CombatNumber);
+			AverageTankLevel = Api.Divide (TotalTankLevel, TankLevelCount);
+			if (MinusTwoLevelNumber + MinusOneLevelNumber + SameLevelNumber + MiddleLevelNumber + PlusOneLevelNumber + PlusTwoLevelNumber != CombatNumber) {
+				Console.WriteLine ($"{tankName} 所有分房等级次数和战斗次数不匹配");
+			}
 		}
 
 	}
