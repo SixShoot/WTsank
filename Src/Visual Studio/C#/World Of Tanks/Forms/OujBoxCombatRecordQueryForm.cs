@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Eruru.Json;
 
 namespace WorldOfTanks {
 
 
-	public partial class OujBoxCombatRecordQueryForm : Form {
+	public partial class OujBoxCombatRecordQueryForm : Form, IFormPage {
 
 		readonly string[] Modes = { "标准赛" };
 		readonly ListViewComparer TankListViewComparer;
@@ -15,6 +17,8 @@ namespace WorldOfTanks {
 		readonly ListViewGroup BoxListViewGroup = new ListViewGroup ("偶游盒子");
 		readonly ListViewGroup ResultListViewGroup = new ListViewGroup ("结果");
 		readonly List<ColumnHeader> Columns = new List<ColumnHeader> ();
+
+		ListViewItem.ListViewSubItem CurrentSubItem;
 
 		public OujBoxCombatRecordQueryForm () {
 			InitializeComponent ();
@@ -27,7 +31,6 @@ namespace WorldOfTanks {
 				}
 			};
 			TankResultListView.ListViewItemSorter = TankListViewComparer;
-			NameTextBox.Text = Config.Instance.BoxCombatQueryPlayerName;
 			ResultListView.Groups.Add (QueryListViewGroup);
 			ResultListView.Groups.Add (BoxListViewGroup);
 			ResultListView.Groups.Add (ResultListViewGroup);
@@ -35,28 +38,33 @@ namespace WorldOfTanks {
 			foreach (ColumnHeader columnHeader in TankResultListView.Columns) {
 				Columns.Add (columnHeader);
 			}
-			if (Config.Instance.BoxCombatQueryTankListColumns == null) {
-				Config.Instance.BoxCombatQueryTankListColumns = new List<string> () {
+		}
+
+		public void OnShow () {
+			LoadQueryNames ();
+			if (ConfigService.Instance.BoxCombatQueryTankListColumns == null) {
+				ConfigService.Instance.BoxCombatQueryTankListColumns = new List<string> () {
 					NameColumnHeader.Text,
 					CombatNumberColumnHeader.Text,
 					VictoryRateColumnHeader.Text,
 					EvenNumberColumnHeader.Text,
 					AverageCombatColumnHeader.Text,
+					PredictCombatColumnHeader.Text,
 					AverageDamageColumnHeader.Text,
 					AverageAssistColumnHeader.Text,
 					AverageArmorResistanceColumnHeader.Text
 				};
-				ConfigDao.Instance.Save (Config.Instance);
+				ConfigDao.Instance.Save (ConfigService.Instance);
 			}
 			for (int i = 0; i < TankResultListView.Columns.Count; i++) {
-				TankResultListView.Columns[i].Tag = Config.Instance.BoxCombatQueryTankListColumns.Contains (TankResultListView.Columns[i].Text) ? null : (object)0;
+				TankResultListView.Columns[i].Tag = ConfigService.Instance.BoxCombatQueryTankListColumns.Contains (TankResultListView.Columns[i].Text) ? null : (object)0;
 			}
 			ApplyColumnVisible ();
 		}
 
 		private void QueryButton_Click (object sender, EventArgs e) {
 			if (Api.CheckDateTime (StartDateTimePicker.Value, EndDateTimePicker.Value)) {
-				Query (NameTextBox.Text, StartDateTimePicker.Value.Date == EndDateTimePicker.Value.Date);
+				Query (NameComboBox.Text, StartDateTimePicker.Value.Date == EndDateTimePicker.Value.Date);
 			}
 		}
 
@@ -73,9 +81,7 @@ namespace WorldOfTanks {
 		}
 
 		private void StartDateTimePicker_ValueChanged (object sender, EventArgs e) {
-			if (EndDateTimePicker.Value < StartDateTimePicker.Value) {
-				EndDateTimePicker.Value = StartDateTimePicker.Value;
-			}
+
 		}
 
 		private void EndDateTimePicker_ValueChanged (object sender, EventArgs e) {
@@ -101,17 +107,32 @@ namespace WorldOfTanks {
 			}
 		}
 
+		private void ListView_MouseClick (object sender, MouseEventArgs e) {
+			if (e.Button == MouseButtons.Right) {
+				ListView listView = (ListView)sender;
+				CurrentSubItem = listView.HitTest (e.X, e.Y).SubItem;
+				if (CurrentSubItem == null) {
+					return;
+				}
+				contextMenuStrip1.Show (listView, e.Location);
+			}
+		}
+
 		private void SetColumnButton_Click (object sender, EventArgs e) {
 			if (new SetColumnForm (Columns).ShowDialog () == DialogResult.OK) {
 				ApplyColumnVisible ();
-				Config.Instance.BoxCombatQueryTankListColumns.Clear ();
+				ConfigService.Instance.BoxCombatQueryTankListColumns.Clear ();
 				for (int i = 0; i < Columns.Count; i++) {
 					if (Columns[i].Tag == null) {
-						Config.Instance.BoxCombatQueryTankListColumns.Add (Columns[i].Text);
+						ConfigService.Instance.BoxCombatQueryTankListColumns.Add (Columns[i].Text);
 					}
 				}
-				ConfigDao.Instance.Save (Config.Instance);
+				ConfigDao.Instance.Save (ConfigService.Instance);
 			}
+		}
+
+		private void CopyToolStripMenuItem_Click (object sender, EventArgs e) {
+			Clipboard.SetText (CurrentSubItem.Text);
 		}
 
 		void AutoResizeResultListViewColumns () {
@@ -121,21 +142,57 @@ namespace WorldOfTanks {
 		}
 
 		void SetState (string text) {
-			Invoke (new Action (() => StateLabel.Text = text));
+			Api.Invoke (this, () => {
+				StateLabel.Text = text;
+			});
+		}
+		void SetState (string format, params object[] args) {
+			SetState (string.Format (format, args));
+		}
+
+		void SetEnabled (bool enabled) {
+			Api.Invoke (this, () => {
+				NameComboBox.Enabled = enabled;
+				StartDateTimePicker.Enabled = enabled;
+				EndDateTimePicker.Enabled = enabled;
+				QueryButton.Enabled = enabled;
+				ExportButton.Enabled = enabled;
+				SetColumnButton.Enabled = enabled;
+				TankResultListView.Enabled = enabled;
+				ResultListView.Enabled = enabled;
+			});
+		}
+
+		void ApplyColumnVisible () {
+			TankResultListView.BeginUpdate ();
+			Api.AutoResizeListViewColumns (TankResultListView);
+			for (int i = 0; i < TankResultListView.Columns.Count; i++) {
+				if (TankResultListView.Columns[i].Tag != null) {
+					TankResultListView.Columns[i].Width = 0;
+				}
+			}
+			TankResultListView.EndUpdate ();
+		}
+
+		void LoadQueryNames () {
+			NameComboBox.Items.Clear ();
+			for (int i = 0; i < ConfigService.Instance.BoxCombatQueryHistoryPlayerNames.Count; i++) {
+				NameComboBox.Items.Add (ConfigService.Instance.BoxCombatQueryHistoryPlayerNames[i]);
+			}
+			if (NameComboBox.Items.Count > 0) {
+				NameComboBox.SelectedIndex = 0;
+			}
 		}
 
 		void Query (string name, bool isSameDay = true) {
-			NameTextBox.Enabled = false;
-			StartDateTimePicker.Enabled = false;
-			EndDateTimePicker.Enabled = false;
-			QueryButton.Enabled = false;
-			ExportButton.Enabled = false;
-			SetColumnButton.Enabled = false;
+			SetEnabled (false);
 			ResultListView.Items.Clear ();
 			TankResultListView.Items.Clear ();
-			Config.Instance.BoxCombatQueryPlayerName = NameTextBox.Text;
-			ConfigDao.Instance.Save (Config.Instance);
-			new Thread (() => {
+			ConfigService.Instance.AddBoxCombatQueryPlayerName (name);
+			ConfigDao.Instance.Save (ConfigService.Instance);
+			LoadQueryNames ();
+			DateTime queryDateTime = DateTime.Now;
+			ThreadPool.QueueUserWorkItem (state => {
 				try {
 					BoxPersonalCombatRecord player = BoxService.Instance.GetPersonalCombatRecord (name);
 					double dayDifference = (DateTime.Now - StartDateTimePicker.Value).TotalDays;
@@ -145,7 +202,9 @@ namespace WorldOfTanks {
 						EndDateTimePicker.Value,
 						isSameDay,
 						(page, dateTime) => {
-							SetState ($"进度：{Api.Divide ((DateTime.Now.Date - dateTime).TotalDays, dayDifference):P0} 页：{page} 时间：{dateTime:yyyy年MM月dd日}");
+							double dateTimeProgress = Api.Divide ((DateTime.Now.Date - dateTime).TotalDays, dayDifference);
+							double pageProgress = Api.Divide (page, 215);
+							SetState ($"进度：{Math.Max (dateTimeProgress, pageProgress):P0} 页：{page} 时间：{dateTime.ToString (Api.DateFormatText)}");
 						}
 					);
 					combatRecords.RemoveAll (item => !Modes.Contains (item.Mode));
@@ -157,8 +216,15 @@ namespace WorldOfTanks {
 						count++;
 						SetState ($"进度：{Api.Divide (count, combatRecords.Count):P0} {count}/{combatRecords.Count}");
 					});
-					Invoke (new Action (() => {
+					DateTime startDateTime = DateTime.MinValue;
+					DateTime endDateTime = DateTime.MinValue;
+					if (combatRecordSummary.CombatRecords.Count > 0) {
+						endDateTime = combatRecordSummary.CombatRecords[0].DateTime;
+						startDateTime = combatRecordSummary.CombatRecords[combatRecordSummary.CombatRecords.Count - 1].DateTime;
+					}
+					Api.Invoke (this, () => {
 						ResultListView.BeginUpdate ();
+						ResultListView.Items.Add (new ListViewItem ("查询时间", QueryListViewGroup)).SubItems.Add (queryDateTime.ToString (Api.DateTimeFormatText));
 						ResultListView.Items.Add (new ListViewItem ("昵称", QueryListViewGroup)).SubItems.Add (player.Name);
 						string clanName;
 						try {
@@ -167,7 +233,7 @@ namespace WorldOfTanks {
 							clanName = e.Message;
 						}
 						ResultListView.Items.Add (new ListViewItem ("军团", QueryListViewGroup)).SubItems.Add (clanName);
-						ResultListView.Items.Add (new ListViewItem ("更新时间", BoxListViewGroup)).SubItems.Add ($"{player.UpdateTime:yyyy年MM月dd日 HH时mm分}");
+						ResultListView.Items.Add (new ListViewItem ("更新时间", BoxListViewGroup)).SubItems.Add (player.UpdateTime.ToString (Api.DateTimeExcludeSecondFormatText));
 						ResultListView.Items.Add (new ListViewItem ("千场效率", BoxListViewGroup)).SubItems.Add (new ListViewItem.ListViewSubItem () {
 							Text = $"{player.Combat}",
 							Tag = Api.GetCombatColor (player.Combat)
@@ -178,10 +244,10 @@ namespace WorldOfTanks {
 						ResultListView.Items.Add (new ListViewItem ("千场均伤", BoxListViewGroup)).SubItems.Add ($"{player.Damage}");
 						if (combatRecordSummary.CombatNumber > 0) {
 							if (isSameDay) {
-								ResultListView.Items.Add (new ListViewItem ($"查询日期", ResultListViewGroup)).SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
+								ResultListView.Items.Add (new ListViewItem ($"查询日期", ResultListViewGroup)).SubItems.Add (StartDateTimePicker.Value.ToString (Api.DateFormatText));
 							} else {
-								ResultListView.Items.Add (new ListViewItem ($"查询范围：从", ResultListViewGroup)).SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
-								ResultListView.Items.Add (new ListViewItem ($"至", ResultListViewGroup)).SubItems.Add ($"{EndDateTimePicker.Value:yyyy年MM月dd日}");
+								ResultListView.Items.Add (new ListViewItem ($"查询范围：从", ResultListViewGroup)).SubItems.Add (startDateTime.ToString (Api.DateTimeExcludeSecondFormatText));
+								ResultListView.Items.Add (new ListViewItem ($"至", ResultListViewGroup)).SubItems.Add (endDateTime.ToString (Api.DateTimeExcludeSecondFormatText));
 							}
 							ResultListView.Items.Add (new ListViewItem ("战斗次数", ResultListViewGroup)).SubItems.Add ($"{combatRecordSummary.CombatNumber}");
 							ResultListView.Items.Add (new ListViewItem ("胜率", ResultListViewGroup)).SubItems.Add ($"{combatRecordSummary.WinRate:P2}");
@@ -350,36 +416,17 @@ namespace WorldOfTanks {
 						TankListViewComparer.SortColumn (AverageCombatColumnHeader.Index, SortOrder.Descending);
 						ApplyColumnVisible ();
 						TankResultListView.EndUpdate ();
-					}));
+						SetState ("查询完毕");
+					});
 				} catch (Exception exception) {
-					Invoke (new Action (() => {
-						MessageBox.Show (this, exception.ToString ());
-					}));
+					Api.Invoke (this, () => {
+						SetState (exception.Message);
+						MessageBox.Show (exception.ToString ());
+					});
 				} finally {
-					Invoke (new Action (() => {
-						NameTextBox.Enabled = true;
-						StartDateTimePicker.Enabled = true;
-						EndDateTimePicker.Enabled = true;
-						QueryButton.Enabled = true;
-						ExportButton.Enabled = true;
-						SetColumnButton.Enabled = true;
-						StateLabel.Text = string.Empty;
-					}));
+					SetEnabled (true);
 				}
-			}) {
-				IsBackground = true
-			}.Start ();
-		}
-
-		void ApplyColumnVisible () {
-			TankResultListView.BeginUpdate ();
-			Api.AutoResizeListViewColumns (TankResultListView);
-			for (int i = 0; i < TankResultListView.Columns.Count; i++) {
-				if (TankResultListView.Columns[i].Tag != null) {
-					TankResultListView.Columns[i].Width = 0;
-				}
-			}
-			TankResultListView.EndUpdate ();
+			});
 		}
 
 	}

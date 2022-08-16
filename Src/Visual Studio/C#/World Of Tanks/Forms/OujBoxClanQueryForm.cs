@@ -1,14 +1,14 @@
-﻿using Eruru.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Eruru.Json;
 
 namespace WorldOfTanks {
 
-	public partial class OujBoxClanQueryForm : Form {
+	public partial class OujBoxClanQueryForm : Form, IFormPage {
 
 		readonly ListViewComparer MemberListViewComparer;
 
@@ -37,13 +37,16 @@ namespace WorldOfTanks {
 			};
 			MemberResultListView.ListViewItemSorter = MemberListViewComparer;
 			ModeComboBox.SelectedIndex = 0;
-			NameTextBox.Text = Config.Instance.BoxClanQueryName;
 			AutoResizeResultListViewColumns ();
 			Api.AutoResizeListViewColumns (MemberResultListView);
 		}
 
+		public void OnShow () {
+			LoadQueryNames ();
+		}
+
 		private void QueryButton_Click (object sender, EventArgs e) {
-			Query (NameTextBox.Text, false);
+			Query (NameComboBox.Text, false);
 		}
 
 		private void AttendanceButton_Click (object sender, EventArgs e) {
@@ -51,17 +54,18 @@ namespace WorldOfTanks {
 				return;
 			}
 			if (Api.CheckDateTime (StartDateTimePicker.Value, EndDateTimePicker.Value)) {
-				Query (NameTextBox.Text, true);
+				Query (NameComboBox.Text, true);
 			}
 		}
 
-		private void MemberResultListView_MouseClick (object sender, MouseEventArgs e) {
+		private void ListView_MouseClick (object sender, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Right) {
-				CurrentSubItem = MemberResultListView.HitTest (e.X, e.Y).SubItem;
+				ListView listView = (ListView)sender;
+				CurrentSubItem = listView.HitTest (e.X, e.Y).SubItem;
 				if (CurrentSubItem == null) {
 					return;
 				}
-				contextMenuStrip1.Show (MemberResultListView, e.Location);
+				contextMenuStrip1.Show (listView, e.Location);
 			}
 		}
 
@@ -82,15 +86,11 @@ namespace WorldOfTanks {
 		}
 
 		private void StartDateTimePicker_ValueChanged (object sender, EventArgs e) {
-			if (EndDateTimePicker.Value < StartDateTimePicker.Value) {
-				EndDateTimePicker.Value = StartDateTimePicker.Value;
-			}
+
 		}
 
 		private void EndDateTimePicker_ValueChanged (object sender, EventArgs e) {
-			if (StartDateTimePicker.Value > EndDateTimePicker.Value) {
-				StartDateTimePicker.Value = EndDateTimePicker.Value;
-			}
+
 		}
 
 		private void MemberResultListView_ColumnClick (object sender, ColumnClickEventArgs e) {
@@ -117,26 +117,48 @@ namespace WorldOfTanks {
 		}
 
 		void SetState (string text) {
-			Invoke (new Action (() => StateLabel.Text = text));
+			Api.Invoke (this, () => {
+				StateLabel.Text = text;
+			});
+		}
+		void SetState (string format, params object[] args) {
+			SetState (string.Format (format, args));
+		}
+
+		void SetEnabled (bool enabled) {
+			Api.Invoke (this, () => {
+				NameComboBox.Enabled = enabled;
+				StartDateTimePicker.Enabled = enabled;
+				EndDateTimePicker.Enabled = enabled;
+				QueryButton.Enabled = enabled;
+				AttendanceButton.Enabled = enabled;
+				ExportButton.Enabled = enabled;
+				ModeComboBox.Enabled = enabled;
+				MemberResultListView.Enabled = enabled;
+				ResultListView.Enabled = enabled;
+			});
+		}
+
+		void LoadQueryNames () {
+			NameComboBox.Items.Clear ();
+			for (int i = 0; i < ConfigService.Instance.BoxClanQueryHistoryNames.Count; i++) {
+				NameComboBox.Items.Add (ConfigService.Instance.BoxClanQueryHistoryNames[i]);
+			}
+			if (NameComboBox.Items.Count > 0) {
+				NameComboBox.SelectedIndex = 0;
+			}
 		}
 
 		void Query (string name, bool isAttendance) {
-			NameTextBox.Enabled = false;
-			StartDateTimePicker.Enabled = false;
-			EndDateTimePicker.Enabled = false;
-			QueryButton.Enabled = false;
-			AttendanceButton.Enabled = false;
-			ExportButton.Enabled = false;
-			ModeComboBox.Enabled = false;
+			SetEnabled (false);
 			Modes = new string[] { ModeComboBox.Text };
 			ResultListView.Items.Clear ();
 			MemberResultListView.Items.Clear ();
-			Config.Instance.BoxClanQueryName = NameTextBox.Text;
-			ConfigDao.Instance.Save (Config.Instance);
-			int count = 0;
-			object summaryLock = new object ();
-			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
-			new Thread (() => {
+			ConfigService.Instance.AddBoxClanQueryName (name);
+			ConfigDao.Instance.Save (ConfigService.Instance);
+			LoadQueryNames ();
+			DateTime queryDateTime = DateTime.Now;
+			ThreadPool.QueueUserWorkItem (state => {
 				try {
 					int clanID = WarGamingNetService.Instance.GetClanIdByName (name);
 					List<float> combats = new List<float> ();
@@ -151,62 +173,62 @@ namespace WorldOfTanks {
 					float totalDamage = 0;
 					List<ClanMember> clanMembers = WarGamingNetService.Instance.GetPlayersByClanId (clanID);
 					List<ClanMember> pageOutClanMembers = new List<ClanMember> ();
-					count = clanMembers.Count;
-					SetState ($"进度：0% 0/{clanMembers.Count}");
-					foreach (ClanMember clanMember in clanMembers) {
-						ThreadPool.QueueUserWorkItem (state => {
-							ClanMember innerClanMember = (ClanMember)state;
-							try {
+					if (clanMembers.Count > 0) {
+						AutoResetEvent autoResetEvent = new AutoResetEvent (false);
+						int count = 0;
+						SetState ($"进度：0% 0/{clanMembers.Count}");
+						foreach (ClanMember clanMember in clanMembers) {
+							ThreadPool.QueueUserWorkItem (innerState => {
+								ClanMember innerClanMember = (ClanMember)innerState;
 								try {
-									innerClanMember.BoxPersonalCombatRecord = BoxService.Instance.GetPersonalCombatRecord (innerClanMember.Name);
-								} catch {
-									innerClanMember.BoxPersonalCombatRecord = new BoxPersonalCombatRecord () {
-										Name = innerClanMember.Name
-									};
-									throw;
-								}
-								innerClanMember.AttendanceDaysText = "0";
-								innerClanMember.AttendanceCountText = "0";
-								combats.Add (innerClanMember.BoxPersonalCombatRecord.Combat);
-								winRates.Add (innerClanMember.BoxPersonalCombatRecord.WinRate);
-								hitRates.Add (innerClanMember.BoxPersonalCombatRecord.HitRate);
-								combatLevels.Add (innerClanMember.BoxPersonalCombatRecord.CombatLevel);
-								damages.Add (innerClanMember.BoxPersonalCombatRecord.Damage);
-								totalCombat += innerClanMember.BoxPersonalCombatRecord.Combat;
-								totalWinRate += innerClanMember.BoxPersonalCombatRecord.WinRate;
-								totalHitRate += innerClanMember.BoxPersonalCombatRecord.HitRate;
-								totalCombatLevel += innerClanMember.BoxPersonalCombatRecord.CombatLevel;
-								totalDamage += innerClanMember.BoxPersonalCombatRecord.Damage;
-								if (isAttendance) {
 									try {
-										innerClanMember.AttendanceDays = QueryAttendance (innerClanMember, out int attendanceCount, out int onlineDays, pageOutClanMember => {
-											pageOutClanMembers.Add (pageOutClanMember);
-										});
-										innerClanMember.AttendanceDaysText = innerClanMember.AttendanceDays.ToString ();
-										innerClanMember.AttendanceCount = attendanceCount;
-										innerClanMember.AttendanceCountText = innerClanMember.AttendanceCount.ToString ();
-										innerClanMember.OnlineDays = onlineDays;
-									} catch (Exception e) {
-										innerClanMember.AttendanceDaysText = e.ToString ();
+										innerClanMember.BoxPersonalCombatRecord = BoxService.Instance.GetPersonalCombatRecord (innerClanMember.Name);
+									} catch {
+										innerClanMember.BoxPersonalCombatRecord = new BoxPersonalCombatRecord () {
+											Name = innerClanMember.Name
+										};
+										throw;
+									}
+									innerClanMember.AttendanceDaysText = "0";
+									innerClanMember.AttendanceCountText = "0";
+									combats.Add (innerClanMember.BoxPersonalCombatRecord.Combat);
+									winRates.Add (innerClanMember.BoxPersonalCombatRecord.WinRate);
+									hitRates.Add (innerClanMember.BoxPersonalCombatRecord.HitRate);
+									combatLevels.Add (innerClanMember.BoxPersonalCombatRecord.CombatLevel);
+									damages.Add (innerClanMember.BoxPersonalCombatRecord.Damage);
+									totalCombat += innerClanMember.BoxPersonalCombatRecord.Combat;
+									totalWinRate += innerClanMember.BoxPersonalCombatRecord.WinRate;
+									totalHitRate += innerClanMember.BoxPersonalCombatRecord.HitRate;
+									totalCombatLevel += innerClanMember.BoxPersonalCombatRecord.CombatLevel;
+									totalDamage += innerClanMember.BoxPersonalCombatRecord.Damage;
+									if (isAttendance) {
+										try {
+											innerClanMember.AttendanceDays = QueryAttendance (innerClanMember, out int attendanceCount, out int onlineDays, pageOutClanMember => {
+												pageOutClanMembers.Add (pageOutClanMember);
+											});
+											innerClanMember.AttendanceDaysText = innerClanMember.AttendanceDays.ToString ();
+											innerClanMember.AttendanceCount = attendanceCount;
+											innerClanMember.AttendanceCountText = innerClanMember.AttendanceCount.ToString ();
+											innerClanMember.OnlineDays = onlineDays;
+										} catch (Exception e) {
+											innerClanMember.AttendanceDaysText = e.ToString ();
+										}
+									}
+								} catch (Exception exception) {
+									innerClanMember.BoxPersonalCombatRecord.CombatText = exception.Message;
+								} finally {
+									lock (autoResetEvent) {
+										count++;
+										if (count >= clanMembers.Count) {
+											autoResetEvent.Set ();
+										}
+										SetState ($"进度：{Api.Divide (count, clanMembers.Count):P0} {count}/{clanMembers.Count}");
 									}
 								}
-							} catch (Exception exception) {
-								innerClanMember.BoxPersonalCombatRecord.CombatText = exception.Message;
-							} finally {
-								lock (summaryLock) {
-									count--;
-									SetState ($"进度：{Api.Divide (clanMembers.Count - count, clanMembers.Count):P0} {clanMembers.Count - count}/{clanMembers.Count}");
-									if (count <= 0) {
-										autoResetEvent.Set ();
-									}
-								}
-							}
-						}, clanMember);
+							}, clanMember);
+						}
+						autoResetEvent.WaitOne ();
 					}
-					if (count <= 0) {
-						autoResetEvent.Set ();
-					}
-					autoResetEvent.WaitOne ();
 					float averageCombat = Api.Divide (totalCombat, combats.Count);
 					float averageWinRate = Api.Divide (totalWinRate, combats.Count);
 					float averageHitRate = Api.Divide (totalHitRate, combats.Count);
@@ -222,14 +244,15 @@ namespace WorldOfTanks {
 					float medianCombatLevel = Api.GetMedian (combatLevels);
 					damages.Sort ();
 					float medianDamage = Api.GetMedian (damages);
-					Invoke (new Action (() => {
+					Api.Invoke (this, () => {
 						ResultListView.BeginUpdate ();
-						ResultListView.Items.Add ("军团").SubItems.Add ($"{name}");
+						ResultListView.Items.Add ("查询时间").SubItems.Add (queryDateTime.ToString (Api.DateTimeFormatText));
+						ResultListView.Items.Add ("军团").SubItems.Add (name);
 						if (!isAttendance || StartDateTimePicker.Value.Date == EndDateTimePicker.Value.Date) {
-							ResultListView.Items.Add ($"查询日期").SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
+							ResultListView.Items.Add ($"查询日期").SubItems.Add (queryDateTime.ToString (Api.DateFormatText));
 						} else {
-							ResultListView.Items.Add ($"查询范围：从").SubItems.Add ($"{StartDateTimePicker.Value:yyyy年MM月dd日}");
-							ResultListView.Items.Add ($"至").SubItems.Add ($"{EndDateTimePicker.Value:yyyy年MM月dd日}");
+							ResultListView.Items.Add ($"查询范围：从").SubItems.Add (StartDateTimePicker.Value.ToString (Api.DateFormatText));
+							ResultListView.Items.Add ($"至").SubItems.Add (EndDateTimePicker.Value.ToString (Api.DateFormatText));
 						}
 						ResultListView.Items.Add ("成员数").SubItems.Add ($"{clanMembers.Count}");
 						ResultListView.Items.Add ("平均效率").SubItems.Add (new ListViewItem.ListViewSubItem () {
@@ -275,6 +298,7 @@ namespace WorldOfTanks {
 						Api.AutoResizeListViewColumns (MemberResultListView);
 						MemberListViewComparer.SortColumn (CombatColumnHeader.Index, SortOrder.Descending);
 						MemberResultListView.EndUpdate ();
+						SetState ("查询完毕");
 						if (pageOutClanMembers.Count > 0) {
 							StringBuilder stringBuilder = new StringBuilder ("以下成员由于偶游盒子战斗日志只显示7条*215页战斗日志，可能已丢失战斗日志，需要手动补充出勤次数：");
 							for (int i = 0; i < pageOutClanMembers.Count; i++) {
@@ -283,26 +307,16 @@ namespace WorldOfTanks {
 							}
 							MessageBox.Show (stringBuilder.ToString ());
 						}
-					}));
+					});
 				} catch (Exception e) {
-					Invoke (new Action (() => {
-						MessageBox.Show (this, e.ToString ());
-					}));
+					Api.Invoke (this, () => {
+						SetState (e.Message);
+						MessageBox.Show (e.ToString ());
+					});
 				} finally {
-					Invoke (new Action (() => {
-						NameTextBox.Enabled = true;
-						StartDateTimePicker.Enabled = true;
-						EndDateTimePicker.Enabled = true;
-						QueryButton.Enabled = true;
-						AttendanceButton.Enabled = true;
-						ExportButton.Enabled = true;
-						StateLabel.Text = string.Empty;
-						ModeComboBox.Enabled = true;
-					}));
+					SetEnabled (true);
 				}
-			}) {
-				IsBackground = true
-			}.Start ();
+			});
 		}
 
 		/// <summary>

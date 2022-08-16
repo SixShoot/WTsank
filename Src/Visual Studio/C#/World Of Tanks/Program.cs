@@ -1,8 +1,8 @@
-﻿using Eruru.Http;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using Eruru.Http;
 
 namespace WorldOfTanks {
 

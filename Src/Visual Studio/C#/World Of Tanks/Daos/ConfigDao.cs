@@ -4,19 +4,34 @@ namespace WorldOfTanks {
 
 	class ConfigDao {
 
-		public static ConfigDao Instance = new ConfigDao ();
+		public static ConfigDao Instance {
+
+			get {
+				lock (Lock) {
+					return _Instance;
+				}
+			}
+
+		}
+
+		readonly static object Lock = new object ();
+		static readonly ConfigDao _Instance = new ConfigDao ();
 
 		readonly string Path = "Config.json";
 
-		public void Save (Config config) {
-			JsonConvert.Serialize (config, Path, false);
+		public void Save (ConfigService config) {
+			lock (Lock) {
+				JsonConvert.Serialize (config, Path, false);
+			}
 		}
 
-		public Config Load () {
-			try {
-				return JsonConvert.DeserializeFile<Config> (Path);
-			} catch {
-				return new Config ();
+		public ConfigService Load () {
+			lock (Lock) {
+				try {
+					return JsonConvert.DeserializeFile<ConfigService> (Path);
+				} catch {
+					return new ConfigService ();
+				}
 			}
 		}
 

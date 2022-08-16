@@ -3,6 +3,12 @@ using System.Windows.Forms;
 
 namespace WorldOfTanks {
 
+	interface IFormPage {
+
+		void OnShow ();
+
+	}
+
 	class PageChanger<T> {
 
 		public Form MDIForm { get; set; }
@@ -29,6 +35,9 @@ namespace WorldOfTanks {
 			if (Pages.TryGetValue (key, out Form page)) {
 				ResizePage (page);
 				page.Show ();
+				if (page is IFormPage formPage) {
+					formPage.OnShow ();
+				}
 			}
 			LastKey = key;
 		}

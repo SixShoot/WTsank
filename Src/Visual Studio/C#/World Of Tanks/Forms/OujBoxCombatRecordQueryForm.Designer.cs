@@ -24,8 +24,8 @@ namespace WorldOfTanks {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent () {
+			this.components = new System.ComponentModel.Container();
 			this.label1 = new System.Windows.Forms.Label();
-			this.NameTextBox = new System.Windows.Forms.TextBox();
 			this.QueryButton = new System.Windows.Forms.Button();
 			this.StartDateTimePicker = new System.Windows.Forms.DateTimePicker();
 			this.ResultListView = new System.Windows.Forms.ListView();
@@ -33,6 +33,7 @@ namespace WorldOfTanks {
 			this.ContentColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.TankResultListView = new System.Windows.Forms.ListView();
 			this.NameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.TankLevelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.CombatNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.VictoryRateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.VictoryNumberColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -43,6 +44,7 @@ namespace WorldOfTanks {
 			this.AverageXPColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.MedianCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.PredictCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageDamageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageAssistColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.AverageArmorResistanceColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -76,8 +78,10 @@ namespace WorldOfTanks {
 			this.label2 = new System.Windows.Forms.Label();
 			this.StateLabel = new System.Windows.Forms.Label();
 			this.SetColumnButton = new System.Windows.Forms.Button();
-			this.PredictCombatColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.TankLevelColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.CopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.NameComboBox = new System.Windows.Forms.ComboBox();
+			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -89,19 +93,6 @@ namespace WorldOfTanks {
 			this.label1.TabIndex = 0;
 			this.label1.Text = "昵称：";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// NameTextBox
-			// 
-			this.NameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.NameTextBox.Font = new System.Drawing.Font("宋体", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			this.NameTextBox.Location = new System.Drawing.Point(45, 5);
-			this.NameTextBox.Margin = new System.Windows.Forms.Padding(0);
-			this.NameTextBox.Name = "NameTextBox";
-			this.NameTextBox.Size = new System.Drawing.Size(474, 23);
-			this.NameTextBox.TabIndex = 1;
-			this.NameTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.NameTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Control_KeyUp);
 			// 
 			// QueryButton
 			// 
@@ -124,8 +115,9 @@ namespace WorldOfTanks {
 			this.StartDateTimePicker.Name = "StartDateTimePicker";
 			this.StartDateTimePicker.Size = new System.Drawing.Size(200, 23);
 			this.StartDateTimePicker.TabIndex = 3;
-			this.StartDateTimePicker.ValueChanged += new System.EventHandler(this.StartDateTimePicker_ValueChanged);
+			this.StartDateTimePicker.CloseUp += new System.EventHandler(this.StartDateTimePicker_ValueChanged);
 			this.StartDateTimePicker.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Control_KeyUp);
+			this.StartDateTimePicker.Leave += new System.EventHandler(this.StartDateTimePicker_ValueChanged);
 			// 
 			// ResultListView
 			// 
@@ -146,6 +138,7 @@ namespace WorldOfTanks {
 			this.ResultListView.View = System.Windows.Forms.View.Details;
 			this.ResultListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.ListView_DrawColumnHeader);
 			this.ResultListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.ListView_DrawSubItem);
+			this.ResultListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListView_MouseClick);
 			// 
 			// LabelColumnHeader
 			// 
@@ -216,11 +209,16 @@ namespace WorldOfTanks {
 			this.TankResultListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.TankResultListView_ColumnClick);
 			this.TankResultListView.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.ListView_DrawColumnHeader);
 			this.TankResultListView.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.ListView_DrawSubItem);
+			this.TankResultListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListView_MouseClick);
 			// 
 			// NameColumnHeader
 			// 
 			this.NameColumnHeader.Text = "坦克";
 			this.NameColumnHeader.Width = 40;
+			// 
+			// TankLevelColumnHeader
+			// 
+			this.TankLevelColumnHeader.Text = "等级";
 			// 
 			// CombatNumberColumnHeader
 			// 
@@ -271,6 +269,10 @@ namespace WorldOfTanks {
 			// 
 			this.MedianCombatColumnHeader.Text = "效率中位数";
 			this.MedianCombatColumnHeader.Width = 84;
+			// 
+			// PredictCombatColumnHeader
+			// 
+			this.PredictCombatColumnHeader.Text = "预测效率";
 			// 
 			// AverageDamageColumnHeader
 			// 
@@ -408,8 +410,9 @@ namespace WorldOfTanks {
 			this.EndDateTimePicker.Name = "EndDateTimePicker";
 			this.EndDateTimePicker.Size = new System.Drawing.Size(200, 23);
 			this.EndDateTimePicker.TabIndex = 33;
-			this.EndDateTimePicker.ValueChanged += new System.EventHandler(this.EndDateTimePicker_ValueChanged);
+			this.EndDateTimePicker.CloseUp += new System.EventHandler(this.EndDateTimePicker_ValueChanged);
 			this.EndDateTimePicker.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Control_KeyUp);
+			this.EndDateTimePicker.Leave += new System.EventHandler(this.EndDateTimePicker_ValueChanged);
 			// 
 			// label2
 			// 
@@ -445,18 +448,37 @@ namespace WorldOfTanks {
 			this.SetColumnButton.UseVisualStyleBackColor = true;
 			this.SetColumnButton.Click += new System.EventHandler(this.SetColumnButton_Click);
 			// 
-			// PredictCombatColumnHeader
+			// contextMenuStrip1
 			// 
-			this.PredictCombatColumnHeader.Text = "预测效率";
+			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CopyToolStripMenuItem});
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(101, 26);
 			// 
-			// TankLevelColumnHeader
+			// CopyToolStripMenuItem
 			// 
-			this.TankLevelColumnHeader.Text = "等级";
+			this.CopyToolStripMenuItem.Name = "CopyToolStripMenuItem";
+			this.CopyToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+			this.CopyToolStripMenuItem.Text = "复制";
+			this.CopyToolStripMenuItem.Click += new System.EventHandler(this.CopyToolStripMenuItem_Click);
+			// 
+			// NameComboBox
+			// 
+			this.NameComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.NameComboBox.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.NameComboBox.FormattingEnabled = true;
+			this.NameComboBox.Location = new System.Drawing.Point(50, 5);
+			this.NameComboBox.Name = "NameComboBox";
+			this.NameComboBox.Size = new System.Drawing.Size(470, 23);
+			this.NameComboBox.TabIndex = 37;
+			this.NameComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Control_KeyUp);
 			// 
 			// OujBoxCombatRecordQueryForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1038, 561);
+			this.Controls.Add(this.NameComboBox);
 			this.Controls.Add(this.SetColumnButton);
 			this.Controls.Add(this.StateLabel);
 			this.Controls.Add(this.EndDateTimePicker);
@@ -466,19 +488,17 @@ namespace WorldOfTanks {
 			this.Controls.Add(this.TankResultListView);
 			this.Controls.Add(this.StartDateTimePicker);
 			this.Controls.Add(this.QueryButton);
-			this.Controls.Add(this.NameTextBox);
 			this.Controls.Add(this.label1);
 			this.Name = "OujBoxCombatRecordQueryForm";
 			this.Text = "OujBoxCombatRecordQueryForm";
+			this.contextMenuStrip1.ResumeLayout(false);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
 		#endregion
 
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox NameTextBox;
 		private System.Windows.Forms.Button QueryButton;
 		private System.Windows.Forms.DateTimePicker StartDateTimePicker;
 		private System.Windows.Forms.ListView ResultListView;
@@ -531,5 +551,8 @@ namespace WorldOfTanks {
 		private System.Windows.Forms.ColumnHeader AverageSPGNumberColumnHeader;
 		private System.Windows.Forms.ColumnHeader PredictCombatColumnHeader;
 		private System.Windows.Forms.ColumnHeader TankLevelColumnHeader;
+		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+		private System.Windows.Forms.ToolStripMenuItem CopyToolStripMenuItem;
+		private System.Windows.Forms.ComboBox NameComboBox;
 	}
 }

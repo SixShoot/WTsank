@@ -1,17 +1,12 @@
-﻿using Eruru.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Eruru.Json;
 
 namespace WorldOfTanks {
 
-	public partial class BoxCombatAnalysisForm : Form {
+	public partial class BoxCombatAnalysisForm : Form, IFormPage {
 
 		readonly Dictionary<JsonValue, CachedPlayer> CachedPlayers = new Dictionary<JsonValue, CachedPlayer> ();
 
@@ -31,7 +26,6 @@ namespace WorldOfTanks {
 			TeamBListView.ListViewItemSorter = new ListViewComparer (TeamBListView) {
 				OnGetColumnType = ((ListViewComparer)TeamAListView.ListViewItemSorter).OnGetColumnType
 			};
-			NameTextBox.Text = Config.Instance.BoxCombatAnalysisPlayerName;
 			TeamBListView.Columns.Clear ();
 			foreach (ColumnHeader column in TeamAListView.Columns) {
 				TeamBListView.Columns.Add (column.Text, column.Width);
@@ -41,9 +35,13 @@ namespace WorldOfTanks {
 			Api.AutoResizeListViewColumns (TeamBListView);
 		}
 
+		public void OnShow () {
+			LoadQueryNames ();
+		}
+
 		private void QueryButton_Click (object sender, EventArgs e) {
 			if (Api.CheckDateTime (StartDateTimePicker.Value, EndDateTimePicker.Value)) {
-				Query (NameTextBox.Text, StartDateTimePicker.Value.Date == EndDateTimePicker.Value.Date);
+				Query (NameComboBox.Text, StartDateTimePicker.Value.Date == EndDateTimePicker.Value.Date);
 			}
 		}
 
@@ -69,15 +67,11 @@ namespace WorldOfTanks {
 		}
 
 		private void StartDateTimePicker_ValueChanged (object sender, EventArgs e) {
-			if (EndDateTimePicker.Value < StartDateTimePicker.Value) {
-				EndDateTimePicker.Value = StartDateTimePicker.Value;
-			}
+
 		}
 
 		private void EndDateTimePicker_ValueChanged (object sender, EventArgs e) {
-			if (StartDateTimePicker.Value > EndDateTimePicker.Value) {
-				StartDateTimePicker.Value = EndDateTimePicker.Value;
-			}
+
 		}
 
 		private void CombatListView_SelectedIndexChanged (object sender, EventArgs e) {
@@ -114,10 +108,12 @@ namespace WorldOfTanks {
 			TeamBListView.Top = TeamAInformationLabel.Bottom + 5;
 			TeamBInformationLabel.Top = TeamBListView.Bottom + 5;
 			StateLabel.Top = TeamBInformationLabel.Top;
+			StateLabel.Width = CombatListView.Width;
 		}
 
 		void AutoResizeResultListViewColumns () {
 			Api.AutoResizeListViewColumns (CombatListView, true);
+			StateLabel.Width = CombatListView.Width;
 			TeamAListView.Left = CombatListView.Right + 5;
 			TeamAListView.Width = QueryButton.Right - TeamAListView.Left;
 			TeamAInformationLabel.Left = TeamAListView.Left;
@@ -129,25 +125,38 @@ namespace WorldOfTanks {
 		}
 
 		void SetState (string text) {
-			Invoke (new Action (() => StateLabel.Text = text));
+			Api.Invoke (this, () => {
+				StateLabel.Text = text;
+			});
+		}
+		void SetState (string format, params object[] args) {
+			SetState (string.Format (format, args));
+		}
+
+		void SetEnabled (bool enabled) {
+			Api.Invoke (this, () => {
+				NameComboBox.Enabled = enabled;
+				StartDateTimePicker.Enabled = enabled;
+				EndDateTimePicker.Enabled = enabled;
+				QueryButton.Enabled = enabled;
+				CombatListView.Enabled = enabled;
+				TeamAListView.Enabled = enabled;
+				TeamBListView.Enabled = enabled;
+			});
 		}
 
 		void Query (string name, bool isSameDay = true) {
-			NameTextBox.Enabled = false;
-			StartDateTimePicker.Enabled = false;
-			EndDateTimePicker.Enabled = false;
-			QueryButton.Enabled = false;
+			SetEnabled (false);
 			CombatListView.Items.Clear ();
 			TeamAListView.Items.Clear ();
 			TeamBListView.Items.Clear ();
 			TeamAInformationLabel.Text = string.Empty;
 			TeamBInformationLabel.Text = string.Empty;
-			Config.Instance.BoxCombatAnalysisPlayerName = NameTextBox.Text;
-			ConfigDao.Instance.Save (Config.Instance);
-			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
-			int count = 0;
-			object summaryLock = new object ();
-			new Thread (() => {
+			ConfigService.Instance.AddBoxCombatQueryPlayerName (name);
+			ConfigDao.Instance.Save (ConfigService.Instance);
+			LoadQueryNames ();
+			DateTime queryDateTime = DateTime.Now;
+			ThreadPool.QueueUserWorkItem (state => {
 				try {
 					BoxPersonalCombatRecord player = BoxService.Instance.GetPersonalCombatRecord (name);
 					double dayDifference = (DateTime.Now - StartDateTimePicker.Value).TotalDays;
@@ -157,31 +166,36 @@ namespace WorldOfTanks {
 						EndDateTimePicker.Value,
 						isSameDay,
 						(page, dateTime) => {
-							SetState ($"{Api.Divide ((DateTime.Now.Date - dateTime).TotalDays, dayDifference):P0} 页：{page} 时间：{dateTime:yyyy年MM月dd日}");
+							double dateTimeProgress = Api.Divide ((DateTime.Now.Date - dateTime).TotalDays, dayDifference);
+							double pageProgress = Api.Divide (page, 215);
+							SetState ($"进度：{Math.Max (dateTimeProgress, pageProgress):P0} 页：{page} 时间：{dateTime.ToString (Api.DateFormatText)}");
 						}
 					);
-					count = combatRecords.Count;
-					SetState ($"进度：0% 0/{combatRecords.Count}");
-					for (int i = 0; i < combatRecords.Count; i++) {
-						ThreadPool.QueueUserWorkItem (state => {
-							BoxCombatRecord innerCombatRecord = (BoxCombatRecord)state;
-							BoxService.Instance.FillCombatRecord (innerCombatRecord);
-							innerCombatRecord.Tag = innerCombatRecord;
-							lock (summaryLock) {
-								count--;
-								SetState ($"进度：{Api.Divide (combatRecords.Count - count, combatRecords.Count):P0} {combatRecords.Count - count}/{combatRecords.Count}");
-								if (count <= 0) {
-									autoResetEvent.Set ();
+					if (combatRecords.Count > 0) {
+						AutoResetEvent autoResetEvent = new AutoResetEvent (false);
+						int count = 0;
+						SetState ($"进度：0% 0/{combatRecords.Count}");
+						for (int i = 0; i < combatRecords.Count; i++) {
+							ThreadPool.QueueUserWorkItem (innerState => {
+								try {
+									BoxCombatRecord innerCombatRecord = (BoxCombatRecord)innerState;
+									BoxService.Instance.FillCombatRecord (innerCombatRecord);
+									innerCombatRecord.Tag = innerCombatRecord;
+								} finally {
+									lock (autoResetEvent) {
+										count++;
+										if (count >= combatRecords.Count) {
+											autoResetEvent.Set ();
+										}
+										SetState ($"进度：{Api.Divide (count, combatRecords.Count):P0} {count}/{combatRecords.Count}");
+									}
 								}
-							}
-						}, combatRecords[i]);
+							}, combatRecords[i]);
+						}
+						autoResetEvent.WaitOne ();
 					}
-					if (count <= 0) {
-						autoResetEvent.Set ();
-					}
-					autoResetEvent.WaitOne ();
-					SetState ("显示结果中");
-					Invoke (new Action (() => {
+					Api.Invoke (this, () => {
+						SetState ("显示结果中");
 						if (combatRecords.Count == 0) {
 							MessageBox.Show (this, "没有战斗数据");
 							return;
@@ -192,7 +206,7 @@ namespace WorldOfTanks {
 								Tag = combatRecord
 							};
 							listViewItem.SubItems.Insert (ModeColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = combatRecord.Mode });
-							listViewItem.SubItems.Insert (DateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = $"{combatRecord.DateTime:yyyy年MM月dd日 HH时mm分}" });
+							listViewItem.SubItems.Insert (DateColumnHeader.Index, new ListViewItem.ListViewSubItem () { Text = combatRecord.DateTime.ToString (Api.DateTimeExcludeSecondFormatText) });
 							listViewItem.SubItems.Insert (CombatListCombatColumnHeader.Index, new ListViewItem.ListViewSubItem () {
 								Text = $"{combatRecord.TeamPlayer.Combat:F2}",
 								Tag = Api.GetCombatColor (combatRecord.TeamPlayer.Combat)
@@ -204,23 +218,17 @@ namespace WorldOfTanks {
 						if (CombatListView.Items.Count > 0) {
 							CombatListView.Items[0].Selected = true;
 						}
-					}));
+						SetState ("查询完毕");
+					});
 				} catch (Exception exception) {
-					Invoke (new Action (() => {
-						MessageBox.Show (this, exception.ToString ());
-					}));
+					Api.Invoke (this, () => {
+						SetState (exception.Message);
+						MessageBox.Show (exception.ToString ());
+					});
 				} finally {
-					Invoke (new Action (() => {
-						NameTextBox.Enabled = true;
-						StartDateTimePicker.Enabled = true;
-						EndDateTimePicker.Enabled = true;
-						QueryButton.Enabled = true;
-						StateLabel.Text = string.Empty;
-					}));
+					SetEnabled (true);
 				}
-			}) {
-				IsBackground = true
-			}.Start ();
+			});
 		}
 
 		void OnSelectedCombatRecord (BoxCombatRecord combatRecord) {
@@ -242,8 +250,7 @@ namespace WorldOfTanks {
 					combatRecord.Tag = combatRecord;
 				}
 				AutoResetEvent autoResetEvent = new AutoResetEvent (false);
-				int count = 2;
-				object summaryLock = new object ();
+				int count = 0;
 				Execute (TeamAListView, TeamAInformationLabel, combatRecord.TeamAPlayers);
 				Execute (TeamBListView, TeamBInformationLabel, combatRecord.TeamBPlayers);
 				void Execute (ListView listView, Label label, JsonArray players) {
@@ -251,86 +258,79 @@ namespace WorldOfTanks {
 						try {
 							RefreshTeamListView (listView, label, players);
 						} finally {
-							OnDone ();
-						}
-					});
-				}
-				void OnDone () {
-					lock (summaryLock) {
-						count--;
-						if (count <= 0) {
-							autoResetEvent.Set ();
-						}
-					}
-				}
-				autoResetEvent.WaitOne ();
-				Invoke (new Action (() => {
-					CombatListView.Enabled = true;
-				}));
-			});
-		}
-
-		void RefreshTeamListView (ListView listView, Label label, JsonArray players) {
-			Invoke (new Action (() => {
-				listView.Items.Clear ();
-				listView.BeginUpdate ();
-			}));
-			int count = 0;
-			object summaryLock = new object ();
-			AutoResetEvent autoResetEvent = new AutoResetEvent (false);
-			int effectiveCount = 0;
-			float totalBoxCombat = 0;
-			float totalBoxWinRate = 0;
-			float totalBoxDamage = 0;
-			foreach (JsonValue playerJsonValue in players) {
-				if (CachedPlayers.TryGetValue (playerJsonValue, out CachedPlayer cachedPlayer) && cachedPlayer.BoxPersonalCombatRecord.Exception == null) {
-					Append ();
-				} else {
-					lock (summaryLock) {
-						count++;
-					}
-					ThreadPool.QueueUserWorkItem (state => {
-						try {
-							cachedPlayer = new CachedPlayer {
-								TeamPlayer = new CombatRecordTeamPlayer ()
-							};
-							CachedPlayers[playerJsonValue] = cachedPlayer;
-							BoxService.Instance.FillCombatRecordTeamPlayer (cachedPlayer.TeamPlayer, playerJsonValue);
-							try {
-								cachedPlayer.BoxPersonalCombatRecord = BoxService.Instance.GetPersonalCombatRecord (cachedPlayer.TeamPlayer.Name);
-								Append ();
-								cachedPlayer.BoxPersonalCombatRecord.Exception = null;
-							} catch (Exception exception) {
-								cachedPlayer.BoxPersonalCombatRecord = new BoxPersonalCombatRecord () {
-									Name = cachedPlayer.TeamPlayer.Name,
-									CombatText = exception.Message
-								};
-								cachedPlayer.BoxPersonalCombatRecord.Exception = exception;
-							}
-						} finally {
-							lock (summaryLock) {
-								count--;
-								if (count <= 0) {
+							lock (autoResetEvent) {
+								count++;
+								if (count >= 2) {
 									autoResetEvent.Set ();
 								}
 							}
 						}
 					});
 				}
-				void Append () {
-					if (cachedPlayer.BoxPersonalCombatRecord.Combat > 0) {
-						effectiveCount++;
-						totalBoxCombat += cachedPlayer.BoxPersonalCombatRecord.Combat;
-						totalBoxWinRate += cachedPlayer.BoxPersonalCombatRecord.WinRate;
-						totalBoxDamage += cachedPlayer.BoxPersonalCombatRecord.Damage;
+				autoResetEvent.WaitOne ();
+				Api.Invoke (this, () => {
+					CombatListView.Enabled = true;
+				});
+			});
+		}
+
+		void RefreshTeamListView (ListView listView, Label label, JsonArray players) {
+			Api.Invoke (this, () => {
+				listView.Items.Clear ();
+				listView.BeginUpdate ();
+			});
+			int effectiveCount = 0;
+			float totalBoxCombat = 0;
+			float totalBoxWinRate = 0;
+			float totalBoxDamage = 0;
+			if (players.Count > 0) {
+				AutoResetEvent autoResetEvent = new AutoResetEvent (false);
+				int count = 0;
+				foreach (JsonValue playerJsonValue in players) {
+					if (CachedPlayers.TryGetValue (playerJsonValue, out CachedPlayer cachedPlayer) && cachedPlayer.BoxPersonalCombatRecord.Exception == null) {
+						count++;
+						Append ();
+					} else {
+						ThreadPool.QueueUserWorkItem (state => {
+							try {
+								cachedPlayer = new CachedPlayer {
+									TeamPlayer = new CombatRecordTeamPlayer ()
+								};
+								CachedPlayers[playerJsonValue] = cachedPlayer;
+								BoxService.Instance.FillCombatRecordTeamPlayer (cachedPlayer.TeamPlayer, playerJsonValue);
+								try {
+									cachedPlayer.BoxPersonalCombatRecord = BoxService.Instance.GetPersonalCombatRecord (cachedPlayer.TeamPlayer.Name);
+									Append ();
+									cachedPlayer.BoxPersonalCombatRecord.Exception = null;
+								} catch (Exception exception) {
+									cachedPlayer.BoxPersonalCombatRecord = new BoxPersonalCombatRecord () {
+										Name = cachedPlayer.TeamPlayer.Name,
+										CombatText = exception.Message
+									};
+									cachedPlayer.BoxPersonalCombatRecord.Exception = exception;
+								}
+							} finally {
+								lock (autoResetEvent) {
+									count++;
+									if (count >= players.Count) {
+										autoResetEvent.Set ();
+									}
+								}
+							}
+						});
+					}
+					void Append () {
+						if (cachedPlayer.BoxPersonalCombatRecord.Combat > 0) {
+							effectiveCount++;
+							totalBoxCombat += cachedPlayer.BoxPersonalCombatRecord.Combat;
+							totalBoxWinRate += cachedPlayer.BoxPersonalCombatRecord.WinRate;
+							totalBoxDamage += cachedPlayer.BoxPersonalCombatRecord.Damage;
+						}
 					}
 				}
+				autoResetEvent.WaitOne ();
 			}
-			if (count <= 0) {
-				autoResetEvent.Set ();
-			}
-			autoResetEvent.WaitOne ();
-			Invoke (new Action (() => {
+			Api.Invoke (this, () => {
 				try {
 					foreach (JsonValue playerJsonValue in players) {
 						CachedPlayer cachedPlayer = CachedPlayers[playerJsonValue];
@@ -374,7 +374,17 @@ namespace WorldOfTanks {
 				} catch (Exception e) {
 					MessageBox.Show ($"出现错误，请尝试重新加载{Environment.NewLine}{e}");
 				}
-			}));
+			});
+		}
+
+		void LoadQueryNames () {
+			NameComboBox.Items.Clear ();
+			for (int i = 0; i < ConfigService.Instance.BoxCombatQueryHistoryPlayerNames.Count; i++) {
+				NameComboBox.Items.Add (ConfigService.Instance.BoxCombatQueryHistoryPlayerNames[i]);
+			}
+			if (NameComboBox.Items.Count > 0) {
+				NameComboBox.SelectedIndex = 0;
+			}
 		}
 
 		class CachedPlayer {

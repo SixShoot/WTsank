@@ -19,6 +19,7 @@ namespace WorldOfTanks {
 			PageChanger.Add (Page.SpottingDistanceCalculator, new SpottingDistanceCalculatorForm ());
 			PageChanger.Add (Page.AimTimeCalculator, new AimTimeCalculatorForm ());
 			PageChanger.Add (Page.BoxCombatAnalysis, new BoxCombatAnalysisForm ());
+			PageChanger.Add (Page.Settings, new SettingsForm ());
 #if DEBUG
 			BoxCombatAnalysisRadioButton.Checked = true;
 #else
@@ -59,6 +60,12 @@ namespace WorldOfTanks {
 
 		private void Panel_Resize (object sender, EventArgs e) {
 			PageChanger.ResizeCurrentPage ();
+		}
+
+		private void SettingsRadioButton_CheckedChanged (object sender, EventArgs e) {
+			if (SettingsRadioButton.Checked) {
+				PageChanger.Change (Page.Settings);
+			}
 		}
 
 	}

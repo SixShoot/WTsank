@@ -18,32 +18,32 @@ namespace WorldOfTanks {
 		}
 
 		public int Compare (object x, object y) {
-			ListViewItem a = (ListViewItem)x;
-			ListViewItem b = (ListViewItem)y;
-			string textA = a.SubItems[SelectedColumnIndex].Text;
-			string textB = b.SubItems[SelectedColumnIndex].Text;
-			int value;
+			ListViewItem listViewItemX = (ListViewItem)x;
+			ListViewItem listViewItemY = (ListViewItem)y;
+			string textX = listViewItemX.SubItems[SelectedColumnIndex].Text;
+			string textY = listViewItemY.SubItems[SelectedColumnIndex].Text;
+			int result;
 			if (SelectedColumnType == typeof (float)) {
-				Match matchA = Regex.Match (textA, @"[0-9+-.eE]+");
-				Match matchB = Regex.Match (textB, @"[0-9+-.eE]+");
-				if (!float.TryParse (matchA.Value, out float floatA)) {
-					floatA = -1;
+				Match matchX = Regex.Match (textX, @"[0-9+-.eE]+");
+				Match matchY = Regex.Match (textY, @"[0-9+-.eE]+");
+				if (!float.TryParse (matchX.Value, out float floatX)) {
+					floatX = -1;
 				}
-				if (!float.TryParse (matchB.Value, out float floatB)) {
-					floatB = -1;
+				if (!float.TryParse (matchY.Value, out float floatY)) {
+					floatY = -1;
 				}
-				value = floatA.CompareTo (floatB);
+				result = floatX.CompareTo (floatY);
 			} else if (SelectedColumnType == typeof (ClanMemberPosition)) {
-				ClanMember clanMemberA = (ClanMember)a.Tag;
-				ClanMember clanMemberB = (ClanMember)b.Tag;
-				value = clanMemberA.PositionRank.CompareTo (clanMemberB.PositionRank);
+				ClanMember clanMemberX = (ClanMember)listViewItemX.Tag;
+				ClanMember clanMemberY = (ClanMember)listViewItemY.Tag;
+				result = clanMemberX.PositionRank.CompareTo (clanMemberY.PositionRank);
 			} else {
-				value = textA.CompareTo (textB);
+				result = textX.CompareTo (textY);
 			}
 			if (ListView.Sorting == SortOrder.Descending) {
-				value *= -1;
+				result *= -1;
 			}
-			return value;
+			return result;
 		}
 
 		public void ToggleSortOrder () {

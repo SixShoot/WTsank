@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WorldOfTanks {
@@ -706,10 +705,10 @@ namespace WorldOfTanks {
 					(int)tankHeight
 				);
 			}
-			DrawImpactPoints (TankA, e.Graphics);
-			DrawImpactPoints (TankB, e.Graphics);
-			DrawAimCircle (TankA, e.Graphics);
 			DrawAimCircle (TankB, e.Graphics);
+			DrawAimCircle (TankA, e.Graphics);
+			DrawImpactPoints (TankB, e.Graphics);
+			DrawImpactPoints (TankA, e.Graphics);
 			CompareResult (TankA, TankB);
 		}
 

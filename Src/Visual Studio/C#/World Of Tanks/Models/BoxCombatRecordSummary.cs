@@ -1,7 +1,7 @@
-﻿using Eruru.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Eruru.Json;
 
 namespace WorldOfTanks {
 
@@ -62,6 +62,7 @@ namespace WorldOfTanks {
 		public float AverageXP { get; set; }
 		public float AverageTankLevel { get; set; }
 		public Dictionary<string, BoxCombatRecordSummary> Tanks { get; set; } = new Dictionary<string, BoxCombatRecordSummary> ();
+		public List<BoxCombatRecord> CombatRecords { get; set; } = new List<BoxCombatRecord> ();
 
 		public void AddCombatRecord (BoxCombatRecord combatRecord) {
 			CombatNumber++;
@@ -160,6 +161,7 @@ namespace WorldOfTanks {
 			TotalArmorResistence += combatRecord.TeamPlayer.ArmorResistence;
 			TotalSurvivalTime += combatRecord.TeamPlayer.SurvivalTime;
 			TotalXP += combatRecord.TeamPlayer.XP;
+			CombatRecords.Add (combatRecord);
 		}
 
 		public void Summary (string tankName = null) {

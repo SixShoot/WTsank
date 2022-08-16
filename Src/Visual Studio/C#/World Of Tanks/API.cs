@@ -4,12 +4,15 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace WorldOfTanks {
 
 	class Api {
+
+		public const string DateTimeFormatText = "yyyy年MM月dd日 HH时mm分ss秒";
+		public const string DateTimeExcludeSecondFormatText = "yyyy年MM月dd日 HH时mm分";
+		public const string DateFormatText = "yyyy年MM月dd日";
 
 		static readonly CombatColor[] CombatColors = {
 			new CombatColor (600, "FFFFFF", "BB0022"),//0-600
@@ -22,6 +25,7 @@ namespace WorldOfTanks {
 			new CombatColor (2000, "000000", "FFAA33")//1800-2000
 		};
 		static readonly Random Random = new Random ();
+		static readonly string[] FileUnits = { "B", "KB", "MB", "GB", "TB" };
 
 		public static void Initialize () {
 			for (int i = 0; i < CombatColors.Length; i++) {
@@ -31,6 +35,27 @@ namespace WorldOfTanks {
 				CombatColors[i].Difference = CombatColors[i].Max - CombatColors[i].Min;
 				CombatColors[i].Middle = CombatColors[i].Min + CombatColors[i].Difference / 2;
 			}
+		}
+
+		public static string FormatFileSize (long byteLength) {
+			float size = byteLength;
+			int index = 0;
+			while (size >= 1024) {
+				index++;
+				size /= 1024;
+			}
+			return string.Format ("{0:F2} {1}", size, FileUnits[index]);
+		}
+
+		public static void Invoke (Control control, Action action, params object[] args) {
+			if (control.IsDisposed || control.Disposing) {
+				return;
+			}
+			if (control.InvokeRequired) {
+				control.Invoke (action, args);
+				return;
+			}
+			action.DynamicInvoke (args);
 		}
 
 		public static void SetCompareColor (Control a, Control b, int compareResult) {

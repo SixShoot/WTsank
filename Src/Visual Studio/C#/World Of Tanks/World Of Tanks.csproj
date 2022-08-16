@@ -56,7 +56,6 @@
     <Reference Include="Eruru.LexicalAnalyzer, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eruru.LexicalAnalyzer.1.0.0.1\lib\net40\Eruru.LexicalAnalyzer.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -89,7 +88,7 @@
       <DependentUpon>BoxCombatAnalysisForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Comparers\ListViewComparer.cs" />
-    <Compile Include="Config.cs" />
+    <Compile Include="Services\ConfigService.cs" />
     <Compile Include="Daos\BoxDao.cs" />
     <Compile Include="Daos\ConfigDao.cs" />
     <Compile Include="DoubleColor.cs" />
@@ -148,6 +147,12 @@
     <Compile Include="Forms\SetColumnForm.Designer.cs">
       <DependentUpon>SetColumnForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Forms\AimTimeCalculatorForm.resx">
       <DependentUpon>AimTimeCalculatorForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -165,6 +170,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SetColumnForm.resx">
       <DependentUpon>SetColumnForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

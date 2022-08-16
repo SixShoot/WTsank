@@ -1,11 +1,11 @@
-﻿using Eruru.Http;
-using Eruru.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Eruru.Http;
+using Eruru.Json;
 
 namespace WorldOfTanks {
 
@@ -20,7 +20,6 @@ namespace WorldOfTanks {
 			}
 		};
 		readonly object RequestLock = new object ();
-		readonly int RequestInterval = 50;
 		readonly Stopwatch Stopwatch = new Stopwatch ();
 
 		long RequestTime = 0;
@@ -215,13 +214,13 @@ namespace WorldOfTanks {
 		}
 
 		void BeginHttpRequest () {
-			if (RequestInterval <= 0) {
+			if (ConfigService.Instance.NetworkRequestInterval <= 0) {
 				return;
 			}
 			lock (RequestLock) {
 				int elapsed = (int)(Stopwatch.ElapsedMilliseconds - RequestTime);
-				if (elapsed < RequestInterval) {
-					Thread.Sleep (RequestInterval - elapsed);
+				if (elapsed < ConfigService.Instance.NetworkRequestInterval) {
+					Thread.Sleep (ConfigService.Instance.NetworkRequestInterval - elapsed);
 				}
 				RequestTime = Stopwatch.ElapsedMilliseconds;
 			}

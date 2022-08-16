@@ -7,6 +7,7 @@
 		SpottingDistanceCalculator,
 		AimTimeCalculator,
 		BoxCombatAnalysis,
+		Settings,
 		None
 
 	}
